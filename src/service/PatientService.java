@@ -61,6 +61,7 @@ public class PatientService {
         return patient;
     }
 
+
     public static void save(Patient patient) {
         patientList.add(patient);
         System.out.println("Patient added successfully!\n");

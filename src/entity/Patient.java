@@ -98,7 +98,6 @@ public class Patient extends Person {
     }
 
     public void addAppointment(Appointment appointment) {
-        // Initialize the list if it's currently null
         if (this.appointment == null) {
             this.appointment = new ArrayList<>();
         }
@@ -109,9 +108,8 @@ public class Patient extends Person {
     }
 
     public void updateInsurance(String newInsuranceId) {
-        // In Phase 3, you will use HelperUtils here for validation
         if (newInsuranceId != null && !newInsuranceId.trim().isEmpty()) {
-            this.setInsuranceId(newInsuranceId); // Assuming you have a setInsuranceId()
+            this.setInsuranceId(newInsuranceId);
             System.out.println("Insurance ID updated successfully to: " + newInsuranceId);
         } else {
             System.out.println("Insurance ID cannot be empty or null.");
@@ -125,7 +123,6 @@ public class Patient extends Person {
         System.out.println("Emergency Contact: " + emergencyContact);
         System.out.println("Insurance ID: " + insuranceId);
         System.out.println("Registration Date: " + registrationDate);
-        // Optional: print allergies, medical records, appointments
         if (allergies != null && !allergies.isEmpty()) {
             System.out.println("Allergies: " + allergies);
         }
@@ -139,19 +136,14 @@ public class Patient extends Person {
 
     @Override
     public String toString() {
-        // Calls the parent's toString() method and adds patient-specific fields
         return "Patient{" +
                 super.toString() + // Retrieves all fields from Person
                 ", bloodGroup='" + bloodGroup + '\'' +
                 ", emergencyContact='" + emergencyContact + '\'' +
                 ", registrationDate=" + registrationDate +
                 ", insuranceId='" + insuranceId + '\'' +
-                // Note: You can optionally exclude large lists like medicalRecord
-                // and appointment from toString() to keep the output clean.
                 '}';
     }
-
-    // Also add these methods to Patient.java
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -86,4 +86,15 @@ public class Appointment {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public void displayInfo() {
+        System.out.println("Appointment Id: " + appointmentId);
+        System.out.println("Patient Id: " + patientId);
+        System.out.println("Doctor Id: " + doctorId);
+        System.out.println("Appointment Date: " + appointmentDate);
+        System.out.println("Appointment Time: " + appointmentTime);
+        System.out.println("Status: " + status);
+        System.out.println("Reason: " + reason);
+        System.out.println("Notes: " + notes);
+    }
 }

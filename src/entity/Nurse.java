@@ -10,6 +10,9 @@ public class Nurse extends Person{
     private String qualification;
     private List<Patient> assignedPatients;
 
+    public Nurse() {
+        super();
+    }
 
     public Nurse(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
@@ -61,5 +64,13 @@ public class Nurse extends Person{
 
     public void setAssignedPatients(List<Patient> assignedPatients) {
         this.assignedPatients = assignedPatients;
+    }
+
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Department Id: " + departmentId);
+        System.out.println("Shift: " + shift);
+        System.out.println("Qualification: " + qualification);
     }
 }

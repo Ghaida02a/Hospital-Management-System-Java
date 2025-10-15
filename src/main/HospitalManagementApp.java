@@ -10,7 +10,6 @@ public class HospitalManagementApp {
 
     public static void main(String[] args) {
         System.out.println("Welcome to the Hospital Management System");
-
         while (mainMenuOption != 8){
             showMainMenu();
             mainMenuOption = scanner.nextInt();
@@ -30,7 +29,6 @@ public class HospitalManagementApp {
                 default -> System.out.println("Please enter a valid option (1–8).");
             }
         }
-
     }
 
     public static void showMainMenu() {

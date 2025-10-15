@@ -13,6 +13,9 @@ public class Doctor extends Person{
     private List<Integer> availableSlots;
     private List<Patient> assignedPatients;
 
+    public Doctor() {
+        super();
+    }
     public Doctor(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
     }
@@ -91,4 +94,17 @@ public class Doctor extends Person{
     public void setAssignedPatients(List<Patient> assignedPatients) {
         this.assignedPatients = assignedPatients;
     }
+
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Specialization: " + specialization);
+        System.out.println("Qualification: " + qualification);
+        System.out.println("Experience Years: " + experienceYears);
+        System.out.println("Department Id: " + departmentId);
+        System.out.println("Consultation Fee: " + consultationFee);
+    }
+
+
+    // Add methods: assignPatient(), removePatient(), updateAvailability()
 }
