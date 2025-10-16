@@ -77,3 +77,4 @@ public class Department {
         this.availableBeds = availableBeds;
     }
 }
+// assignDoctor(), assignNurse(), updateBedAvailability()

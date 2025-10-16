@@ -123,14 +123,18 @@ public class Patient extends Person {
         System.out.println("Emergency Contact: " + emergencyContact);
         System.out.println("Insurance ID: " + insuranceId);
         System.out.println("Registration Date: " + registrationDate);
+
         if (allergies != null && !allergies.isEmpty()) {
-            System.out.println("Allergies: " + allergies);
+            System.out.println("Allergies:");
+            for (Allergies allergy : allergies) {
+                System.out.println("  - " + allergy);
+            }
         }
         if (medicalRecord != null && !medicalRecord.isEmpty()) {
-            System.out.println("Allergies: " + medicalRecord);
+            System.out.println("Medical Records Count: " + medicalRecord.size());
         }
         if (appointment != null && !appointment.isEmpty()) {
-            System.out.println("Allergies: " + appointment);
+            System.out.println("Appointment Count: " + appointment.size());
         }
     }
 

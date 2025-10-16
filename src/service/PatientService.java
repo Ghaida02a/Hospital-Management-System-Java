@@ -1,6 +1,7 @@
 package service;
 
 import Utils.HelperUtils;
+import entity.Allergies;
 import entity.Patient;
 
 import java.time.LocalDate;
@@ -61,28 +62,53 @@ public class PatientService {
         return patient;
     }
 
+    public static void addAllergyToPatient(String patientId) {
+        Patient patient = getPatientById(patientId);
+        if (patient == null) {
+            System.out.println("Error: Patient with ID " + patientId + " not found.\n");
+            return;
+        }
+
+        System.out.println("\n--- Adding Allergy for " + patient.getFirstName() + " ---");
+        System.out.print("Enter Allergy ID: ");
+        String allergyId = scanner.nextLine();
+
+        System.out.print("Enter Allergy Name (e.g., Peanuts): ");
+        String allergyName = scanner.nextLine();
+
+        System.out.print("Enter Allergy Type (e.g., Food, Drug, Environmental): ");
+        String allergyType = scanner.nextLine();
+
+        Allergies newAllergy = new Allergies(allergyId, allergyName, allergyType);
+
+        if (patient.getAllergies() == null) {
+            patient.setAllergies(new ArrayList<>());
+        }
+        patient.getAllergies().add(newAllergy);
+
+        System.out.println("Successfully added allergy '" + allergyName + "' to patient " + patientId + ".\n");
+    }
 
     public static void save(Patient patient) {
-        patientList.add(patient);
-        System.out.println("Patient added successfully!\n");
+        if (patient != null) {
+            patientList.add(patient);
+            System.out.println("Patient added successfully!\n");
+        }
     }
 
     public static void editPatient(String patientId, Patient updatedPatient) {
         if (patientList.isEmpty()) {
             System.out.println("No Patients available to edit.");
+            return;
         }
-
-        if (!HelperUtils.checkIfIdExists(patientList, patientId)) {
-            System.out.println("Patient with ID " + patientId + " not found.");
-        }
-
         for (int i = 0; i < patientList.size(); i++) {
             if (patientList.get(i).getId().equals(patientId)) {
                 patientList.set(i, updatedPatient);
-                System.out.println("Patient updated successfully!");
+                System.out.println("Patient updated successfully!\n");
+                return;
             }
         }
-        System.out.println("Patient not found.");
+        System.out.println("Patient with ID " + patientId + " not found.\n");
     }
 
     public static void removePatient(String patientId) {
@@ -124,9 +150,15 @@ public class PatientService {
         System.out.println("========================\n");
     }
 
-    public static void searchPatientsByName(String name) {
-        if (patientList.isEmpty()) {
-            System.out.println("No patients found.\n");
+    public static List<Patient> searchPatientsByName(String name) {
+        List<Patient> searchResults = new ArrayList<>();
+        String searchName = name.toLowerCase();
+
+        for (Patient patient : patientList) {
+            if (patient.getFirstName().toLowerCase().contains(searchName)) {
+                searchResults.add(patient);
+            }
         }
+        return searchResults;
     }
 }

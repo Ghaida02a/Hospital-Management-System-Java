@@ -1,15 +1,14 @@
 package entity;
 
-import java.time.LocalDate;
-
 public class Allergies {
     private String allergyId;          // unique identifier for the allergy
     private String allergyName;        // e.g., "Peanuts", "Penicillin", "Dust"
+    private String allergyType;
 
-    public Allergies(String allergyId, String allergyName, String allergyType, String reaction, String severity, LocalDate dateIdentified, String notes) {
+    public Allergies(String allergyId, String allergyName, String allergyType) {
         this.allergyId = allergyId;
         this.allergyName = allergyName;
-
+        this.allergyType = allergyType;
     }
 
     public String getAllergyId() {
@@ -26,5 +25,18 @@ public class Allergies {
 
     public void setAllergyName(String allergyName) {
         this.allergyName = allergyName;
+    }
+
+    public String getAllergyType() {
+        return allergyType;
+    }
+
+    public void setAllergyType(String allergyType) {
+        this.allergyType = allergyType;
+    }
+
+    @Override
+    public String toString() {
+        return allergyName + " (ID: " + allergyId + ", Type: " + allergyType + ")";
     }
 }
