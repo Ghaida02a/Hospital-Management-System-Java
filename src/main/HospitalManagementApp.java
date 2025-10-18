@@ -582,7 +582,7 @@ public class HospitalManagementApp {
             switch (option) {
                 case 1 -> System.out.println("still");
                 case 2 -> System.out.println("still");
-                case 3 -> System.out.println("still");
+                case 3 -> System.out.println("still");  
                 case 4 -> System.out.println("still");
                 case 5 -> System.out.println("still");
                 case 6 -> System.out.println("Exiting Report Management...");
