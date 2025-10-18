@@ -17,16 +17,22 @@ public class Patient extends Person {
 
     public Patient() {
         super();
+        // Ensure lists are initialized
+        this.allergies = new ArrayList<>();
+        this.medicalRecord = new ArrayList<>();
+        this.appointment = new ArrayList<>();
+        this.registrationDate = LocalDate.now();
     }
     public Patient(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address, String bloodGroup, List<Allergies> allergies, String emergencyContact, LocalDate registrationDate, String insuranceId, List<MedicalRecord> medicalRecord, List<Appointment> appointment) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
-        this.bloodGroup = bloodGroup;
-        this.allergies = allergies;
-        this.emergencyContact = emergencyContact;
-        this.registrationDate = registrationDate;
-        this.insuranceId = insuranceId;
-        this.medicalRecord = medicalRecord;
-        this.appointment = appointment;
+        // Use setters to apply validations and normalization
+        setBloodGroup(bloodGroup);
+        setAllergies(allergies);
+        setEmergencyContact(emergencyContact);
+        setRegistrationDate(registrationDate);
+        setInsuranceId(insuranceId);
+        setMedicalRecord(medicalRecord);
+        setAppointment(appointment);
     }
 
 
@@ -36,7 +42,18 @@ public class Patient extends Person {
     }
 
     public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
+        if (bloodGroup == null || bloodGroup.trim().isEmpty()) {
+            this.bloodGroup = null;
+            return;
+        }
+        String normalized = bloodGroup.trim().toUpperCase().replaceAll("\\s+", "");
+        // Accept forms like A+, A-, B+, B-, AB+, AB-, O+, O-
+        if (normalized.matches("^(A|B|AB|O)[+-]$")) {
+            this.bloodGroup = normalized;
+        } else {
+            System.out.println("Warning: invalid blood group '" + bloodGroup + "'. Expected one of A+, A-, B+, B-, AB+, AB-, O+, O-. Setting to null.");
+            this.bloodGroup = null;
+        }
     }
 
     public List<Allergies> getAllergies() {
@@ -44,7 +61,11 @@ public class Patient extends Person {
     }
 
     public void setAllergies(List<Allergies> allergies) {
-        this.allergies = allergies;
+        if (allergies == null) {
+            this.allergies = new ArrayList<>();
+        } else {
+            this.allergies = allergies;
+        }
     }
 
     public String getEmergencyContact() {
@@ -52,7 +73,24 @@ public class Patient extends Person {
     }
 
     public void setEmergencyContact(String emergencyContact) {
-        this.emergencyContact = emergencyContact;
+        if (emergencyContact == null || emergencyContact.trim().isEmpty()) {
+            this.emergencyContact = null;
+            return;
+        }
+        String normalized = emergencyContact.trim();
+        // Allow digits, spaces, dashes and leading +. Require at least 7 digits overall.
+        String digitsOnly = normalized.replaceAll("[^0-9]", "");
+        if (digitsOnly.length() < 7) {
+            System.out.println("Warning: emergency contact '" + emergencyContact + "' appears too short. Setting to null.");
+            this.emergencyContact = null;
+            return;
+        }
+        if (normalized.matches("^[+]?[0-9][0-9\s-]{5,}$")) {
+            this.emergencyContact = normalized;
+        } else {
+            System.out.println("Warning: emergency contact '" + emergencyContact + "' contains invalid characters. Setting to null.");
+            this.emergencyContact = null;
+        }
     }
 
     public LocalDate getRegistrationDate() {
@@ -60,7 +98,17 @@ public class Patient extends Person {
     }
 
     public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
+        if (registrationDate == null) {
+            this.registrationDate = LocalDate.now();
+        } else {
+            // Prevent future dates
+            if (registrationDate.isAfter(LocalDate.now())) {
+                System.out.println("Warning: registration date cannot be in the future. Using today's date instead.");
+                this.registrationDate = LocalDate.now();
+            } else {
+                this.registrationDate = registrationDate;
+            }
+        }
     }
 
     public String getInsuranceId() {
@@ -68,7 +116,18 @@ public class Patient extends Person {
     }
 
     public void setInsuranceId(String insuranceId) {
-        this.insuranceId = insuranceId;
+        if (insuranceId == null || insuranceId.trim().isEmpty()) {
+            this.insuranceId = null;
+            return;
+        }
+        // Basic validation: length between 3 and 50 and no control characters
+        String trimmed = insuranceId.trim();
+        if (trimmed.length() < 3 || trimmed.length() > 50 || trimmed.matches(".*\\p{Cntrl}.*")) {
+            System.out.println("Warning: insurance ID appears invalid. Setting to null.");
+            this.insuranceId = null;
+        } else {
+            this.insuranceId = trimmed;
+        }
     }
 
     public List<MedicalRecord> getMedicalRecord() {
@@ -76,7 +135,11 @@ public class Patient extends Person {
     }
 
     public void setMedicalRecord(List<MedicalRecord> medicalRecord) {
-        this.medicalRecord = medicalRecord;
+        if (medicalRecord == null) {
+            this.medicalRecord = new ArrayList<>();
+        } else {
+            this.medicalRecord = medicalRecord;
+        }
     }
 
     public List<Appointment> getAppointment() {
@@ -84,7 +147,11 @@ public class Patient extends Person {
     }
 
     public void setAppointment(List<Appointment> appointment) {
-        this.appointment = appointment;
+        if (appointment == null) {
+            this.appointment = new ArrayList<>();
+        } else {
+            this.appointment = appointment;
+        }
     }
 
     public void addMedicalRecord(MedicalRecord record) {
@@ -94,6 +161,8 @@ public class Patient extends Person {
         if (record != null) {
             this.medicalRecord.add(record);
             System.out.println("Medical record added for patient " + this.getId());
+        } else {
+            System.out.println("Warning: null medical record not added.");
         }
     }
 
@@ -104,6 +173,8 @@ public class Patient extends Person {
         if (appointment != null) {
             this.appointment.add(appointment);
             System.out.println("Appointment scheduled for patient " + this.getId());
+        } else {
+            System.out.println("Warning: null appointment not added.");
         }
     }
 

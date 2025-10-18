@@ -28,14 +28,25 @@ public class Appointment {
     }
 
     public void setAppointmentId(String appointmentId) {
+        validateId(appointmentId, "appointmentId");
         this.appointmentId = appointmentId;
     }
+
+    private void validateId(String id, String fieldName) {
+        if (id == null || id.trim().isEmpty()) {
+            System.out.println(fieldName + " cannot be empty.");
+        } else {
+            System.out.println(fieldName + " is valid.");
+        }
+    }
+
 
     public String getPatientId() {
         return patientId;
     }
 
     public void setPatientId(String patientId) {
+        validateId(patientId, "patientId");
         this.patientId = patientId;
     }
 
@@ -44,6 +55,7 @@ public class Appointment {
     }
 
     public void setDoctorId(String doctorId) {
+        validateId(doctorId, "doctorId");
         this.doctorId = doctorId;
     }
 

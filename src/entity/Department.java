@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class Department {
     private String departmentId;
@@ -11,14 +12,15 @@ public class Department {
     private int bedCapacity;
     private int availableBeds;
 
-    public Department(String departmentId, String departmentName, String headDoctorId, List<Doctor> doctors, List<Nurse> nurses, int bedCapacity, int availableBeds) {
-        this.departmentId = departmentId;
-        this.departmentName = departmentName;
-        this.headDoctorId = headDoctorId;
-        this.doctors = doctors;
-        this.nurses = nurses;
-        this.bedCapacity = bedCapacity;
-        this.availableBeds = availableBeds;
+    public Department() {
+        // initialize with sensible defaults
+        this.departmentId = "";
+        this.departmentName = "";
+        this.headDoctorId = "";
+        this.doctors = new ArrayList<>();
+        this.nurses = new ArrayList<>();
+        this.bedCapacity = 0;
+        this.availableBeds = 0;
     }
 
     public String getDepartmentId() {

@@ -23,6 +23,10 @@ public class MedicalRecord {
         this.notes = notes;
     }
 
+    public MedicalRecord() {
+
+    }
+
     public String getRecordId() {
         return recordId;
     }

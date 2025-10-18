@@ -73,4 +73,6 @@ public class Nurse extends Person{
         System.out.println("Shift: " + shift);
         System.out.println("Qualification: " + qualification);
     }
+
+    //• Additional: getNursesByDepartment(), getNursesByShift()
 }
