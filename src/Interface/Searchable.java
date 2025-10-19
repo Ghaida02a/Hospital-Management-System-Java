@@ -1,6 +1,6 @@
 package Interface;
 
 public interface Searchable {
-    //- search(String keyword)
-    //- searchById(String id)
+    String search(String keyword);
+    String searchById(String id);
 }
