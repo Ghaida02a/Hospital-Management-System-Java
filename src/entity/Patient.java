@@ -1,11 +1,13 @@
 package entity;
 
+import Interface.Displayable;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Patient extends Person {
+public class Patient extends Person implements Displayable {
     private String bloodGroup;
     private List<Allergies> allergies;
     private String emergencyContact;
@@ -34,6 +36,7 @@ public class Patient extends Person {
         setMedicalRecord(medicalRecord);
         setAppointment(appointment);
     }
+
 
 
 
@@ -85,7 +88,7 @@ public class Patient extends Person {
             this.emergencyContact = null;
             return;
         }
-        if (normalized.matches("^[+]?[0-9][0-9\s-]{5,}$")) {
+        if (normalized.matches("^[+]?[0-9][0-9\\s-]{5,}$")) {
             this.emergencyContact = normalized;
         } else {
             System.out.println("Warning: emergency contact '" + emergencyContact + "' contains invalid characters. Setting to null.");
@@ -188,25 +191,31 @@ public class Patient extends Person {
     }
 
     @Override
-    public void displayInfo() {
-        super.displayInfo();
-        System.out.println("Blood Group: " + bloodGroup);
-        System.out.println("Emergency Contact: " + emergencyContact);
-        System.out.println("Insurance ID: " + insuranceId);
-        System.out.println("Registration Date: " + registrationDate);
+    public String displayInfo(String str) {
+        StringBuilder newStr = new StringBuilder();
+        newStr.append(super.displayInfo("")).append(System.lineSeparator());
+        newStr.append("Blood Group: ").append(bloodGroup).append(System.lineSeparator());
+        newStr.append("Emergency Contact: ").append(emergencyContact).append(System.lineSeparator());
+        newStr.append("Insurance ID: ").append(insuranceId).append(System.lineSeparator());
+        newStr.append("Registration Date: ").append(registrationDate).append(System.lineSeparator());
 
         if (allergies != null && !allergies.isEmpty()) {
-            System.out.println("Allergies:");
+            newStr.append("Allergies:").append(System.lineSeparator());
             for (Allergies allergy : allergies) {
-                System.out.println("  - " + allergy);
+                newStr.append("  - ").append(allergy.toString()).append(System.lineSeparator());
             }
         }
-        if (medicalRecord != null && !medicalRecord.isEmpty()) {
-            System.out.println("Medical Records Count: " + medicalRecord.size());
-        }
-        if (appointment != null && !appointment.isEmpty()) {
-            System.out.println("Appointment Count: " + appointment.size());
-        }
+        newStr.append("Medical Records Count: ").append(medicalRecord == null ? 0 : medicalRecord.size()).append(System.lineSeparator());
+        newStr.append("Appointment Count: ").append(appointment == null ? 0 : appointment.size());
+
+        String out = newStr.toString();
+        System.out.println(out);
+        return out;
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return "Patient{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
     @Override

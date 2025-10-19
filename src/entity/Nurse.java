@@ -1,9 +1,11 @@
 package entity;
 
+import Interface.Displayable;
+
 import java.time.LocalDate;
 import java.util.List;
 
-public class Nurse extends Person{
+public class Nurse extends Person implements Displayable{
     private String nurseId;
     private String departmentId;
     private String shift; //- Morning/Evening/Night)
@@ -66,12 +68,23 @@ public class Nurse extends Person{
         this.assignedPatients = assignedPatients;
     }
 
+    // Displayable methods
     @Override
-    public void displayInfo() {
-        super.displayInfo();
-        System.out.println("Department Id: " + departmentId);
-        System.out.println("Shift: " + shift);
-        System.out.println("Qualification: " + qualification);
+    public String displayInfo(String str) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.displayInfo("")).append(System.lineSeparator());
+        sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
+        sb.append("Shift: ").append(shift).append(System.lineSeparator());
+        sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
+        sb.append("Assigned Patients Count: ").append(assignedPatients == null ? 0 : assignedPatients.size());
+        String out = sb.toString();
+        System.out.println(out);
+        return out;
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return "Nurse{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
     //• Additional: getNursesByDepartment(), getNursesByShift()

@@ -1,5 +1,5 @@
 package entity;
-
+import Interface.Displayable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
@@ -7,7 +7,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Iterator;
 
-public class Doctor extends Person{
+import service.AppointmentService;
+import service.MedicalRecordService;
+
+public class Doctor extends Person implements Displayable {
     private String doctorId;
     private String specialization;
     private String qualification;
@@ -179,19 +182,6 @@ public class Doctor extends Person{
         this.assignedPatients = unique;
     }
 
-    @Override
-    public void displayInfo() {
-        super.displayInfo();
-        System.out.println("Specialization: " + specialization);
-        System.out.println("Qualification: " + qualification);
-        System.out.println("Experience Years: " + experienceYears);
-        System.out.println("Department Id: " + departmentId);
-        System.out.println("Consultation Fee: " + consultationFee);
-        System.out.println("Available: " + available);
-        System.out.println("Available Slots: " + (availableSlots == null ? "[]" : availableSlots.toString()));
-        System.out.println("Assigned Patients Count: " + (assignedPatients == null ? 0 : assignedPatients.size()));
-    }
-
     public boolean isAvailable() {
         // doctor is considered available if explicitly marked available or has non-empty slots
         return available || (availableSlots != null && !availableSlots.isEmpty());
@@ -289,6 +279,102 @@ public class Doctor extends Person{
             this.available = true;
             System.out.println("Doctor " + this.getDoctorId() + " availability updated: " + validated);
         }
+    }
+
+    // Default surgery-related methods so subclasses (e.g., Surgeon) can override them.
+    public void performSurgery(Patient patient, String surgeryType, String notes) {
+        System.out.println("performSurgery: Doctor " + this.getDoctorId() + " is not a surgeon or surgery not supported.");
+    }
+
+    public void updateSurgeryCount(int additional) {
+        // default no-op; surgeons should override
+    }
+
+    public void updateSurgeryCount() {
+        updateSurgeryCount(1);
+    }
+
+    public Appointment scheduleConsultation(String patientId, LocalDate date, String time, String reason) {
+        if (patientId == null || patientId.isBlank()) {
+            System.out.println("Invalid patientId");
+            return null;
+        }
+        if (date == null) {
+            System.out.println("Appointment date cannot be null");
+            return null;
+        }
+        if (time == null || !time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+            System.out.println("Invalid time. Use HH:mm (24-hour).");
+            return null;
+        }
+
+        Appointment appt = new Appointment(
+                "APPT-" + System.currentTimeMillis(),
+                patientId,
+                this.getId(),
+                date,
+                time,
+                "Scheduled",
+                reason == null ? "" : reason,
+                ""
+        );
+
+        AppointmentService.save(appt);
+        System.out.println("Consultation scheduled: " + appt.getAppointmentId() + " for patient " + patientId);
+        return appt;
+    }
+
+    public Appointment scheduleConsultation(Appointment appt) {
+        if (appt == null) return null;
+        if (appt.getDoctorId() == null || appt.getDoctorId().isBlank()) {
+            appt.setDoctorId(this.getId());
+        }
+        AppointmentService.save(appt);
+        System.out.println("Consultation scheduled (object): " + appt.getAppointmentId());
+        return appt;
+    }
+
+    public MedicalRecord provideSecondOpinion(String patientId, String originalDoctorId, String opinionNotes) {
+        if (patientId == null || patientId.isBlank()) {
+            System.out.println("Invalid patientId");
+            return null;
+        }
+
+        MedicalRecord mr = new MedicalRecord();
+        mr.setRecordId("MR-SECOND-" + System.currentTimeMillis());
+        mr.setPatientId(patientId);
+        mr.setDoctorId(this.getId());
+        mr.setVisitDate(LocalDate.now());
+        mr.setDiagnosis("Second Opinion" + (originalDoctorId != null ? " on " + originalDoctorId : ""));
+        mr.setPrescription(null);
+        mr.setTestResults(null);
+        mr.setNotes(opinionNotes == null ? "" : opinionNotes);
+
+        MedicalRecordService.saveRecord(mr);
+        System.out.println("Second opinion recorded for patient " + patientId);
+        return mr;
+    }
+
+    public String displayInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.displayInfo(""));
+        sb.append(System.lineSeparator());
+        sb.append("Specialization: ").append(specialization).append(System.lineSeparator());
+        sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
+        sb.append("Experience Years: ").append(experienceYears).append(System.lineSeparator());
+        sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
+        sb.append("Consultation Fee: ").append(consultationFee).append(System.lineSeparator());
+        sb.append("Available: ").append(available).append(System.lineSeparator());
+        sb.append("Available Slots: ").append(availableSlots == null ? "[]" : availableSlots.toString()).append(System.lineSeparator());
+        sb.append("Assigned Patients Count: ").append(assignedPatients == null ? 0 : assignedPatients.size());
+        String out = sb.toString();
+        System.out.println(out);
+        return out;
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return "Doctor{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
 }

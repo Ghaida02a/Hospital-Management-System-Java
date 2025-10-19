@@ -1,9 +1,11 @@
 package entity;
 
+import Interface.Displayable;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Person {
+public class Person implements Displayable {
     String id;
     String firstName;
     String lastName;
@@ -91,16 +93,6 @@ public class Person {
         this.address = address;
     }
 
-    public void displayInfo() {
-        System.out.println("ID: " + id);
-        System.out.println("Name: " + firstName + " " + lastName);
-        System.out.println("Date of Birth: " + dateOfBirth);
-        System.out.println("Gender: " + gender);
-        System.out.println("Phone: " + phoneNumber);
-        System.out.println("Email: " + email);
-        System.out.println("Address: " + address);
-    }
-
 
     @Override
     public String toString() {
@@ -126,5 +118,23 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
+    }
+
+    @Override
+    public String displayInfo(String str) {
+        String info = "ID: " + id + System.lineSeparator()
+                + "Name: " + firstName + " " + lastName + System.lineSeparator()
+                + "Date of Birth: " + dateOfBirth + System.lineSeparator()
+                + "Gender: " + gender + System.lineSeparator()
+                + "Phone: " + phoneNumber + System.lineSeparator()
+                + "Email: " + email + System.lineSeparator()
+                + "Address: " + address;
+        System.out.println(info);
+        return info;
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return "";
     }
 }

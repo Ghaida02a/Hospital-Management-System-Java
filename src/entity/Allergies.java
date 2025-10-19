@@ -1,6 +1,8 @@
 package entity;
 
-public class Allergies {
+import Interface.Displayable;
+
+public class Allergies implements Displayable {
     private String allergyId;          // unique identifier for the allergy
     private String allergyName;        // e.g., "Peanuts", "Penicillin", "Dust"
     private String allergyType;
@@ -38,5 +40,17 @@ public class Allergies {
     @Override
     public String toString() {
         return allergyName + " (ID: " + allergyId + ", Type: " + allergyType + ")";
+    }
+
+    @Override
+    public String displayInfo(String str) {
+        String info = toString();
+        System.out.println(info);
+        return info;
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return allergyName == null ? "" : allergyName;
     }
 }

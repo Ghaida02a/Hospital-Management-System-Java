@@ -1,8 +1,10 @@
 package entity;
 
+import Interface.Displayable;
+
 import java.time.LocalDate;
 
-public class Appointment {
+public class Appointment implements Displayable {
     private String appointmentId;
     private String patientId;
     private String doctorId;
@@ -99,7 +101,8 @@ public class Appointment {
         this.notes = notes;
     }
 
-    public void displayInfo() {
+    @Override
+    public String displayInfo(String str) {
         System.out.println("Appointment Id: " + appointmentId);
         System.out.println("Patient Id: " + patientId);
         System.out.println("Doctor Id: " + doctorId);
@@ -108,5 +111,11 @@ public class Appointment {
         System.out.println("Status: " + status);
         System.out.println("Reason: " + reason);
         System.out.println("Notes: " + notes);
+        return "";
+    }
+
+    @Override
+    public String displaySummary(String str) {
+        return "";
     }
 }

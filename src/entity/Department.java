@@ -1,7 +1,8 @@
 package entity;
 
+import Interface.Displayable;
+
 import java.util.List;
-import java.util.ArrayList;
 
 public class Department {
     private String departmentId;
@@ -13,14 +14,13 @@ public class Department {
     private int availableBeds;
 
     public Department() {
-        // initialize with sensible defaults
-        this.departmentId = "";
-        this.departmentName = "";
-        this.headDoctorId = "";
-        this.doctors = new ArrayList<>();
-        this.nurses = new ArrayList<>();
-        this.bedCapacity = 0;
-        this.availableBeds = 0;
+        this.departmentId = departmentId;
+        this.departmentName = departmentName;
+        this.headDoctorId = headDoctorId;
+        this.doctors = doctors;
+        this.nurses = nurses;
+        this.bedCapacity = bedCapacity;
+        this.availableBeds = availableBeds;
     }
 
     public String getDepartmentId() {
@@ -77,6 +77,16 @@ public class Department {
 
     public void setAvailableBeds(int availableBeds) {
         this.availableBeds = availableBeds;
+    }
+
+    public void displayInfo() {
+        System.out.println("Department ID: " + departmentId);
+        System.out.println("Department Name: " + departmentName);
+        System.out.println("Head Doctor ID: " + headDoctorId);
+        System.out.println("Number of Doctors: " + (doctors != null ? doctors.size() : 0));
+        System.out.println("Number of Nurses: " + (nurses != null ? nurses.size() : 0));
+        System.out.println("Bed Capacity: " + bedCapacity);
+        System.out.println("Available Beds: " + availableBeds);
     }
 }
 // assignDoctor(), assignNurse(), updateBedAvailability()
