@@ -1,5 +1,6 @@
 package main;
 
+import Utils.InputHandler;
 import entity.*;
 import service.*;
 
@@ -25,7 +26,7 @@ public class HospitalManagementApp {
                 case 4 -> showAppointmentManagementMenu();
                 case 5 -> showMedicalRecordsManagementMenu();
                 case 6 -> showDepartmentManagementMenu();
-                case 7 -> System.out.println("Reports and Statistics – coming soon...");
+                case 7 -> showReportsAndStatisticsMenu();
                 case 8 -> {
                     System.out.println("Exiting the system... Goodbye!");
                     mainMenuOption = 8;
@@ -82,9 +83,8 @@ public class HospitalManagementApp {
                     Patient patient = PatientService.addPatient();
                     PatientService.save(patient);
 
-                    System.out.print("Do you want to add allergies for this patient? (yes/no): ");
-                    String response = scanner.nextLine().toLowerCase();
-                    if (response.equals("yes") || response.equals("y")) {
+
+                    if(InputHandler.getConfirmation("Do you want to add allergies for this patient? ")){
                         PatientService.addAllergyToPatient(patient.getId());
                     }
                 }
@@ -158,8 +158,8 @@ public class HospitalManagementApp {
                     DoctorService.save(doctor);
                 }
                 case 2 -> {
-                    Surgeon surgeon = SurgeonService.addSurgeon();
-                    DoctorService.save(surgeon);
+                    //Surgeon surgeon = SurgeonService.addSurgeon();
+                    //DoctorService.save(surgeon);
                 }
                 case 3 -> {
 //                    Consultant consultant = ConsultantService.addConsultant();
@@ -325,7 +325,7 @@ public class HospitalManagementApp {
                     List<entity.Appointment> res = AppointmentService.getAppointmentsByPatient(pid);
                     if (res.isEmpty()) System.out.println("No appointments found for patient " + pid);
                     else {
-                        for (entity.Appointment a : res) a.displayInfo();
+                        for (entity.Appointment a : res) a.displayInfo("");
                     }
                 }
                 case 4 -> {
@@ -334,7 +334,7 @@ public class HospitalManagementApp {
                     List<entity.Appointment> res = AppointmentService.getAppointmentsByDoctor(did);
                     if (res.isEmpty()) System.out.println("No appointments found for doctor " + did);
                     else {
-                        for (entity.Appointment a : res) a.displayInfo();
+                        for (entity.Appointment a : res) a.displayInfo("");
                     }
                 }
                 case 5 -> {
@@ -351,7 +351,7 @@ public class HospitalManagementApp {
                     }
                     List<entity.Appointment> res = AppointmentService.getAppointmentsByDate(date);
                     if (res.isEmpty()) System.out.println("No appointments found on " + date);
-                    else for (entity.Appointment a : res) a.displayInfo();
+                    else for (entity.Appointment a : res) a.displayInfo("");
                 }
                 case 6 -> {
                     System.out.print("Enter appointment ID to reschedule: ");
@@ -371,7 +371,7 @@ public class HospitalManagementApp {
                     while (true) {
                         System.out.print("Enter new time (HH:mm): ");
                         newTime = scanner.nextLine();
-                        if (newTime.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")){
+                        if (newTime.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
                             break;
                         }
                         System.out.println("Invalid time format.");
@@ -430,7 +430,7 @@ public class HospitalManagementApp {
                     if (recordsByPatient.isEmpty()) System.out.println("No medical records found for patient " + pid);
                     else {
                         for (entity.MedicalRecord r : recordsByPatient) {
-                            r.displayInfo();
+                            r.displayInfo("");
                             System.out.println("---------------------------");
                         }
                     }
@@ -442,7 +442,7 @@ public class HospitalManagementApp {
                     if (recordsByDoctor.isEmpty()) System.out.println("No medical records found for doctor " + did);
                     else {
                         for (entity.MedicalRecord r : recordsByDoctor) {
-                            r.displayInfo();
+                            r.displayInfo("");
                             System.out.println("---------------------------");
                         }
                     }
@@ -515,10 +515,9 @@ public class HospitalManagementApp {
                     System.out.print("Enter Doctor ID to assign: ");
                     String doctorId = scanner.nextLine();
                     boolean assignDoctorToDepartment = DepartmentService.assignDoctorToDepartment(departmentId, doctorId);
-                    if (assignDoctorToDepartment){
+                    if (assignDoctorToDepartment) {
                         System.out.println("Doctor assigned successfully.");
-                    }
-                    else{
+                    } else {
                         System.out.println("Failed to assign doctor.");
                     }
                 }
@@ -528,14 +527,13 @@ public class HospitalManagementApp {
                     System.out.print("Enter Nurse ID to assign: ");
                     String nurseId = scanner.nextLine();
                     boolean assignNurseToDepartment = DepartmentService.assignNurseToDepartment(departmentId, nurseId);
-                    if (assignNurseToDepartment){
+                    if (assignNurseToDepartment) {
                         System.out.println("Nurse assigned successfully.");
-                    }
-                    else{
+                    } else {
                         System.out.println("Failed to assign nurse.");
                     }
                 }
-                case 6 ->{
+                case 6 -> {
                     System.out.print("Enter Department ID to update: ");
                     String departmentId = scanner.nextLine();
                     Department updatedDept = DepartmentService.addDepartment();
@@ -582,7 +580,7 @@ public class HospitalManagementApp {
             switch (option) {
                 case 1 -> System.out.println("still");
                 case 2 -> System.out.println("still");
-                case 3 -> System.out.println("still");  
+                case 3 -> System.out.println("still");
                 case 4 -> System.out.println("still");
                 case 5 -> System.out.println("still");
                 case 6 -> System.out.println("Exiting Report Management...");
