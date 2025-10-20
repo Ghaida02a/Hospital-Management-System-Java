@@ -1,9 +1,11 @@
 package service;
 
 import Utils.HelperUtils;
+import Utils.InputHandler;
 import entity.Allergies;
 import entity.Patient;
 
+import java.lang.ref.SoftReference;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,46 +18,44 @@ public class PatientService {
     public static Patient addPatient() {
         Patient patient = new Patient();
 
-        System.out.print("Enter Patient ID: ");
-        String idInput = scanner.nextLine();
-        if (!HelperUtils.checkIfIdExists(patientList, idInput)) {
-            patient.setId(idInput);
+        // Generate ID
+        String generatedId;
+        do {
+            generatedId = HelperUtils.getRandomNumber(2); //set length of ID equals 2
         }
+        while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
+        patient.setId(generatedId);
+        System.out.println("Generated Patient ID: " + patient.getId());
 
-        System.out.print("Enter First Name: ");
-        patient.setFirstName(scanner.nextLine());
+        // Name
+        patient.setFirstName(InputHandler.getStringInput("Enter First Name: "));
+        patient.setLastName(InputHandler.getStringInput("Enter Last Name: "));
 
-        System.out.print("Enter Last Name: ");
-        patient.setLastName(scanner.nextLine());
+        //Date
+        patient.setDateOfBirth(InputHandler.getDateInput("Enter Date of Birth"));
 
-        System.out.println("Enter Date of Birth (YYYY-MM-DD): ");
-        LocalDate dob = LocalDate.parse(scanner.nextLine());
-        patient.setDateOfBirth(dob);
+        //Gender
+        patient.setGender(InputHandler.getGenderInput("Enter Gender: "));
 
-        System.out.print("Enter Gender: ");
-        patient.setGender(scanner.nextLine());
+        // Phone
+        patient.setPhoneNumber(InputHandler.getPhoneNumberInput("Enter Phone Number: "));
 
-        System.out.print("Enter Phone Number: ");
-        patient.setPhoneNumber(scanner.nextLine());
+        // Email
+        patient.setEmail(InputHandler.getEmailInput("Enter Email: "));
 
-        System.out.print("Enter Email: ");
-        patient.setEmail(scanner.nextLine());
+        // Address
+        patient.setAddress(InputHandler.getStringInput("Enter Address: "));
 
-        System.out.print("Enter Address: ");
-        patient.setAddress(scanner.nextLine());
+        // Blood Group
+        patient.setBloodGroup(InputHandler.getStringInput("Enter Blood Group: "));
 
-        System.out.print("Enter Blood Group: ");
-        patient.setBloodGroup(scanner.nextLine());
+        // Emergency Contact
+        patient.setEmergencyContact(InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: "));
 
-        System.out.print("Emergency Contact: ");
-        String emergencyInput = scanner.nextLine();
-        patient.setEmergencyContact(emergencyInput);
+        // Insurance ID
+        patient.setInsuranceId(InputHandler.getStringInput("Enter Insurance ID: "));
 
-        System.out.print("Insurance ID: ");
-        String insuranceId = scanner.nextLine();
-        patient.setInsuranceId(insuranceId);
-
-
+        // Registration Date
         patient.setRegistrationDate(LocalDate.now());
         System.out.println("Registration Date set to today: " + patient.getRegistrationDate());
 
@@ -76,7 +76,7 @@ public class PatientService {
         System.out.print("Enter Allergy Name (e.g., Peanuts): ");
         String allergyName = scanner.nextLine();
 
-        System.out.print("Enter Allergy Type (e.g., Food, Drug, Environmental): ");
+        System.out.print("Enter Allergy Type (e.g., Food, Environmental): ");
         String allergyType = scanner.nextLine();
 
         Allergies newAllergy = new Allergies(allergyId, allergyName, allergyType);
@@ -144,7 +144,7 @@ public class PatientService {
 
         System.out.println("===== Patients List =====");
         for (Patient patient : patientList) {
-            patient.displayInfo();
+            patient.displayInfo("");
             System.out.println("------------------------");
         }
         System.out.println("========================\n");
