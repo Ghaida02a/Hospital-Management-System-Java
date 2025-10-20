@@ -2,41 +2,130 @@ package Utils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 
 public class InputHandler {
+    private static final Scanner scanner = new Scanner(System.in);
 
-    public static String getStringInput(String prompt){
-
-        return prompt;
-    }
-    public static void getIntInput(String prompt){
-
-    }
-    public static Integer getIntInput(String prompt, int min, int max) {
-        return null;
-    }
-    public static void getDoubleInput(String prompt){
-
-    }
-    public static LocalDate getDateInput(String prompt){
-        LocalDate date = null;
-        while (date == null) {
-            String input = getStringInput(prompt + " (YYYY-MM-DD): ");
-            try {
-                date = LocalDate.parse(input);
-
-                // Validation to ensure DOB is not in the future
-                if (date.isAfter(LocalDate.now())) {
-                    System.out.println("Date cannot be in the future. Please enter a past or current date.");
-                    date = null; // reset date to continue loop
-                }
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format or date value. Please use YYYY-MM-DD.");
+    //String Input Method
+    public static String getStringInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (HelperUtils.isValidString(input)) { // returns true if not null/empty
+                return input;
+            } else {
+                System.out.println("Input cannot be empty. Please try again.");
             }
         }
-        return date;
     }
-    public static void getConfirmation(String prompt) {//yes/no
 
+    //Integer Input Method
+    public static Integer getIntInput(String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            String input = scanner.nextLine();
+            String validation = HelperUtils.isValidInteger(input);
+            if (validation == null) {
+                return Integer.parseInt(input);
+            }
+            System.out.println(validation);
+        }
+    }
+
+    public static Integer getIntInput(String prompt, int min, int max) {
+        while (true) {
+            Integer input = getIntInput(prompt);
+            String validation = HelperUtils.isValidNumber(input, min, max);
+            if (validation == null) {
+                return input;
+            }
+            System.out.println(validation);
+        }
+    }
+
+    public static Double getDoubleInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            String validation = HelperUtils.isValidDouble(input);
+            if (validation == null) {
+                return Double.parseDouble(input);
+            }
+            System.out.println(validation);
+        }
+    }
+
+
+    public static LocalDate getDateInput(String prompt) {
+        while (true) {
+            String input = getStringInput(prompt + " (YYYY-MM-DD): ");
+            String validation = HelperUtils.isValidDate(input);
+            if (validation == null) {
+                return LocalDate.parse(input);
+            } else {
+                System.out.println(validation);
+            }
+        }
+    }
+
+
+    public static boolean getConfirmation(String prompt) {  //yes/no
+        while (true) {
+            System.out.print(prompt + " (yes/no): ");
+            String input = scanner.nextLine().toLowerCase();
+            if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y")) {
+                return true;
+            } else if (input.equals("no") || input.equals("n")) {
+                return false;
+            } else {
+                System.out.println("Please enter yes or no.");
+            }
+        }
+    }
+
+    public static String getGenderInput(String prompt) {
+        while (true) {
+            String input = getStringInput(prompt + " (Male/Female): ");
+            input = input.trim();
+
+            // Accept full words or just first letter (case-insensitive)
+            if (input.equalsIgnoreCase("Male") || input.equalsIgnoreCase("M")) {
+                return "Male";
+            } else if (input.equalsIgnoreCase("Female") || input.equalsIgnoreCase("F")) {
+                return "Female";
+            } else {
+                System.out.println("Invalid input. Please enter 'Male' or 'Female'.");
+            }
+        }
+    }
+
+    public static String getPhoneNumberInput(String prompt) {
+        while (true) {
+            String input = getStringInput(prompt);
+
+            if (!input.matches("\\d+")) {
+                System.out.println("Invalid phone number. Only digits allowed.");
+                continue;
+            }
+
+            if (input.length() != 8) { // must be exactly 8 digits
+                System.out.println("Phone number must be exactly 8 digits.");
+                continue;
+            }
+
+            return input;
+        }
+    }
+
+
+    public static String getEmailInput(String prompt) {
+        while (true) {
+            String input = getStringInput(prompt);
+            if (HelperUtils.isValidEmail(input)) {
+                return input;
+            }
+            System.out.println("Invalid email format. Try again.");
+        }
     }
 }
