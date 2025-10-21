@@ -3,14 +3,12 @@ package entity;
 import Interface.Displayable;
 
 public class Allergies implements Displayable {
-    private String allergyId;          // unique identifier for the allergy
+    private String allergyId;
     private String allergyName;        // e.g., "Peanuts", "Penicillin", "Dust"
-    private String allergyType;
 
-    public Allergies(String allergyId, String allergyName, String allergyType) {
+    public Allergies(String allergyId, String allergyName) {
         this.allergyId = allergyId;
         this.allergyName = allergyName;
-        this.allergyType = allergyType;
     }
 
     public String getAllergyId() {
@@ -29,17 +27,9 @@ public class Allergies implements Displayable {
         this.allergyName = allergyName;
     }
 
-    public String getAllergyType() {
-        return allergyType;
-    }
-
-    public void setAllergyType(String allergyType) {
-        this.allergyType = allergyType;
-    }
-
     @Override
     public String toString() {
-        return allergyName + " (ID: " + allergyId + ", Type: " + allergyType + ")";
+        return allergyName + " (Id: " + allergyId+ "Allergy: " + allergyName + ")";
     }
 
     @Override
