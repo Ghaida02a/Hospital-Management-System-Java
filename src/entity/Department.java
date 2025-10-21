@@ -4,7 +4,7 @@ import Interface.Displayable;
 
 import java.util.List;
 
-public class Department {
+public class Department implements Displayable {
     private String departmentId;
     private String departmentName;
     private String headDoctorId;
@@ -79,14 +79,22 @@ public class Department {
         this.availableBeds = availableBeds;
     }
 
-    public void displayInfo() {
-        System.out.println("Department ID: " + departmentId);
-        System.out.println("Department Name: " + departmentName);
-        System.out.println("Head Doctor ID: " + headDoctorId);
-        System.out.println("Number of Doctors: " + (doctors != null ? doctors.size() : 0));
-        System.out.println("Number of Nurses: " + (nurses != null ? nurses.size() : 0));
-        System.out.println("Bed Capacity: " + bedCapacity);
-        System.out.println("Available Beds: " + availableBeds);
+    @Override
+    public String displayInfo(String str) {
+        String info = "Department ID: " + departmentId + System.lineSeparator()
+                + "Department Name: " + departmentName + System.lineSeparator()
+                + "Head Doctor ID: " + headDoctorId + System.lineSeparator()
+                + "Number of Doctors: " + (doctors != null ? doctors.size() : 0) + System.lineSeparator()
+                + "Number of Nurses: " + (nurses != null ? nurses.size() : 0) + System.lineSeparator()
+                + "Bed Capacity: " + bedCapacity + System.lineSeparator()
+                + "Available Beds: " + availableBeds;
+        System.out.println(info);
+        return info;
+    }
+
+    @Override
+    public String displaySummary(String str){
+        return "Department Id" + departmentId + " - " + "Department Name" + departmentName;
     }
 }
 // assignDoctor(), assignNurse(), updateBedAvailability()

@@ -87,5 +87,6 @@ public class Nurse extends Person implements Displayable{
         return "Nurse{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
+    //Add methods for patient assignment
     //• Additional: getNursesByDepartment(), getNursesByShift()
 }
