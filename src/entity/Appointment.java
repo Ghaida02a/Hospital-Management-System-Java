@@ -116,6 +116,12 @@ public class Appointment implements Displayable {
 
     @Override
     public String displaySummary(String str) {
-        return "";
+        return "Appointment{" +
+                ", patientId='" + patientId + '\'' +
+                ", doctorId='" + doctorId + '\'' +
+                ", appointmentDate=" + appointmentDate +
+                ", appointmentTime='" + appointmentTime + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
