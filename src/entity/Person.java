@@ -135,6 +135,6 @@ public class Person implements Displayable {
 
     @Override
     public String displaySummary(String str) {
-        return "";
+        return id + " - " + firstName + " " + lastName;
     }
 }
