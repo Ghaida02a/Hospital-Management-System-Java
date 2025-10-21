@@ -29,7 +29,7 @@ public class Allergies implements Displayable {
 
     @Override
     public String toString() {
-        return allergyName + " (Id: " + allergyId+ "Allergy: " + allergyName + ")";
+        return allergyName + " (Id: " + allergyId+ " Allergy: " + allergyName + ")";
     }
 
     @Override
