@@ -81,7 +81,7 @@ public class DoctorService {
 
     public static void save(Doctor doctor) {
         doctorsList.add(doctor);
-        System.out.println("Doctor added successfully!\n");
+        System.out.println("\n===== Doctor Added Successfully =====\n");
     }
 
     public static void editDoctor(String doctorId, Doctor updatedDoctor) {
@@ -170,7 +170,8 @@ public class DoctorService {
         } else {
             System.out.println("Doctors with specialization " + specialization + ":");
             for (Doctor doc : specializedDoctors) {
-                System.out.println(doc);
+                doc.displayInfo("");
+                System.out.println("------------------------");
             }
         }
         return specializedDoctors;
