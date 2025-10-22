@@ -40,7 +40,7 @@ public class HelperUtils {
 
     //String Validation Methods (Overloaded)
     public static boolean isValidString(String str) {
-        return str != null && !str.isEmpty();
+        return str != null && !str.trim().isEmpty() && str.matches("[a-zA-Z\\s]+");
     }
 
     public static boolean isValidString(String str, int minLength) { //checks minimum length
@@ -126,7 +126,6 @@ public class HelperUtils {
     private static boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
-
 
 
     public static String isValidDate(Date date, Date minDate, Date maxDate) { //range check
@@ -233,7 +232,7 @@ public class HelperUtils {
 
     // Double/Decimal validation
     public static String isValidDouble(String str) {
-        if(str != null && str.matches("-?\\d+(\\.\\d+)?")) {
+        if (str != null && str.matches("-?\\d+(\\.\\d+)?")) {
             return null; // valid
         }
         return "Invalid double: " + str;
