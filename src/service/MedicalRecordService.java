@@ -160,8 +160,7 @@ public class MedicalRecordService {
         if (!HelperUtils.isNull(diagnosis)) {
             record.setDiagnosis(diagnosis);
         } else {
-            System.out.print("Enter Diagnosis (" + record.getDiagnosis() + "): ");
-            String input = sc.nextLine();
+            String input = InputHandler.getStringInput("Enter Diagnosis (" + record.getDiagnosis() + "): ");
             if (!input.isEmpty()) record.setDiagnosis(input);
         }
 
@@ -170,8 +169,7 @@ public class MedicalRecordService {
         if (!HelperUtils.isNull(prescription)) {
             record.setPrescription(prescription);
         } else {
-            System.out.print("Enter Prescription (" + record.getPrescription() + "): ");
-            String input = sc.nextLine();
+            String input = InputHandler.getStringInput("Enter Prescription (" + record.getPrescription() + "): ");
             if (!input.isEmpty()) record.setPrescription(input);
         }
 
@@ -180,8 +178,7 @@ public class MedicalRecordService {
         if (!HelperUtils.isNull(testResults)) {
             record.setTestResults(testResults);
         } else {
-            System.out.print("Enter Test Results (" + record.getTestResults() + "): ");
-            String input = sc.nextLine();
+            String input = InputHandler.getStringInput("Enter Test Results (" + record.getTestResults() + "): ");
             if (!input.isEmpty()) record.setTestResults(input);
         }
 
@@ -190,8 +187,7 @@ public class MedicalRecordService {
         if (!HelperUtils.isNull(notes)) {
             record.setNotes(notes);
         } else {
-            System.out.print("Enter Notes (" + record.getNotes() + "): ");
-            String input = sc.nextLine();
+            String input = InputHandler.getStringInput("Enter Notes (" + record.getNotes() + "): ");
             if (!input.isEmpty()) record.setNotes(input);
         }
 
