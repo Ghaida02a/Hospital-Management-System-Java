@@ -226,7 +226,6 @@ public class HelperUtils {
     // Integer validation
     public static String isValidInteger(String str) {
         if (str != null && str.matches("-?\\d+")) {
-            System.out.println("Valid integer: " + str);
             return null; // valid
         }
         return "Invalid integer: " + str;
@@ -235,7 +234,6 @@ public class HelperUtils {
     // Double/Decimal validation
     public static String isValidDouble(String str) {
         if(str != null && str.matches("-?\\d+(\\.\\d+)?")) {
-            System.out.println("Valid double: " + str);
             return null; // valid
         }
         return "Invalid double: " + str;
