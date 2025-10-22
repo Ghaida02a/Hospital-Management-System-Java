@@ -377,4 +377,7 @@ public class Doctor extends Person implements Displayable {
         return "Doctor{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
+    public void setAvailableSlots() {
+
+    }
 }

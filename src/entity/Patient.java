@@ -209,7 +209,7 @@ public class Patient extends Person implements Displayable {
         newStr.append("Appointment Count: ").append(appointment == null ? 0 : appointment.size());
 
         String out = newStr.toString();
-        System.out.println(out);
+//        System.out.println(out);
         return out;
     }
 

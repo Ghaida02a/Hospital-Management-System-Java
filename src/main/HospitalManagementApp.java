@@ -1,5 +1,6 @@
 package main;
 
+import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
 import service.*;
@@ -83,8 +84,7 @@ public class HospitalManagementApp {
                     Patient patient = PatientService.addPatient();
                     PatientService.save(patient);
 
-
-                    if(InputHandler.getConfirmation("Do you want to add allergies for this patient? ")){
+                    while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
                 }
@@ -118,7 +118,10 @@ public class HospitalManagementApp {
                     String id = scanner.nextLine();
                     PatientService.removePatient(id);
                 }
-                case 9 -> System.out.println("View Patient Medical History – coming soon...");
+                case 9 -> {
+                    Integer patientId = InputHandler.getIntInput("Enter patient ID to view medical history: ");
+                    PatientService.viewPatientMedicalHistory(patientId);
+                }
                 case 10 -> System.out.println("Returning to Main Menu...");
                 default -> System.out.println("Please enter a valid option (1–10).");
             }

@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 public class PatientService {
     public static List<Patient> patientList = new ArrayList<>();
-    public static Scanner scanner = new Scanner(System.in);
 
     public static Patient addPatient() {
         Patient patient = new Patient();
@@ -21,11 +20,11 @@ public class PatientService {
         // Generate ID
         String generatedId;
         do {
-            generatedId = HelperUtils.getRandomNumber(2); //set length of ID equals 2
+            generatedId = HelperUtils.generateId("PAT");
         }
         while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
         patient.setId(generatedId);
-        System.out.println("Generated Patient ID: " + patient.getId());
+        System.out.println("Patient ID: " + patient.getId());
 
         // Name
         patient.setFirstName(InputHandler.getStringInput("Enter First Name: "));
@@ -70,16 +69,13 @@ public class PatientService {
         }
 
         System.out.println("\n--- Adding Allergy for " + patient.getFirstName() + " ---");
-        System.out.print("Enter Allergy ID: ");
-        String allergyId = scanner.nextLine();
 
-        System.out.print("Enter Allergy Name (e.g., Peanuts): ");
-        String allergyName = scanner.nextLine();
+        System.out.println("Allergy Id:");
+        String allergyId = HelperUtils.getRandomNumber(2);
 
-        System.out.print("Enter Allergy Type (e.g., Food, Environmental): ");
-        String allergyType = scanner.nextLine();
+        String allergyName = InputHandler.getStringInput("Enter Allergy Name (e.g., Peanuts): ");
 
-        Allergies newAllergy = new Allergies(allergyId, allergyName, allergyType);
+        Allergies newAllergy = new Allergies(allergyId, allergyName);
 
         if (patient.getAllergies() == null) {
             patient.setAllergies(new ArrayList<>());
@@ -90,7 +86,7 @@ public class PatientService {
     }
 
     public static void save(Patient patient) {
-        if (patient != null) {
+        if (HelperUtils.isNotNull(patient)) {
             patientList.add(patient);
             System.out.println("Patient added successfully!\n");
         }
@@ -160,5 +156,26 @@ public class PatientService {
             }
         }
         return searchResults;
+    }
+
+    public static void viewPatientMedicalHistory(Integer patientId) {
+
+        Patient patient = PatientService.getPatientById(String.valueOf(patientId));
+
+        if (patient != null) {
+            System.out.println("\n===== Patient Medical History =====");
+            patient.displayInfo("");
+
+            if (patient.getAllergies() != null && !patient.getAllergies().isEmpty()) {
+                System.out.println("\nAllergies:");
+                for (Allergies allergy : patient.getAllergies()) {
+                    System.out.println("- " + allergy.getAllergyName());
+                }
+            } else {
+                System.out.println("\nNo allergies recorded.");
+            }
+
+            System.out.println("===================================\n");
+        }
     }
 }

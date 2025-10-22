@@ -1,5 +1,7 @@
 package service;
 
+import Utils.HelperUtils;
+import Utils.InputHandler;
 import entity.Doctor;
 
 import java.util.ArrayList;
@@ -10,76 +12,45 @@ import java.util.Set;
 
 public class DoctorService {
     public static List<Doctor> doctorsList = new ArrayList<>();
-    public static Scanner scanner = new Scanner(System.in);
 
     public static Doctor addDoctor() {
         Doctor doctor = new Doctor();
 
-        System.out.print("Enter Doctor ID: ");
-        String idInput = scanner.nextLine();
-        doctor.setId(idInput);
-        doctor.setDoctorId(idInput);
-
-        System.out.print("Enter First Name: ");
-        doctor.setFirstName(scanner.nextLine());
-
-        System.out.print("Enter Last Name: ");
-        doctor.setLastName(scanner.nextLine());
-
-        System.out.print("Enter Gender: ");
-        doctor.setGender(scanner.nextLine());
-
-        System.out.print("Enter Phone Number: ");
-        doctor.setPhoneNumber(scanner.nextLine());
-
-        System.out.print("Enter Email: ");
-        doctor.setEmail(scanner.nextLine());
-
-        System.out.print("Enter Address: ");
-        doctor.setAddress(scanner.nextLine());
-
-        System.out.print("Enter Specialization: ");
-        doctor.setSpecialization(scanner.nextLine());
-
-        System.out.print("Enter Qualification: ");
-        doctor.setQualification(scanner.nextLine());
-
-        boolean validExp = false;
-        while (!validExp) {
-            System.out.print("Enter Experience Years (integer) or leave blank for 0: ");
-            String expInput = scanner.nextLine().trim();
-            if (expInput.isEmpty()) {
-                doctor.setExperienceYears(0);
-                validExp = true;
-            } else if (expInput.matches("\\d+")) {
-                doctor.setExperienceYears(Integer.parseInt(expInput));
-                validExp = true;
-            } else {
-                System.out.println("Invalid number. Please enter an integer.");
-            }
+        String generatedId;
+        do {
+            generatedId = HelperUtils.generateId("DR");
         }
+        while (HelperUtils.checkIfIdExists(doctorsList, generatedId)); // ensure uniqueness
+        doctor.setId(generatedId);
+        System.out.println("Doctor ID: " + doctor.getId());
 
-        System.out.print("Enter Department ID: ");
-        doctor.setDepartmentId(scanner.nextLine());
+        doctor.setFirstName(InputHandler.getStringInput("Enter First Name: "));
+        doctor.setLastName(InputHandler.getStringInput("Enter Last Name: "));
 
-        boolean validFee = false;
-        while (!validFee) {
-            System.out.print("Enter Consultation Fee (number) or leave blank for 0: ");
-            String feeInput = scanner.nextLine().trim();
-            if (feeInput.isEmpty()) {
-                doctor.setConsultationFee(0.0);
-                validFee = true;
-            } else if (feeInput.matches("\\d+(\\.\\d+)?")) {
-                doctor.setConsultationFee(Double.parseDouble(feeInput));
-                validFee = true;
-            } else {
-                System.out.println("Invalid number. Please enter a valid fee (e.g., 50.0).");
-            }
-        }
+        doctor.setDateOfBirth(InputHandler.getDateInput("Enter Date of Birth"));
+
+        doctor.setGender(InputHandler.getGenderInput("Enter Gender: "));
+
+        doctor.setPhoneNumber(InputHandler.getPhoneNumberInput("Enter Phone Number: "));
+
+        doctor.setEmail(InputHandler.getEmailInput("Enter Email: "));
+
+        doctor.setAddress(InputHandler.getStringInput("Enter Address: "));
+
+        doctor.setSpecialization(InputHandler.getStringInput("Enter Specialization: "));
+
+        doctor.setQualification(InputHandler.getStringInput("Enter Qualification: "));
+
+        doctor.setExperienceYears(InputHandler.getIntInput("Enter Experience Years: "));
+
+        doctor.setDepartmentId(InputHandler.getStringInput("Enter Department ID: "));
+
+        doctor.setConsultationFee(InputHandler.getDoubleInput("Enter Consultation Fee: "));
+
 
         // Available slots (comma-separated integers 0-23)
-        System.out.print("Enter available slots as comma-separated integers (0-23) or leave blank: ");
-        String slotsInput = scanner.nextLine().trim();
+//        System.out.print("Enter available slots as comma-separated integers (0-23) or leave blank: ");
+        String slotsInput = InputHandler.getIntInput("Enter available slots: ", 0, 23).toString();
         List<Integer> slots = new ArrayList<>();
         if (!slotsInput.isEmpty()) {
             String[] parts = slotsInput.split(",");
@@ -103,9 +74,7 @@ public class DoctorService {
 
 //        doctor.setAssignedPatients(new ArrayList<>());
 
-        System.out.print("Enter Availability (true/false or yes/no) or press Enter to infer from provided slots: ");
-        String availInput = scanner.nextLine().trim();
-        doctor.setAvailable(Boolean.parseBoolean(availInput));
+        doctor.setAvailable(InputHandler.getConfirmation("Is the doctor available?"));
         return doctor;
     }
 
@@ -116,14 +85,14 @@ public class DoctorService {
     }
 
     public static void editDoctor(String doctorId, Doctor updatedDoctor) {
-        for (int i = 0; i < doctorsList.size(); i++) {
-            if (doctorsList.get(i).getId().equals(doctorId)) {
-                doctorsList.set(i, updatedDoctor);
-                System.out.println("Doctor with ID " + doctorId + " has been updated.");
-                return;
-            }
+        Doctor found = getDoctorById(doctorId);
+        if (found != null) {
+            int index = doctorsList.indexOf(found);
+            doctorsList.set(index, updatedDoctor);
+            System.out.println("Doctor with ID " + doctorId + " has been updated.");
+        } else {
+            System.out.println("Doctor with ID " + doctorId + " not found.");
         }
-        System.out.println("Doctor with ID " + doctorId + " not found.");
     }
 
     public static boolean assignPatientToDoctor(String doctorId, String patientId) {
@@ -136,19 +105,12 @@ public class DoctorService {
             return false;
         }
 
-        Doctor found = null;
-        for (Doctor d : doctorsList) {
-            if (d != null && doctorId.equals(d.getId())) {
-                found = d;
-                break;
-            }
-        }
+        Doctor found = getDoctorById(doctorId); // use new method
         if (found == null) {
             System.out.println("Doctor with ID " + doctorId + " not found.");
             return false;
         }
 
-        // Use PatientService to find patient
         entity.Patient patient = PatientService.getPatientById(patientId);
         if (patient == null) {
             System.out.println("Patient with ID " + patientId + " not found.");
@@ -165,22 +127,22 @@ public class DoctorService {
     }
 
     public static void removeDoctor(String doctorId) {
-        boolean removed = doctorsList.removeIf(doctor -> doctor.getId().equals(doctorId));
-        if (removed) {
+        Doctor found = getDoctorById(doctorId);
+        if (found != null) {
+            doctorsList.remove(found);
             System.out.println("Doctor with ID " + doctorId + " has been removed.");
         } else {
             System.out.println("Doctor with ID " + doctorId + " not found.");
         }
     }
 
-    public static void getDoctorById(String doctorId) {
+    public static Doctor getDoctorById(String doctorId) {
         for (Doctor doctor : doctorsList) {
             if (doctor.getId().equals(doctorId)) {
-                System.out.println("Doctor found: " + doctor);
-                return;
+                return doctor;
             }
         }
-        System.out.println("Doctor with ID " + doctorId + " not found.");
+        return null; // not found
     }
 
     public static void displayAllDoctors() {
@@ -191,7 +153,7 @@ public class DoctorService {
 
         System.out.println("===== Doctors List =====");
         for (Doctor doctor : doctorsList) {
-            doctor.displayInfo();
+            doctor.displayInfo("");
             System.out.println("------------------------");
         }
     }
