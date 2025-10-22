@@ -1,6 +1,7 @@
 package service;
 
 import Utils.HelperUtils;
+import Utils.InputHandler;
 import entity.Nurse;
 
 import java.time.LocalDate;
@@ -15,45 +16,30 @@ public class NurseService {
     public static Nurse addNurse() {
         Nurse nurse = new Nurse();
 
-        System.out.print("Enter Nurse ID: ");
-        String idInput = scanner.nextLine();
-        if (!HelperUtils.checkIfIdExists(nurseList, idInput)) {
-            nurse.setId(idInput);
-            nurse.setNurseId(idInput);
-        } else {
-            System.out.println("Warning: Nurse ID already exists. Leave blank or use a new ID.");
+        String generatedId;
+        do {
+            generatedId = HelperUtils.generateId("NUR");
         }
+        while (HelperUtils.checkIfIdExists(nurseList, generatedId)); // ensure uniqueness
+        nurse.setId(generatedId);
+        System.out.println("Nurse ID: " + nurse.getId());
 
-        System.out.print("Enter First Name: ");
-        nurse.setFirstName(scanner.nextLine());
+        nurse.setFirstName(InputHandler.getStringInput("Enter First Name: "));
+        nurse.setLastName(InputHandler.getStringInput("Enter Last Name: "));
 
-        System.out.print("Enter Last Name: ");
-        nurse.setLastName(scanner.nextLine());
+        nurse.setDateOfBirth(InputHandler.getDateInput("Enter Date of Birth"));
 
-        System.out.print("Enter Date of Birth (YYYY-MM-DD) or leave blank: ");
-        String dobInput = scanner.nextLine().trim();
-        if (!dobInput.isEmpty()) {
-            LocalDate dob = LocalDate.parse(dobInput);
-            nurse.setDateOfBirth(dob);
-        }
+        nurse.setGender(InputHandler.getGenderInput("Enter Gender: "));
 
-        System.out.print("Enter Gender: ");
-        nurse.setGender(scanner.nextLine());
+        nurse.setPhoneNumber(InputHandler.getPhoneNumberInput("Enter Phone Number: "));
 
-        System.out.print("Enter Phone Number: ");
-        nurse.setPhoneNumber(scanner.nextLine());
+        nurse.setEmail(InputHandler.getEmailInput("Enter Email: "));
 
-        System.out.print("Enter Email: ");
-        nurse.setEmail(scanner.nextLine());
+        nurse.setAddress(InputHandler.getStringInput("Enter Address: "));
 
-        System.out.print("Enter Address: ");
-        nurse.setAddress(scanner.nextLine());
+        nurse.setDepartmentId(InputHandler.getIntInput("Enter Department ID: ").toString());
 
-        System.out.print("Enter Department ID: ");
-        nurse.setDepartmentId(scanner.nextLine());
-
-        System.out.print("Enter Shift (Morning/Evening/Night): ");
-        nurse.setShift(scanner.nextLine());
+        nurse.setShift(InputHandler.getStringInput("Enter Shift (Morning/Evening/Night): "));
 
         System.out.print("Enter Qualification: ");
         nurse.setQualification(scanner.nextLine());
@@ -72,32 +58,23 @@ public class NurseService {
     }
 
     public static void editNurse(String nurseId, Nurse updatedNurse) {
-        if (nurseList.isEmpty()) {
-            System.out.println("No nurses available to edit.");
-            return;
+        Nurse existingNurse = getNurseById(nurseId);
+        if (existingNurse != null) {
+            updatedNurse.setId(existingNurse.getId());
+
+            int index = nurseList.indexOf(existingNurse);
+            nurseList.set(index, updatedNurse);
+            System.out.println("Nurse updated successfully!\n");
+        } else {
+            System.out.println("Nurse not found with ID: " + nurseId);
         }
-        for (int i = 0; i < nurseList.size(); i++) {
-            if (nurseList.get(i).getId().equals(nurseId)) {
-                nurseList.set(i, updatedNurse);
-                System.out.println("Nurse updated successfully!\n");
-                return;
-            }
-        }
-        System.out.println("Nurse with ID " + nurseId + " not found.\n");
     }
 
     public static void removeNurse(String nurseId) {
-        if (nurseList.isEmpty()) {
-            System.out.println("The list is empty. No nurse removed.");
-            return;
-        }
-
-        boolean removed = nurseList.removeIf(n -> n.getId().equals(nurseId));
-
-        if (removed) {
+        Nurse nurse = getNurseById(nurseId); // use the method
+        if (nurse != null) {
+            nurseList.remove(nurse);
             System.out.println("Nurse with ID " + nurseId + " removed successfully!");
-        } else {
-            System.out.println("Nurse with ID " + nurseId + " not found.");
         }
     }
 
@@ -119,7 +96,7 @@ public class NurseService {
 
         System.out.println("===== Nurses List =====");
         for (Nurse nurse : nurseList) {
-            nurse.displayInfo();
+            nurse.displayInfo("");
             System.out.println("------------------------");
         }
         System.out.println("========================\n");
@@ -150,18 +127,5 @@ public class NurseService {
             System.out.println("No nurses found with shift: " + shift);
         }
         return result;
-    }
-
-    public static List<Nurse> searchNursesByName(String name) {
-        List<Nurse> searchResults = new ArrayList<>();
-        if (name == null) return searchResults;
-        String searchName = name.toLowerCase();
-
-        for (Nurse nurse : nurseList) {
-            if (nurse.getFirstName() != null && nurse.getFirstName().toLowerCase().contains(searchName)) {
-                searchResults.add(nurse);
-            }
-        }
-        return searchResults;
     }
 }

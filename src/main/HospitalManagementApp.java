@@ -93,8 +93,7 @@ public class HospitalManagementApp {
                 case 4 -> System.out.println("Register Emergency Patient – coming soon...");
                 case 5 -> PatientService.displayAllPatients();
                 case 6 -> {
-                    System.out.print("Enter patient name to search: ");
-                    String name = scanner.nextLine();
+                    String name = InputHandler.getIntInput("Enter patient name to search: ").toString();
                     List<Patient> results = PatientService.searchPatientsByName(name);
 
                     if (results.isEmpty()) {
@@ -108,14 +107,12 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 7 -> {
-                    System.out.print("Enter patient ID to update: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getIntInput("Enter patient ID to update: ").toString();
                     Patient updatedPatient = PatientService.addPatient(); // reuse input method
                     PatientService.editPatient(id, updatedPatient);
                 }
                 case 8 -> {
-                    System.out.print("Enter patient ID to remove: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getIntInput("Enter patient ID to remove: ").toString();
                     PatientService.removePatient(id);
                 }
                 case 9 -> {
@@ -171,8 +168,7 @@ public class HospitalManagementApp {
                 case 4 -> System.out.println(" Add General Practitioner – coming soon...");
                 case 5 -> DoctorService.displayAllDoctors();
                 case 6 -> {
-                    System.out.print("Enter specialization to search: ");
-                    String specialization = scanner.nextLine();
+                    String specialization = InputHandler.getStringInput("Enter specialization to search:");
                     List<Doctor> results = DoctorService.getDoctorsBySpecialization(specialization);
 
                     if (results.isEmpty()) {
@@ -193,23 +189,19 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 8 -> {
-                    System.out.print("Enter Doctor ID: ");
-                    String doctorId = scanner.nextLine();
-                    System.out.print("Enter Patient ID to assign: ");
-                    String patientId = scanner.nextLine();
+                    String doctorId = InputHandler.getIntInput("Enter Doctor ID: ").toString();
+                    String patientId = InputHandler.getIntInput("Enter Patient ID to assign").toString();
                     boolean ok = DoctorService.assignPatientToDoctor(doctorId, patientId);
                     if (ok) System.out.println("Assignment succeeded.");
                     else System.out.println("Assignment failed.");
                 }
                 case 9 -> {
-                    System.out.print("Enter doctor ID to update: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getIntInput("Enter doctor ID to update: ").toString();
                     Doctor updatedDoctor = DoctorService.addDoctor();
                     DoctorService.editDoctor(id, updatedDoctor);
                 }
                 case 10 -> {
-                    System.out.print("Enter doctor ID to remove: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getIntInput("Enter doctor ID to remove: ").toString();
                     DoctorService.removeDoctor(id);
                 }
                 case 11 -> System.out.println("Exiting Doctor Management...");
@@ -248,8 +240,7 @@ public class HospitalManagementApp {
                 }
                 case 2 -> NurseService.displayAllNurses();
                 case 3 -> {
-                    System.out.print("Enter department ID to search: ");
-                    String dept = scanner.nextLine();
+                    String dept = InputHandler.getStringInput("Enter department ID to search: ");
                     List<Nurse> nursesByDepartment = NurseService.getNursesByDepartment(dept);
                     if (nursesByDepartment.isEmpty()) {
                         System.out.println("No nurses found in department \"" + dept + "\".");
@@ -262,8 +253,7 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 4 -> {
-                    System.out.print("Enter shift (Morning/Evening/Night) to search: ");
-                    String shift = scanner.nextLine();
+                    String shift = InputHandler.getStringInput("Enter shift (Morning/Evening/Night) to search: ");
                     List<Nurse> res = NurseService.getNursesByShift(shift);
                     if (res.isEmpty()) {
                         System.out.println("No nurses found with shift \"" + shift + "\".");
@@ -276,14 +266,12 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 5 -> {
-                    System.out.print("Enter nurse ID to update: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getStringInput("Enter nurse ID to update: ");
                     Nurse updated = NurseService.addNurse();
                     NurseService.editNurse(id, updated);
                 }
                 case 6 -> {
-                    System.out.print("Enter nurse ID to remove: ");
-                    String id = scanner.nextLine();
+                    String id = InputHandler.getStringInput("Enter nurse ID to remove: ");
                     NurseService.removeNurse(id);
                 }
                 case 7 -> System.out.println("Exiting Nurse Management...");

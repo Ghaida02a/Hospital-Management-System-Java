@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,17 +15,23 @@ public class Nurse extends Person implements Displayable{
 
     public Nurse() {
         super();
+        this.nurseId = HelperUtils.generateId("NuR"); // generate nurse ID
+        this.shift = "Morning"; // default shift
     }
 
-    public Nurse(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address) {
+    public Nurse(String id, String firstName, String lastName, LocalDate dateOfBirth,
+                 String gender, String phoneNumber, String email, String address) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
+        this.nurseId = HelperUtils.generateId("NuR");
+        this.shift = "Morning"; // default
     }
 
     public Nurse(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address, String departmentId, String shift, String qualification, List<Patient> assignedPatients) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
-        this.departmentId = departmentId;
-        this.shift = shift;
-        this.qualification = qualification;
+        this.nurseId = HelperUtils.isNull(id) ? HelperUtils.generateId("NR") : id;
+        this.departmentId = HelperUtils.isValidString(departmentId) ? departmentId : "";
+        setShift(shift); // validates shift
+        this.qualification = HelperUtils.isValidString(qualification) ? qualification : "";
         this.assignedPatients = assignedPatients;
     }
 
@@ -33,7 +40,7 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setNurseId(String nurseId) {
-        this.nurseId = nurseId;
+        this.nurseId = HelperUtils.isNull(nurseId) ? HelperUtils.generateId("NuR") : nurseId;
     }
 
     public String getDepartmentId() {
@@ -41,7 +48,7 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setDepartmentId(String departmentId) {
-        this.departmentId = departmentId;
+        this.departmentId = HelperUtils.isValidString(departmentId) ? departmentId : "";
     }
 
     public String getShift() {
@@ -49,6 +56,19 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setShift(String shift) {
+        //(Morning/Evening/Night)
+        if(shift != null) {
+            String normalizedShift = shift.toLowerCase();
+            if (normalizedShift.equals("morning") || normalizedShift.equals("evening") || normalizedShift.equals("night")) {
+                this.shift = normalizedShift;
+            }
+            else {
+                System.out.println("Warning: Invalid shift '" + shift + "'. Expected 'Morning', 'Evening', or 'Night'. Setting to 'Morning' by default.");
+                this.shift = "Morning";
+            }
+        } else {
+            this.shift = "Morning"; // default value
+        }
         this.shift = shift;
     }
 
@@ -57,7 +77,7 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setQualification(String qualification) {
-        this.qualification = qualification;
+        this.qualification = HelperUtils.isValidString(qualification) ? qualification : "";
     }
 
     public List<Patient> getAssignedPatients() {
@@ -72,7 +92,8 @@ public class Nurse extends Person implements Displayable{
     @Override
     public String displayInfo(String str) {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.displayInfo("")).append(System.lineSeparator());
+        sb.append(super.displayInfo(""));
+        sb.append(System.lineSeparator());
         sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
         sb.append("Shift: ").append(shift).append(System.lineSeparator());
         sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
