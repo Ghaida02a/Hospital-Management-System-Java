@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -15,18 +16,23 @@ public class Person implements Displayable {
     String email;
     String address;
 
-    public Person(){
-
+    public Person() {
+        // Generate an ID with "P" prefix for Person
+        this.id = HelperUtils.generateId("P");
     }
-    public Person(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+
+    public Person(String id, String firstName, String lastName,
+                  LocalDate dateOfBirth, String gender, String phoneNumber,
+                  String email, String address) {
+        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId("P") : id;
+
+        this.firstName = HelperUtils.isValidString(firstName) ? firstName : "";
+        this.lastName = HelperUtils.isValidString(lastName) ? lastName : "";
         this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
+        this.gender = HelperUtils.isValidString(gender) ? gender : "";
+        this.phoneNumber = HelperUtils.isValidString(phoneNumber) ? phoneNumber : "";
+        this.email = HelperUtils.isValidEmail(email) ? email : "";
+        this.address = HelperUtils.isValidString(address) ? address : "";
     }
 
     public String getId() {
@@ -34,7 +40,7 @@ public class Person implements Displayable {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId("P") : id;
     }
 
     public String getFirstName() {
@@ -42,23 +48,36 @@ public class Person implements Displayable {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+        if (firstName != null && firstName.matches("[a-zA-Z\\s]+")) {
+            this.firstName = firstName;
+        } else {
+            this.firstName = "";
+            System.out.println("Invalid first name. Only letters allowed.");
+        }    }
 
     public String getLastName() {
         return lastName;
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+        if (lastName != null && lastName.matches("[a-zA-Z\\s]+")) {
+            this.lastName = lastName;
+        } else {
+            this.lastName = "";
+            System.out.println("Invalid lastName name. Only letters allowed.");
+        }    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+        if (dateOfBirth != null && HelperUtils.isValidAge(dateOfBirth)) {
+            this.dateOfBirth = dateOfBirth;
+        } else {
+            this.dateOfBirth = null;
+            System.out.println("⚠ Invalid date of birth.");
+        }
     }
 
     public String getGender() {
@@ -66,7 +85,12 @@ public class Person implements Displayable {
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        if (gender != null && gender.matches("(?i)male|female")) {
+            this.gender = gender.substring(0,1).toUpperCase() + gender.substring(1).toLowerCase();
+        } else {
+            this.gender = "";
+            System.out.println("⚠ Invalid gender. Must be 'Male' or 'Female'.");
+        }
     }
 
     public String getPhoneNumber() {
@@ -74,7 +98,7 @@ public class Person implements Displayable {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = HelperUtils.isValidString(phoneNumber) ? phoneNumber : "";
     }
 
     public String getEmail() {
@@ -82,16 +106,24 @@ public class Person implements Displayable {
     }
 
     public void setEmail(String email) {
-        this.email = email;
-    }
+        if (HelperUtils.isValidEmail(email)) {
+            this.email = email;
+        } else {
+            this.email = "";
+            System.out.println("Invalid email format.");
+        }    }
 
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
-        this.address = address;
-    }
+        if (HelperUtils.isNotNull(address)) {
+            this.address = address.trim();
+        } else {
+            this.address = "";
+            System.out.println("Invalid address.");
+        }    }
 
 
     @Override
@@ -129,7 +161,6 @@ public class Person implements Displayable {
                 + "Phone: " + phoneNumber + System.lineSeparator()
                 + "Email: " + email + System.lineSeparator()
                 + "Address: " + address;
-        System.out.println(info);
         return info;
     }
 
