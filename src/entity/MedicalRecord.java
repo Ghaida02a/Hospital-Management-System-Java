@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,8 @@ public class MedicalRecord implements Displayable {
     private String testResults;
     private String notes;
 
-    public MedicalRecord(String recordId, String patientId, String doctorId, LocalDate visitDate, String diagnosis, String prescription, String testResults, String notes) {
+    public MedicalRecord(String recordId, String patientId, String doctorId, LocalDate visitDate,
+                         String diagnosis, String prescription, String testResults, String notes) {
         this.recordId = recordId;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -26,7 +28,7 @@ public class MedicalRecord implements Displayable {
     }
 
     public MedicalRecord() {
-
+        this.recordId = HelperUtils.generateId("MR");
     }
 
     public String getRecordId() {
@@ -34,7 +36,7 @@ public class MedicalRecord implements Displayable {
     }
 
     public void setRecordId(String recordId) {
-        this.recordId = recordId;
+        this.recordId = HelperUtils.isNotNull(recordId) ? recordId : HelperUtils.generateId("MR");
     }
 
     public String getPatientId() {
@@ -42,31 +44,48 @@ public class MedicalRecord implements Displayable {
     }
 
     public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
+        if (HelperUtils.isNotNull(patientId)) {
+            this.patientId = patientId;
+        } else {
+            this.patientId = "";
+            System.out.println("Invalid patient ID.");
+        }    }
 
     public String getDoctorId() {
         return doctorId;
     }
 
     public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
-    }
+        if (HelperUtils.isNotNull(doctorId)) {
+            this.doctorId = doctorId;
+        } else {
+            this.doctorId = "";
+            System.out.println("Invalid doctor ID.");
+        }    }
 
     public LocalDate getVisitDate() {
         return visitDate;
     }
 
     public void setVisitDate(LocalDate visitDate) {
-        this.visitDate = visitDate;
-    }
+        if (visitDate != null && !visitDate.isAfter(LocalDate.now())) {
+            this.visitDate = visitDate;
+        } else {
+            this.visitDate = LocalDate.now();
+            System.out.println("Invalid visit date. Setting to today.");
+        }    }
 
     public String getDiagnosis() {
         return diagnosis;
     }
 
     public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
+        if (HelperUtils.isValidString(diagnosis)) {
+            this.diagnosis = diagnosis.trim();
+        } else {
+            this.diagnosis = "";
+            System.out.println("Invalid diagnosis.");
+        }
     }
 
     public String getPrescription() {
@@ -74,7 +93,12 @@ public class MedicalRecord implements Displayable {
     }
 
     public void setPrescription(String prescription) {
-        this.prescription = prescription;
+        if (HelperUtils.isValidString(prescription)) {
+            this.prescription = prescription.trim();
+        } else {
+            this.prescription = "";
+            System.out.println("Invalid prescription.");
+        }
     }
 
     public String getTestResults() {
@@ -82,16 +106,24 @@ public class MedicalRecord implements Displayable {
     }
 
     public void setTestResults(String testResults) {
-        this.testResults = testResults;
-    }
+        if (HelperUtils.isValidString(testResults)) {
+            this.testResults = testResults.trim();
+        } else {
+            this.testResults = "";
+            System.out.println("Invalid test results.");
+        }    }
 
     public String getNotes() {
         return notes;
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
-    }
+        if (HelperUtils.isValidString(notes)) {
+            this.notes = notes.trim();
+        } else {
+            this.notes = "";
+            System.out.println("Invalid notes.");
+        }    }
 
     public void displayInfo() {
         System.out.println("Record Id: " + recordId);

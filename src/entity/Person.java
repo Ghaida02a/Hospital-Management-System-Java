@@ -17,8 +17,7 @@ public class Person implements Displayable {
     String address;
 
     public Person() {
-        // Generate an ID with "P" prefix for Person
-        this.id = HelperUtils.generateId("P");
+
     }
 
     public Person(String id, String firstName, String lastName,
@@ -142,15 +141,17 @@ public class Person implements Displayable {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(dateOfBirth, person.dateOfBirth) && Objects.equals(gender, person.gender) && Objects.equals(phoneNumber, person.phoneNumber) && Objects.equals(email, person.email) && Objects.equals(address, person.address);
+        return Objects.equals(id, person.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
+        return Objects.hash(id);
     }
+
 
     @Override
     public String displayInfo(String str) {

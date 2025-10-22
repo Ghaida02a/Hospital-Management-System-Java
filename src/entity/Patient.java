@@ -220,14 +220,19 @@ public class Patient extends Person implements Displayable {
 
     @Override
     public String toString() {
-        return "Patient{" +
-                super.toString() + // Retrieves all fields from Person
-                ", bloodGroup='" + bloodGroup + '\'' +
-                ", emergencyContact='" + emergencyContact + '\'' +
-                ", registrationDate=" + registrationDate +
-                ", insuranceId='" + insuranceId + '\'' +
-                '}';
+        return "Patient ID: " + getId() +
+                "\nName: " + getFirstName() + " " + getLastName() +
+                "\nDOB: " + getDateOfBirth() +
+                "\nGender: " + getGender() +
+                "\nPhone: " + getPhoneNumber() +
+                "\nEmail: " + getEmail() +
+                "\nAddress: " + getAddress() +
+                "\nBlood Group: " + getBloodGroup() +
+                "\nEmergency Contact: " + getEmergencyContact() +
+                "\nInsurance ID: " + getInsuranceId() +
+                "\nRegistration Date: " + getRegistrationDate();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

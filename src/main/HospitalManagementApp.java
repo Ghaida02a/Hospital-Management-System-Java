@@ -93,7 +93,7 @@ public class HospitalManagementApp {
                 case 4 -> System.out.println("Register Emergency Patient – coming soon...");
                 case 5 -> PatientService.displayAllPatients();
                 case 6 -> {
-                    String name = InputHandler.getIntInput("Enter patient name to search: ").toString();
+                    String name = InputHandler.getStringInput("Enter patient name to search: ").toString();
                     List<Patient> results = PatientService.searchPatientsByName(name);
 
                     if (results.isEmpty()) {
@@ -107,7 +107,7 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 7 -> {
-                    String id = InputHandler.getIntInput("Enter patient ID to update: ").toString();
+                    String id = InputHandler.getStringInput("Enter patient ID to update: ");
                     Patient updatedPatient = PatientService.addPatient(); // reuse input method
                     PatientService.editPatient(id, updatedPatient);
                 }

@@ -40,7 +40,7 @@ public class HelperUtils {
 
     //String Validation Methods (Overloaded)
     public static boolean isValidString(String str) {
-        return str != null && !str.trim().isEmpty() && str.matches("[a-zA-Z\\s]+");
+        return str != null && !str.trim().isEmpty();
     }
 
     public static boolean isValidString(String str, int minLength) { //checks minimum length
