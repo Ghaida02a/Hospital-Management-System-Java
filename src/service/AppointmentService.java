@@ -30,14 +30,18 @@ public class AppointmentService implements Manageable, Searchable {
 
     @Override
     public String remove(String id) {
-        if (id == null) return "Invalid id";
+        if (id == null){
+            return "Invalid id";
+        }
         boolean removed = appointmentList.removeIf(a -> a.getAppointmentId() != null && a.getAppointmentId().equals(id));
         return removed ? "Appointment " + id + " removed." : "Appointment " + id + " not found.";
     }
 
     @Override
     public String getAll() {
-        if (appointmentList.isEmpty()) return "No appointments found.";
+        if (appointmentList.isEmpty()){
+            return "No appointments found.";
+        }
         StringBuilder sb = new StringBuilder();
         for (Appointment a : appointmentList) {
             sb.append("Appointment ID: ").append(a.getAppointmentId())

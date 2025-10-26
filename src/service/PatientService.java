@@ -134,13 +134,16 @@ public class PatientService {
 
     public static void displayAllPatients() {
         if (patientList.isEmpty()) {
-            System.out.println("No patients found.\n");
+            System.out.println("===== Patients List =====");
+            System.out.println("------------------------");
+            System.out.println("No patients found!");
+            System.out.println("========================\n");
             return;
         }
 
         System.out.println("===== Patients List =====");
-        for (Patient patient : patientList) {
-            patient.displayInfo("");
+        for (Patient p : patientList) {
+            System.out.println(p); // make sure Patient.toString() is implemented
             System.out.println("------------------------");
         }
         System.out.println("========================\n");

@@ -305,13 +305,12 @@ public class HospitalManagementApp {
             scanner.nextLine();
             switch (option) {
                 case 1 -> {
-                    var appt = AppointmentService.addAppointment();
+                    Appointment appt = AppointmentService.addAppointment();
                     AppointmentService.save(appt);
                 }
                 case 2 -> AppointmentService.displayAllAppointments();
                 case 3 -> {
-                    System.out.print("Enter patient ID: ");
-                    String pid = scanner.nextLine();
+                    String pid = InputHandler.getStringInput("Enter patient ID: ");
                     List<entity.Appointment> res = AppointmentService.getAppointmentsByPatient(pid);
                     if (res.isEmpty()) System.out.println("No appointments found for patient " + pid);
                     else {
@@ -319,8 +318,7 @@ public class HospitalManagementApp {
                     }
                 }
                 case 4 -> {
-                    System.out.print("Enter doctor ID: ");
-                    String did = scanner.nextLine();
+                    String did = InputHandler.getStringInput("Enter doctor ID: ");
                     List<entity.Appointment> res = AppointmentService.getAppointmentsByDoctor(did);
                     if (res.isEmpty()) System.out.println("No appointments found for doctor " + did);
                     else {
@@ -329,53 +327,28 @@ public class HospitalManagementApp {
                 }
                 case 5 -> {
                     LocalDate date = null;
-                    while (true) {
-                        System.out.print("Enter date (yyyy-MM-dd): ");
-                        String d = scanner.nextLine();
-                        try {
-                            date = LocalDate.parse(d);
-                            break;
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                    String d = InputHandler.getStringInput("Enter date (yyyy-MM-dd): ");
+                    List<entity.Appointment> res = AppointmentService.getAppointmentsByDate(date);
+                    if (res.isEmpty()) {
+                        System.out.println("No appointments found on " + date);
+                    } else {
+                        for (entity.Appointment a : res) {
+                            a.displayInfo("");
                         }
                     }
-                    List<entity.Appointment> res = AppointmentService.getAppointmentsByDate(date);
-                    if (res.isEmpty()) System.out.println("No appointments found on " + date);
-                    else for (entity.Appointment a : res) a.displayInfo("");
                 }
                 case 6 -> {
-                    System.out.print("Enter appointment ID to reschedule: ");
-                    String aid = scanner.nextLine();
-                    LocalDate newDate = null;
-                    while (true) {
-                        System.out.print("Enter new date (yyyy-MM-dd): ");
-                        String d = scanner.nextLine();
-                        try {
-                            newDate = LocalDate.parse(d);
-                            break;
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format.");
-                        }
-                    }
-                    String newTime;
-                    while (true) {
-                        System.out.print("Enter new time (HH:mm): ");
-                        newTime = scanner.nextLine();
-                        if (newTime.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
-                            break;
-                        }
-                        System.out.println("Invalid time format.");
-                    }
+                    String aid = InputHandler.getStringInput("Enter appointment ID to reschedule: ");
+                    LocalDate newDate = InputHandler.getDateInput("Enter new date");
+                    String newTime = InputHandler.getStringInput("Enter new time (HH:MM): ");
                     AppointmentService.rescheduleAppointment(aid, newDate, newTime);
                 }
                 case 7 -> {
-                    System.out.print("Enter appointment ID to cancel: ");
-                    String aid = scanner.nextLine();
+                    String aid = InputHandler.getStringInput("Enter appointment ID to cancel: ");
                     AppointmentService.cancelAppointment(aid);
                 }
                 case 8 -> {
-                    System.out.print("Enter appointment ID to complete: ");
-                    String aid = scanner.nextLine();
+                    String aid = InputHandler.getStringInput("Enter appointment ID to complete: ");
                     AppointmentService.completeAppointment(aid);
                 }
                 case 9 -> AppointmentService.viewUpcomingAppointments();
@@ -488,11 +461,11 @@ public class HospitalManagementApp {
                 }
                 case 2 -> DepartmentService.displayAllDepartments();
                 case 3 -> {
-                    System.out.print("Enter Department ID to view details: ");
-                    String departmentId = scanner.nextLine();
+                    String departmentId = InputHandler.getStringInput("Enter Department ID: ");
                     Department d = DepartmentService.getDepartmentById(departmentId);
-                    if (d == null) System.out.println("Department not found: " + departmentId);
-                    else {
+                    if (d == null) {
+                        System.out.println("Department not found: " + departmentId);
+                    } else {
                         System.out.println("Name: " + d.getDepartmentName());
                         System.out.println("Head Doctor ID: " + d.getHeadDoctorId());
                         System.out.println("Bed Capacity: " + d.getBedCapacity());
@@ -500,10 +473,12 @@ public class HospitalManagementApp {
                     }
                 }
                 case 4 -> {
-                    System.out.print("Enter Department ID: ");
-                    String departmentId = scanner.nextLine();
-                    System.out.print("Enter Doctor ID to assign: ");
-                    String doctorId = scanner.nextLine();
+                    System.out.println("===== Departments =====");
+                    DepartmentService.displayAllDepartments();
+
+                    String departmentId = InputHandler.getStringInput("Enter Department ID to assign the doctor: ");
+                    String doctorId = InputHandler.getStringInput("Enter Doctor ID to assign: ");
+
                     boolean assignDoctorToDepartment = DepartmentService.assignDoctorToDepartment(departmentId, doctorId);
                     if (assignDoctorToDepartment) {
                         System.out.println("Doctor assigned successfully.");
@@ -512,10 +487,8 @@ public class HospitalManagementApp {
                     }
                 }
                 case 5 -> {
-                    System.out.print("Enter Department ID: ");
-                    String departmentId = scanner.nextLine();
-                    System.out.print("Enter Nurse ID to assign: ");
-                    String nurseId = scanner.nextLine();
+                    String departmentId = InputHandler.getStringInput("Enter Department ID: ");
+                    String nurseId = InputHandler.getStringInput("Enter Nurse ID to assign: ");
                     boolean assignNurseToDepartment = DepartmentService.assignNurseToDepartment(departmentId, nurseId);
                     if (assignNurseToDepartment) {
                         System.out.println("Nurse assigned successfully.");
@@ -524,14 +497,12 @@ public class HospitalManagementApp {
                     }
                 }
                 case 6 -> {
-                    System.out.print("Enter Department ID to update: ");
-                    String departmentId = scanner.nextLine();
+                    String departmentId = InputHandler.getStringInput("Enter Department ID to update: ");
                     Department updatedDept = DepartmentService.addDepartment();
                     DepartmentService.updateDepartment(departmentId, updatedDept);
                 }
                 case 7 -> {
-                    System.out.print("Enter Department ID to view statistics: ");
-                    String departmentId = scanner.nextLine();
+                    String departmentId = InputHandler.getStringInput("Enter Department ID: ");
                     Department d = DepartmentService.getDepartmentById(departmentId);
                     if (d == null) {
                         System.out.println("Department not found: " + departmentId);

@@ -1,5 +1,7 @@
 package service;
 
+import Utils.HelperUtils;
+import Utils.InputHandler;
 import entity.Department;
 import entity.Doctor;
 import entity.Nurse;
@@ -14,34 +16,26 @@ public class DepartmentService {
 
     public static Department addDepartment() {
         Department department = new Department();
-        System.out.print("Enter Department ID: ");
-        String id = scanner.nextLine();
-        department.setDepartmentId(id);
+        String generatedId = HelperUtils.getRandomNumber(4);
+        department.setDepartmentId(generatedId);
+        System.out.println("Department ID: " + department.getDepartmentId());
 
-        System.out.print("Enter Department Name: ");
-        String name = scanner.nextLine();
-        department.setDepartmentName(name);
+        department.setDepartmentName(InputHandler.getStringInput("Enter Department Name: "));
 
-        System.out.print("Enter Department Head (Doctor ID): ");
-        String head = scanner.nextLine();
-        department.setHeadDoctorId(head);
+        department.setHeadDoctorId(InputHandler.getStringInput("Enter Head Doctor ID: "));
 
-        System.out.print("Enter bed capacity: ");
-        int bedCapacity = Integer.parseInt(scanner.nextLine());
-        department.setBedCapacity(bedCapacity);
+        int bedCapacity = InputHandler.getIntInput("Enter bed capacity: ");
 
-        System.out.print("Enter available beds: ");
-        int availableBeds = Integer.parseInt(scanner.nextLine());
-        department.setAvailableBeds(availableBeds);
-
+        int availableBeds = InputHandler.getIntInput("Enter available beds: ");
 
         if (bedCapacity < 0) bedCapacity = 0;
         if (availableBeds < 0) availableBeds = 0;
         if (availableBeds > bedCapacity) availableBeds = bedCapacity;
 
+        department.setBedCapacity(bedCapacity);
+        department.setAvailableBeds(availableBeds);
         return department;
     }
-
 
     public static boolean saveDepartment(Department dept) {
         if (dept == null || dept.getDepartmentId() == null || dept.getDepartmentId().trim().isEmpty()) {
@@ -58,7 +52,7 @@ public class DepartmentService {
     }
 
     public static Department getDepartmentById(String departmentId) {
-        if (departmentId == null){
+        if (departmentId == null) {
             return null;
         }
         for (Department department : departmentList) {
@@ -111,7 +105,7 @@ public class DepartmentService {
     }
 
     // Assign a doctor (by doctorId) to a department (by departmentId)
-    public static boolean assignDoctorToDepartment(String doctorId, String departmentId) {
+    public static boolean assignDoctorToDepartment(String departmentId, String doctorId) {
         if (doctorId == null || doctorId.isEmpty()) {
             System.out.println("Invalid doctor ID.");
             return false;
@@ -127,7 +121,6 @@ public class DepartmentService {
             return false;
         }
 
-        // Find doctor from DoctorService
         Doctor found = null;
         for (Doctor doc : service.DoctorService.doctorsList) {
             if (doc != null && doctorId.equals(doc.getId())) {
