@@ -8,7 +8,6 @@ import java.util.List;
 import service.MedicalRecordService;
 
 public class Surgeon extends Doctor implements Displayable {
-
     private int surgeriesPerformed;
     private List<String> surgeryTypes;
     private boolean operationTheatreAccess;

@@ -8,7 +8,7 @@ import java.util.List;
 public class EmergencyPatient extends InPatient implements Displayable {
     private String emergencyType;
     private String arrivalMode; // Ambulance/Walk-in
-    private int triageLevel;
+    private int triageLevel; // 1 to 5
     private boolean admittedViaER;
 
     public EmergencyPatient(LocalDate admissionDate, LocalDate dischargeDate, String roomNumber, String bedNumber, String admittingDoctorId, double dailyCharges, String emergencyType, String arrivalMode, int triageLevel, boolean admittedViaER) {

@@ -3,19 +3,17 @@ package service;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Doctor;
+import entity.Patient;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 public class DoctorService {
     public static List<Doctor> doctorsList = new ArrayList<>();
-
-    public static Doctor addDoctor() {
-        Doctor doctor = new Doctor();
-
+    private static Doctor initializeDoctor(Doctor doctor) {
+        // Generate ID
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("DR");
@@ -23,6 +21,14 @@ public class DoctorService {
         while (HelperUtils.checkIfIdExists(doctorsList, generatedId)); // ensure uniqueness
         doctor.setId(generatedId);
         System.out.println("Doctor ID: " + doctor.getId());
+
+        return doctor;
+    }
+
+    public static Doctor addDoctor() {
+        Doctor doctor = new Doctor();
+
+        initializeDoctor(doctor);
 
         doctor.setFirstName(InputHandler.getStringInput("Enter First Name: "));
         doctor.setLastName(InputHandler.getStringInput("Enter Last Name: "));
@@ -50,21 +56,17 @@ public class DoctorService {
 
         // Available slots (comma-separated integers 0-23)
 //        System.out.print("Enter available slots as comma-separated integers (0-23) or leave blank: ");
-        String slotsInput = InputHandler.getIntInput("Enter available slots: ", 0, 23).toString();
+        String slotsInput = String.valueOf(InputHandler.getIntInput("Enter available slots (comma-separated 0-23): ", 0, 23));
         List<Integer> slots = new ArrayList<>();
         if (!slotsInput.isEmpty()) {
             String[] parts = slotsInput.split(",");
             Set<Integer> seen = new LinkedHashSet<>();
             for (String p : parts) {
-                String t = p.trim();
-                if (t.matches("\\d+")) {
-                    int val = Integer.parseInt(t);
-                    if (val < 0 || val > 23) {
-                        System.out.println("Warning: invalid slot '" + t + "' ignored (expected 0-23).");
-                        continue;
-                    }
-                    seen.add(val);
-                } else {
+                try {
+                    int val = Integer.parseInt(p.trim());
+                    if (val >= 0 && val <= 23) seen.add(val);
+                    else System.out.println("Warning: invalid slot '" + val + "' ignored.");
+                } catch (NumberFormatException e) {
                     System.out.println("Warning: invalid slot '" + p + "' ignored.");
                 }
             }
@@ -78,7 +80,126 @@ public class DoctorService {
         return doctor;
     }
 
+    public static Doctor addDoctor(String firstName, String lastName, String specialization, String phone) {
+        Doctor doctor = new Doctor();
+        doctor.setFirstName(firstName);
+        doctor.setLastName(lastName);
+        doctor.setSpecialization(specialization);
+        doctor.setPhoneNumber(phone);
+        return initializeDoctor(doctor);
+    }
 
+    public static Doctor addDoctor(String name, String specialization, String phone, double consultationFee) {
+        Doctor doctor = new Doctor();
+        String[] nameParts = name.trim().split(" ");
+        if (nameParts.length >= 2) {
+            doctor.setFirstName(nameParts[0]);
+            doctor.setLastName(nameParts[1]);
+        } else if (nameParts.length == 1) {
+            doctor.setFirstName(nameParts[0]);
+            doctor.setLastName("");
+        } else {
+            doctor.setFirstName("Unknown");
+            doctor.setLastName("Unknown");
+        }
+        doctor.setSpecialization(specialization);
+        doctor.setPhoneNumber(phone);
+        doctor.setConsultationFee(consultationFee);
+        return initializeDoctor(doctor);
+    }
+
+    public static Doctor addDoctor(Doctor doctor) {
+        return initializeDoctor(doctor);
+    }
+
+    public static Doctor assignPatient(String doctorId, String patientId) {
+        Doctor found = getDoctorById(doctorId);
+        if (found == null) {
+            System.out.println("Doctor with ID " + doctorId + " not found.");
+            return null;
+        }
+
+        entity.Patient patient = PatientService.getPatientById(patientId);
+        if (patient == null) {
+            System.out.println("Patient with ID " + patientId + " not found.");
+            return null;
+        }
+
+        boolean assigned = found.assignPatient(patient);
+        if (assigned) {
+            System.out.println("Patient " + patientId + " assigned to Doctor " + doctorId + ".");
+        } else {
+            System.out.println("Failed to assign patient " + patientId + " to Doctor " + doctorId + ".");
+        }
+        return found;
+    }
+
+    public static Doctor assignPatient(Doctor doctor, Patient patient){
+        boolean assigned = doctor.assignPatient(patient);
+        if (assigned) {
+            System.out.println("Patient " + patient.getId() + " assigned to Doctor " + doctor.getId() + ".");
+        } else {
+            System.out.println("Failed to assign patient " + patient.getId() + " to Doctor " + doctor.getId() + ".");
+        }
+        return doctor;
+    }
+
+    public static Doctor assignPatient(String doctorId, List<String> patientIds){
+        Doctor found = getDoctorById(doctorId);
+        if (found == null) {
+            System.out.println("Doctor with ID " + doctorId + " not found.");
+            return null;
+        }
+
+        for (String patientId : patientIds) {
+            entity.Patient patient = PatientService.getPatientById(patientId);
+            if (patient == null) {
+                System.out.println("Patient with ID " + patientId + " not found. Skipping.");
+                continue;
+            }
+
+            boolean assigned = found.assignPatient(patient);
+            if (assigned) {
+                System.out.println("Patient " + patientId + " assigned to Doctor " + doctorId + ".");
+            } else {
+                System.out.println("Failed to assign patient " + patientId + " to Doctor " + doctorId + ".");
+            }
+        }
+        return found;
+    }
+
+    public static Doctor displayDoctors(){
+        displayAllDoctors();
+        return null;
+    }
+
+     public static void displayDoctors(String specialization){
+        getDoctorsBySpecialization(specialization);
+     }
+
+     public static void displayDoctors(String departmentId, boolean showAvailableOnly){
+        List<Doctor> filteredDoctors = new ArrayList<>();
+        for (Doctor doctor : doctorsList) {
+            if (doctor.getDepartmentId().equals(departmentId)) {
+                if (showAvailableOnly) {
+                    if (doctor.isAvailable()) {
+                        filteredDoctors.add(doctor);
+                    }
+                } else {
+                    filteredDoctors.add(doctor);
+                }
+            }
+        }
+        if (filteredDoctors.isEmpty()) {
+            System.out.println("No doctors found for Department ID: " + departmentId);
+        } else {
+            System.out.println("Doctors in Department ID " + departmentId + ":");
+            for (Doctor doc : filteredDoctors) {
+                doc.displayInfo("");
+                System.out.println("------------------------");
+            }
+        }
+     }
     public static void save(Doctor doctor) {
         doctorsList.add(doctor);
         System.out.println("\n===== Doctor Added Successfully =====\n");

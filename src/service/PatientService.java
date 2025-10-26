@@ -17,14 +17,7 @@ public class PatientService {
     public static Patient addPatient() {
         Patient patient = new Patient();
 
-        // Generate ID
-        String generatedId;
-        do {
-            generatedId = HelperUtils.generateId("PAT");
-        }
-        while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
-        patient.setId(generatedId);
-        System.out.println("Patient ID: " + patient.getId());
+        initializePatient(patient);
 
         // Name
         patient.setFirstName(InputHandler.getStringInput("Enter First Name: "));
@@ -54,11 +47,119 @@ public class PatientService {
         // Insurance ID
         patient.setInsuranceId(InputHandler.getStringInput("Enter Insurance ID: "));
 
+        return patient;
+    }
+
+    public static Patient addPatient(String firstName, String lastName, String phone) { // minimal info
+        Patient patient = new Patient();
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setPhoneNumber(phone);
+        return initializePatient(patient);
+    }
+
+    private static Patient initializePatient(Patient patient) {
+        // Generate ID
+        String generatedId;
+        do {
+            generatedId = HelperUtils.generateId("PAT");
+        }
+        while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
+        patient.setId(generatedId);
+        System.out.println("Patient ID: " + patient.getId());
+
         // Registration Date
         patient.setRegistrationDate(LocalDate.now());
         System.out.println("Registration Date set to today: " + patient.getRegistrationDate());
 
         return patient;
+    }
+
+    // with blood group
+    public static Patient addPatient(String firstName, String lastName, String phone, String bloodGroup, String email) {
+        Patient patient = new Patient();
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setPhoneNumber(phone);
+        patient.setBloodGroup(bloodGroup);
+        patient.setEmail(email);
+        return initializePatient(patient);
+    }
+
+    //full object
+    public static Patient addPatient(Patient patient) {
+        return initializePatient(patient);
+    }
+
+    // Search by keyword (any field)
+    public static List<Patient> searchPatients(String keyword) {
+        List<Patient> results = new ArrayList<>();
+        String key = keyword.toLowerCase();
+
+        for (Patient patient : patientList) {
+            if (patient.getId().toLowerCase().contains(key)
+                    || patient.getFirstName().toLowerCase().contains(key)
+                    || patient.getLastName().toLowerCase().contains(key)
+                    || patient.getPhoneNumber().toLowerCase().contains(key)
+                    || (patient.getEmail() != null && patient.getEmail().toLowerCase().contains(key))) {
+                results.add(patient);
+            }
+        }
+        return results;
+    }
+
+    // Search by full name
+    public static List<Patient> searchPatients(String firstName, String lastName) {
+        List<Patient> results = new ArrayList<>();
+        for (Patient patient : patientList) {
+            if (patient.getFirstName().equalsIgnoreCase(firstName) &&
+                    patient.getLastName().equalsIgnoreCase(lastName)) {
+                results.add(patient);
+            }
+        }
+        return results;
+    }
+
+    // display all
+    public static void displayPatients() {
+        displayPatients(patientList.toString());
+    }
+
+    // display filtered by criteria
+    public static Patient displayPatients(String filter) {
+        if (patientList.isEmpty()) {
+            System.out.println("No patients found!\n");
+            return null;
+        }
+
+        System.out.println("===== Patients List (Filtered by: " + filter + ") =====");
+        for (Patient p : patientList) {
+            if (p.getBloodGroup() != null && p.getBloodGroup().equalsIgnoreCase(filter)) {
+                System.out.println(p); // make sure Patient.toString() is implemented
+                System.out.println("------------------------");
+            }
+        }
+        System.out.println("========================\n");
+        return null;
+    }
+
+    //display limited number
+    public static Patient displayPatients(int limit) {
+        if (patientList.isEmpty()) {
+            System.out.println("No patients found!\n");
+            return null;
+        }
+
+        System.out.println("===== Patients List (Limited to: " + limit + ") =====");
+        int count = 0;
+        for (Patient p : patientList) {
+            if (count >= limit) break;
+            System.out.println(p);
+            System.out.println("------------------------");
+            count++;
+        }
+        System.out.println("========================\n");
+        return null;
     }
 
     public static void addAllergyToPatient(String patientId) {
