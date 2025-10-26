@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,7 +29,11 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setVisitCount(int visitCount) {
-        this.visitCount = visitCount;
+        if(HelperUtils.isNegative(visitCount)) {
+            System.out.println("Visit count cannot be negative.");
+        } else {
+            this.visitCount = visitCount;
+        }
     }
 
     public LocalDate getLastVisitDate() {
@@ -36,7 +41,11 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setLastVisitDate(LocalDate lastVisitDate) {
-        this.lastVisitDate = lastVisitDate;
+        if(lastVisitDate.isAfter(LocalDate.now())) {
+            System.out.println("Last visit date cannot be in the future.");
+        } else {
+            this.lastVisitDate = lastVisitDate;
+        }
     }
 
     public String getPreferredDoctorId() {
@@ -44,13 +53,12 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setPreferredDoctorId(String preferredDoctorId) {
-        this.preferredDoctorId = preferredDoctorId;
+        if(HelperUtils.isNotNull(preferredDoctorId)) {
+            this.preferredDoctorId = preferredDoctorId;
+        } else {
+            System.out.println("Preferred doctor ID cannot be null.");
+        }
     }
-
-    /**
-     * Override methods
-     * • Add: scheduleFollowUp(), updateVisitCount()
-     */
 
     @Override
     public String displayInfo(String str) {
@@ -69,4 +77,8 @@ public class OutPatient extends Patient implements Displayable{
     public String displaySummary(String str) {
         return "OutPatient{" + getId() + ": " + getFirstName() + " " + getLastName() + ", visits=" + visitCount + "}";
     }
+    /**
+     * Override methods
+     * • Add: scheduleFollowUp(), updateVisitCount()
+     */
 }

@@ -1,7 +1,9 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
+import javax.net.ssl.HandshakeCompletedEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setBloodGroup(String bloodGroup) {
-        if (bloodGroup == null || bloodGroup.trim().isEmpty()) {
+        if (HelperUtils.isNull(bloodGroup) || bloodGroup.isEmpty()) {
             this.bloodGroup = null;
             return;
         }
@@ -63,7 +65,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setAllergies(List<Allergies> allergies) {
-        if (allergies == null) {
+        if (HelperUtils.isNull(allergies)) {
             this.allergies = new ArrayList<>();
         } else {
             this.allergies = allergies;
@@ -75,14 +77,14 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setEmergencyContact(String emergencyContact) {
-        if (emergencyContact == null || emergencyContact.trim().isEmpty()) {
+        if (HelperUtils.isNull(emergencyContact)|| emergencyContact.isEmpty()) {
             this.emergencyContact = null;
             return;
         }
         String normalized = emergencyContact.trim();
         // Allow digits, spaces, dashes and leading +. Require at least 7 digits overall.
         String digitsOnly = normalized.replaceAll("[^0-9]", "");
-        if (digitsOnly.length() < 7) {
+        if (digitsOnly.length() == 8) {
             System.out.println("Warning: emergency contact '" + emergencyContact + "' appears too short. Setting to null.");
             this.emergencyContact = null;
             return;
@@ -100,7 +102,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setRegistrationDate(LocalDate registrationDate) {
-        if (registrationDate == null) {
+        if (HelperUtils.isNull(registrationDate)) {
             this.registrationDate = LocalDate.now();
         } else {
             // Prevent future dates
@@ -118,17 +120,17 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setInsuranceId(String insuranceId) {
-        if (insuranceId == null || insuranceId.trim().isEmpty()) {
+        if (HelperUtils.isNull(insuranceId) || insuranceId.trim().isEmpty()) {
             this.insuranceId = null;
             return;
         }
         // Basic validation: length between 3 and 50 and no control characters
-        String trimmed = insuranceId.trim();
-        if (trimmed.length() < 3 || trimmed.length() > 50 || trimmed.matches(".*\\p{Cntrl}.*")) {
+        String insuranceId = insuranceId;
+        if (insuranceId.length() < 3 || insuranceId.length() > 50 || insuranceId.matches(".*\\p{Cntrl}.*")) {
             System.out.println("Warning: insurance ID appears invalid. Setting to null.");
             this.insuranceId = null;
         } else {
-            this.insuranceId = trimmed;
+            this.insuranceId = insuranceId;
         }
     }
 
@@ -137,7 +139,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setMedicalRecord(List<MedicalRecord> medicalRecord) {
-        if (medicalRecord == null) {
+        if (HelperUtils.isNull(medicalRecord)) {
             this.medicalRecord = new ArrayList<>();
         } else {
             this.medicalRecord = medicalRecord;
@@ -149,7 +151,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setAppointment(List<Appointment> appointment) {
-        if (appointment == null) {
+        if (HelperUtils.isNull(appointment)) {
             this.appointment = new ArrayList<>();
         } else {
             this.appointment = appointment;
@@ -160,7 +162,7 @@ public class Patient extends Person implements Displayable {
         if (this.medicalRecord == null) {
             this.medicalRecord = new ArrayList<>();
         }
-        if (record != null) {
+        if (HelperUtils.isNotNull(record)) {
             this.medicalRecord.add(record);
             System.out.println("Medical record added for patient " + this.getId());
         } else {
@@ -172,7 +174,7 @@ public class Patient extends Person implements Displayable {
         if (this.appointment == null) {
             this.appointment = new ArrayList<>();
         }
-        if (appointment != null) {
+        if (HelperUtils.isNotNull(appointment)) {
             this.appointment.add(appointment);
             System.out.println("Appointment scheduled for patient " + this.getId());
         } else {
@@ -181,7 +183,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void updateInsurance(String newInsuranceId) {
-        if (newInsuranceId != null && !newInsuranceId.trim().isEmpty()) {
+        if (HelperUtils.isNotNull(newInsuranceId) && !newInsuranceId.trim().isEmpty()) {
             this.setInsuranceId(newInsuranceId);
             System.out.println("Insurance ID updated successfully to: " + newInsuranceId);
         } else {

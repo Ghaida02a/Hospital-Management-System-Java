@@ -1,7 +1,9 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
+import java.awt.*;
 import java.util.List;
 
 public class Department implements Displayable {
@@ -28,7 +30,11 @@ public class Department implements Displayable {
     }
 
     public void setDepartmentId(String departmentId) {
-        this.departmentId = departmentId;
+        if (HelperUtils.isNull(departmentId) || departmentId.isEmpty()) {
+            System.out.println("Department ID cannot be empty.");
+        } else {
+            this.departmentId = HelperUtils.getRandomNumber(4);
+        }
     }
 
     public String getDepartmentName() {
@@ -36,7 +42,11 @@ public class Department implements Displayable {
     }
 
     public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+        if (HelperUtils.isNull(departmentName) || departmentName.isEmpty()) {
+            System.out.println("Department name cannot be empty.");
+        } else {
+            this.departmentName = departmentName;
+        }
     }
 
     public String getHeadDoctorId() {
@@ -44,7 +54,11 @@ public class Department implements Displayable {
     }
 
     public void setHeadDoctorId(String headDoctorId) {
-        this.headDoctorId = headDoctorId;
+        if (HelperUtils.isNull(headDoctorId) || headDoctorId.isEmpty()) {
+            System.out.println("Head Doctor ID cannot be empty.");
+        } else {
+            this.headDoctorId = headDoctorId;
+        }
     }
 
     public List<Doctor> getDoctors() {
@@ -52,7 +66,11 @@ public class Department implements Displayable {
     }
 
     public void setDoctors(List<Doctor> doctors) {
-        this.doctors = doctors;
+        if (HelperUtils.isNull(doctors) || doctors.isEmpty()) {
+            System.out.println("Doctors list cannot be null or empty.");
+        } else {
+            this.doctors = doctors;
+        }
     }
 
     public List<Nurse> getNurses() {
@@ -60,7 +78,11 @@ public class Department implements Displayable {
     }
 
     public void setNurses(List<Nurse> nurses) {
-        this.nurses = nurses;
+        if (HelperUtils.isNull(nurses) || nurses.isEmpty()) {
+            System.out.println("Nurses list cannot be null or empty.");
+        } else {
+            this.nurses = nurses;
+        }
     }
 
     public int getBedCapacity() {
@@ -68,7 +90,11 @@ public class Department implements Displayable {
     }
 
     public void setBedCapacity(int bedCapacity) {
-        this.bedCapacity = bedCapacity;
+        if (HelperUtils.isPositive(bedCapacity)) {
+            this.bedCapacity = bedCapacity;
+        } else {
+            System.out.println("Bed capacity must be a positive integer.");
+        }
     }
 
     public int getAvailableBeds() {
@@ -76,7 +102,11 @@ public class Department implements Displayable {
     }
 
     public void setAvailableBeds(int availableBeds) {
-        this.availableBeds = availableBeds;
+        if (HelperUtils.isPositive(availableBeds) && availableBeds <= bedCapacity) {
+            this.availableBeds = availableBeds;
+        } else {
+            System.out.println("Available beds must be between 0 and bed capacity.");
+        }
     }
 
     @Override
@@ -93,7 +123,7 @@ public class Department implements Displayable {
     }
 
     @Override
-    public String displaySummary(String str){
+    public String displaySummary(String str) {
         return "Department Id" + departmentId + " - " + "Department Name" + departmentName;
     }
 }

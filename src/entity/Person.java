@@ -47,7 +47,7 @@ public class Person implements Displayable {
     }
 
     public void setFirstName(String firstName) {
-        if (firstName != null && firstName.matches("[a-zA-Z\\s]+")) {
+        if (HelperUtils.isNotNull(firstName) && firstName.matches("[a-zA-Z\\s]+")) {
             this.firstName = firstName;
         } else {
             this.firstName = "";
@@ -59,7 +59,7 @@ public class Person implements Displayable {
     }
 
     public void setLastName(String lastName) {
-        if (lastName != null && lastName.matches("[a-zA-Z\\s]+")) {
+        if (HelperUtils.isNotNull(lastName) && lastName.matches("[a-zA-Z\\s]+")) {
             this.lastName = lastName;
         } else {
             this.lastName = "";
@@ -71,7 +71,7 @@ public class Person implements Displayable {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        if (dateOfBirth != null && HelperUtils.isValidAge(dateOfBirth)) {
+        if (HelperUtils.isNotNull(dateOfBirth) && HelperUtils.isValidAge(dateOfBirth)) {
             this.dateOfBirth = dateOfBirth;
         } else {
             this.dateOfBirth = null;
@@ -84,7 +84,7 @@ public class Person implements Displayable {
     }
 
     public void setGender(String gender) {
-        if (gender != null && gender.matches("(?i)male|female")) {
+        if (HelperUtils.isNotNull(gender) && gender.matches("(?i)male|female")) {
             this.gender = gender.substring(0,1).toUpperCase() + gender.substring(1).toLowerCase();
         } else {
             this.gender = "";

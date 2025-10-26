@@ -57,7 +57,7 @@ public class Nurse extends Person implements Displayable{
 
     public void setShift(String shift) {
         //(Morning/Evening/Night)
-        if(shift != null) {
+        if(HelperUtils.isNotNull(shift)) {
             String normalizedShift = shift.toLowerCase();
             if (normalizedShift.equals("morning") || normalizedShift.equals("evening") || normalizedShift.equals("night")) {
                 this.shift = normalizedShift;
@@ -77,7 +77,12 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setQualification(String qualification) {
-        this.qualification = HelperUtils.isValidString(qualification) ? qualification : "";
+        if(HelperUtils.isValidString(qualification)) {
+            this.qualification = qualification;
+        } else {
+            this.qualification = "";
+            System.out.println("Warning: Invalid qualification. Setting to empty string.");
+        }
     }
 
     public List<Patient> getAssignedPatients() {
@@ -85,7 +90,12 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setAssignedPatients(List<Patient> assignedPatients) {
-        this.assignedPatients = assignedPatients;
+        if(HelperUtils.isNotNull(assignedPatients)) {
+            this.assignedPatients = assignedPatients;
+        } else {
+            this.assignedPatients = null;
+            System.out.println("Warning: Assigned patients list cannot be null. Setting to null.");
+        }
     }
 
     // Displayable methods

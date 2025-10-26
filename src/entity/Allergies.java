@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 public class Allergies implements Displayable {
     private String allergyId;
@@ -16,7 +17,11 @@ public class Allergies implements Displayable {
     }
 
     public void setAllergyId(String allergyId) {
-        this.allergyId = allergyId;
+        if(HelperUtils.isNotNull(allergyId) && !allergyId.isEmpty()) {
+            this.allergyId = allergyId;
+        } else {
+            System.out.println("Allergy ID cannot be empty.");
+        }
     }
 
     public String getAllergyName() {
@@ -24,7 +29,11 @@ public class Allergies implements Displayable {
     }
 
     public void setAllergyName(String allergyName) {
-        this.allergyName = allergyName;
+        if(HelperUtils.isNotNull(allergyName) && !allergyName.isEmpty()) {
+            this.allergyName = allergyName;
+        } else {
+            System.out.println("Allergy name cannot be empty.");
+        }
     }
 
     @Override

@@ -18,7 +18,11 @@ public class GeneralPractitioner extends Doctor implements Displayable {
     }
 
     public void setWalkinAvailable(boolean walkinAvailable) {
-        this.walkinAvailable = walkinAvailable;
+        if(walkinAvailable) {
+            this.walkinAvailable = walkinAvailable;
+        } else {
+            System.out.println("Walk-in availability must be specified.");
+        }
     }
 
     public boolean isHomeVisitAvailable() {
@@ -26,7 +30,11 @@ public class GeneralPractitioner extends Doctor implements Displayable {
     }
 
     public void setHomeVisitAvailable(boolean homeVisitAvailable) {
-        this.homeVisitAvailable = homeVisitAvailable;
+        if(homeVisitAvailable) {
+            this.homeVisitAvailable = homeVisitAvailable;
+        } else {
+            System.out.println("Home visit availability must be specified.");
+        }
     }
 
     public boolean isVaccinationCertified() {
@@ -34,7 +42,11 @@ public class GeneralPractitioner extends Doctor implements Displayable {
     }
 
     public void setVaccinationCertified(boolean vaccinationCertified) {
-        this.vaccinationCertified = vaccinationCertified;
+        if(vaccinationCertified) {
+            this.vaccinationCertified = vaccinationCertified;
+        } else {
+            System.out.println("Vaccination certification must be specified.");
+        }
     }
 
     @Override

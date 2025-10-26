@@ -1,11 +1,12 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class InPatient extends Patient implements Displayable{
+public class InPatient extends Patient implements Displayable {
     private LocalDate admissionDate;
     private LocalDate dischargeDate;
     private String roomNumber;
@@ -40,7 +41,11 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setAdmissionDate(LocalDate admissionDate) {
-        this.admissionDate = admissionDate;
+        if (admissionDate.isAfter(LocalDate.now())) {
+            System.out.println("Admission date cannot be in the future.");
+        } else {
+            this.admissionDate = admissionDate;
+        }
     }
 
     public LocalDate getDischargeDate() {
@@ -48,7 +53,11 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setDischargeDate(LocalDate dischargeDate) {
-        this.dischargeDate = dischargeDate;
+        if (dischargeDate.isBefore(admissionDate)) {
+            System.out.println("Discharge date cannot be before admission date.");
+        } else {
+            this.dischargeDate = dischargeDate;
+        }
     }
 
     public String getRoomNumber() {
@@ -56,7 +65,11 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setRoomNumber(String roomNumber) {
-        this.roomNumber = roomNumber;
+        if (HelperUtils.isNull(roomNumber) || HelperUtils.isPositive(Integer.parseInt(roomNumber)) || roomNumber.isEmpty()) {
+            System.out.println("Room number cannot be empty.");
+        } else {
+            this.roomNumber = roomNumber;
+        }
     }
 
     public String getBedNumber() {
@@ -64,7 +77,11 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setBedNumber(String bedNumber) {
-        this.bedNumber = bedNumber;
+        if (HelperUtils.isNull(bedNumber) || HelperUtils.isPositive(Integer.parseInt(bedNumber)) || bedNumber.isEmpty()) {
+            System.out.println("Bed number cannot be empty.");
+        } else {
+            this.bedNumber = bedNumber;
+        }
     }
 
     public String getAdmittingDoctorId() {
@@ -72,7 +89,11 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setAdmittingDoctorId(String admittingDoctorId) {
-        this.admittingDoctorId = admittingDoctorId;
+        if (HelperUtils.isNull(admittingDoctorId) || admittingDoctorId.isEmpty()) {
+            System.out.println("Admitting Doctor ID cannot be empty.");
+        } else {
+            this.admittingDoctorId = admittingDoctorId;
+        }
     }
 
     public double getDailyCharges() {
@@ -80,13 +101,12 @@ public class InPatient extends Patient implements Displayable{
     }
 
     public void setDailyCharges(double dailyCharges) {
-        this.dailyCharges = dailyCharges;
+        if (HelperUtils.isNegative(dailyCharges)) {
+            System.out.println("Daily charges cannot be negative.");
+        } else {
+            this.dailyCharges = dailyCharges;
+        }
     }
-
-    /**
-     *  Override methods
-     * • Add: calculateStayDuration(), calculateTotalCharges()
-     */
 
     @Override
     public String displayInfo(String str) {
@@ -108,4 +128,8 @@ public class InPatient extends Patient implements Displayable{
     public String displaySummary(String str) {
         return "InPatient{" + getId() + ": " + getFirstName() + " " + getLastName() + ", room=" + roomNumber + "}";
     }
+    /**
+     * Override methods
+     * Add: calculateStayDuration(), calculateTotalCharges()
+     */
 }

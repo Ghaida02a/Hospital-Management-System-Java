@@ -1,6 +1,8 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
+import com.sun.net.httpserver.Headers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,7 +42,7 @@ public class Appointment implements Displayable {
     }
 
     private void validateId(String id, String fieldName) {
-        if (id == null || id.trim().isEmpty()) {
+        if (HelperUtils.isNull(id) || id.isEmpty()) {
             System.out.println(fieldName + " cannot be empty.");
         } else {
             System.out.println(fieldName + " is valid.");
@@ -71,7 +73,11 @@ public class Appointment implements Displayable {
     }
 
     public void setAppointmentDate(LocalDate appointmentDate) {
-        this.appointmentDate = appointmentDate;
+        if (appointmentDate.isBefore(LocalDate.now())) {
+            System.out.println("Appointment date cannot be in the past.");
+        } else {
+            this.appointmentDate = appointmentDate;
+        }
     }
 
     public String getAppointmentTime() {
@@ -79,7 +85,11 @@ public class Appointment implements Displayable {
     }
 
     public void setAppointmentTime(String appointmentTime) {
-        this.appointmentTime = appointmentTime;
+        if (HelperUtils.isNull(appointmentTime) || appointmentTime.isEmpty()) {
+            System.out.println("Appointment time cannot be empty.");
+        } else {
+            this.appointmentTime = appointmentTime;
+        }
     }
 
     public String getStatus() {
@@ -87,7 +97,11 @@ public class Appointment implements Displayable {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        if (HelperUtils.isNull(status) || status.isEmpty()) {
+            System.out.println("Status cannot be empty.");
+        } else {
+            this.status = status;
+        }
     }
 
     public String getReason() {
@@ -95,7 +109,11 @@ public class Appointment implements Displayable {
     }
 
     public void setReason(String reason) {
-        this.reason = reason;
+        if (HelperUtils.isNull(reason) || reason.isEmpty()) {
+            System.out.println("Reason cannot be empty.");
+        } else {
+            this.reason = reason;
+        }
     }
 
     public String getNotes() {
@@ -103,7 +121,11 @@ public class Appointment implements Displayable {
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
+        if (HelperUtils.isNull(notes) || notes.isEmpty()) {
+            System.out.println("Notes cannot be empty.");
+        } else {
+            this.notes = notes;
+        }
     }
 
     @Override

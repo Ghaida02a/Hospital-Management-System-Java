@@ -55,17 +55,11 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setDoctorId(String doctorId) {
-        if (doctorId == null || doctorId.trim().isEmpty()) {
-            System.out.println("Warning: doctorId is null or empty; leaving unset.");
-            this.doctorId = null;
-            return;
+        if (HelperUtils.isNull(doctorId)) {
+            System.out.println("Doctor ID cannot be null or empty.");
+        } else {
+            this.doctorId = HelperUtils.generateId("Dr");
         }
-        String trimmed = doctorId.trim();
-        if (trimmed.contains(" ")) {
-            System.out.println("Warning: doctorId contains spaces; trimming whitespace.");
-            trimmed = trimmed.replaceAll("\\s+", "");
-        }
-        this.doctorId = trimmed;
     }
 
     public String getSpecialization() {
@@ -73,11 +67,11 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setSpecialization(String specialization) {
-        if (specialization == null || specialization.trim().isEmpty()) {
+        if (HelperUtils.isNull(specialization) || specialization.isEmpty()) {
             this.specialization = "General"; // sensible default
             return;
         }
-        this.specialization = specialization.trim();
+        this.specialization = specialization;
     }
 
     public String getQualification() {
@@ -85,7 +79,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setQualification(String qualification) {
-        if (qualification == null || qualification.trim().isEmpty()) {
+        if (HelperUtils.isNull(qualification) || qualification.isEmpty()) {
             this.qualification = "Unknown";
             return;
         }
@@ -97,7 +91,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setExperienceYears(int experienceYears) {
-        if (experienceYears < 0) {
+        if (HelperUtils.isNegative(experienceYears)) {
             System.out.println("Warning: experienceYears cannot be negative; setting to 0.");
             this.experienceYears = 0;
             return;
@@ -110,7 +104,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setDepartmentId(String departmentId) {
-        if (departmentId == null || departmentId.trim().isEmpty()) {
+        if (HelperUtils.isNull(departmentId) || departmentId.isEmpty()) {
             this.departmentId = null;
             return;
         }
@@ -122,7 +116,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setConsultationFee(double consultationFee) {
-        if (Double.isNaN(consultationFee) || consultationFee < 0) {
+        if (HelperUtils.isNegative(consultationFee)) {
             System.out.println("Warning: consultationFee must be non-negative; setting to 0.0.");
             this.consultationFee = 0.0;
             return;
@@ -135,7 +129,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setAvailableSlots(List<Integer> availableSlots) {
-        if (availableSlots == null) {
+        if (HelperUtils.isNull(availableSlots)) {
             this.availableSlots = new ArrayList<>();
             return;
         }
@@ -160,7 +154,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void setAssignedPatients(List<Patient> assignedPatients) {
-        if (assignedPatients == null) {
+        if (HelperUtils.isNull(assignedPatients)) {
             this.assignedPatients = new ArrayList<>();
             return;
         }
@@ -168,12 +162,12 @@ public class Doctor extends Person implements Displayable {
         List<Patient> unique = new ArrayList<>();
         Set<String> seenIds = new LinkedHashSet<>();
         for (Patient p : assignedPatients) {
-            if (p == null) {
+            if (HelperUtils.isNull(p)) {
                 System.out.println("Warning: null patient in assigned list ignored.");
                 continue;
             }
             String pid = p.getId();
-            if (pid == null || pid.trim().isEmpty()) {
+            if (HelperUtils.isNull(pid) || pid.isEmpty()) {
                 System.out.println("Warning: patient with null/empty ID ignored.");
                 continue;
             }
@@ -204,12 +198,12 @@ public class Doctor extends Person implements Displayable {
     }
 
     public boolean assignPatient(Patient patient) {
-        if (patient == null) {
+        if (HelperUtils.isNull(patient)) {
             System.out.println("Cannot assign null patient.");
             return false;
         }
         String pid = patient.getId();
-        if (pid == null || pid.trim().isEmpty()) {
+        if (HelperUtils.isNull(pid) || pid.isEmpty()) {
             System.out.println("Cannot assign patient with null/empty ID.");
             return false;
         }
@@ -217,7 +211,7 @@ public class Doctor extends Person implements Displayable {
             assignedPatients = new ArrayList<>();
         }
         for (Patient p : assignedPatients) {
-            if (p != null && pid.equals(p.getId())) {
+            if (HelperUtils.isNotNull(p) && pid.equals(p.getId())) {
                 System.out.println("Patient with ID " + pid + " is already assigned to doctor " + this.getDoctorId());
                 return false;
             }
@@ -228,18 +222,18 @@ public class Doctor extends Person implements Displayable {
     }
 
     public boolean removePatient(String patientId) {
-        if (patientId == null || patientId.trim().isEmpty()) {
+        if (HelperUtils.isNull(patientId) || patientId.isEmpty()) {
             System.out.println("Invalid patient ID provided for removal.");
             return false;
         }
-        if (assignedPatients == null || assignedPatients.isEmpty()) {
+        if (HelperUtils.isNull(assignedPatients)|| assignedPatients.isEmpty()) {
             System.out.println("No assigned patients to remove from doctor " + this.getDoctorId());
             return false;
         }
         Iterator<Patient> it = assignedPatients.iterator();
         while (it.hasNext()) {
             Patient p = it.next();
-            if (p != null && patientId.equals(p.getId())) {
+            if (HelperUtils.isNotNull(p) && patientId.equals(p.getId())) {
                 it.remove();
                 System.out.println("Removed patient ID " + patientId + " from doctor " + this.getDoctorId());
                 return true;
@@ -250,7 +244,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public void updateAvailability(List<Integer> newSlots) {
-        if (newSlots == null) {
+        if (HelperUtils.isNull(newSlots)) {
             if (this.availableSlots != null) {
                 this.availableSlots.clear();
             } else {
@@ -263,7 +257,7 @@ public class Doctor extends Person implements Displayable {
         // Validate and filter slots to be within 0-23
         Set<Integer> seen = new LinkedHashSet<>();
         for (Integer s : newSlots) {
-            if (s == null) {
+            if (HelperUtils.isNull(s)) {
                 System.out.println("Warning: null slot ignored.");
                 continue;
             }
@@ -299,15 +293,15 @@ public class Doctor extends Person implements Displayable {
     }
 
     public Appointment scheduleConsultation(String patientId, LocalDate date, String time, String reason) {
-        if (patientId == null || patientId.isBlank()) {
+        if (HelperUtils.isNull(patientId) || patientId.isBlank()) {
             System.out.println("Invalid patientId");
             return null;
         }
-        if (date == null) {
+        if (HelperUtils.isNull(date)) {
             System.out.println("Appointment date cannot be null");
             return null;
         }
-        if (time == null || !time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+        if (HelperUtils.isNull(time) || !time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
             System.out.println("Invalid time. Use HH:mm (24-hour).");
             return null;
         }
@@ -329,7 +323,9 @@ public class Doctor extends Person implements Displayable {
     }
 
     public Appointment scheduleConsultation(Appointment appt) {
-        if (appt == null) return null;
+        if (HelperUtils.isNull(appt)){
+            return null;
+        }
         if (appt.getDoctorId() == null || appt.getDoctorId().isBlank()) {
             appt.setDoctorId(this.getId());
         }
@@ -339,7 +335,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public MedicalRecord provideSecondOpinion(String patientId, String originalDoctorId, String opinionNotes) {
-        if (patientId == null || patientId.isBlank()) {
+        if (HelperUtils.isNull(patientId) || patientId.isBlank()) {
             System.out.println("Invalid patientId");
             return null;
         }

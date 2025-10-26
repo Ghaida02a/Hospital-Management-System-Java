@@ -1,5 +1,7 @@
 package entity;
 import Interface.Displayable;
+import Utils.HelperUtils;
+
 import java.util.List;
 
 public class Consultant extends Doctor implements Displayable {
@@ -18,7 +20,11 @@ public class Consultant extends Doctor implements Displayable {
     }
 
     public void setConsultationTypes(List<String> consultationTypes) {
-        this.consultationTypes = consultationTypes;
+        if(HelperUtils.isNull(consultationTypes) || consultationTypes.isEmpty()) {
+            System.out.println("Consultation types cannot be null or empty.");
+        } else {
+            this.consultationTypes = consultationTypes;
+        }
     }
 
     public boolean isOnlineConsultationAvailable() {
@@ -26,7 +32,11 @@ public class Consultant extends Doctor implements Displayable {
     }
 
     public void setOnlineConsultationAvailable(boolean onlineConsultationAvailable) {
-        this.onlineConsultationAvailable = onlineConsultationAvailable;
+        if (HelperUtils.isNotNull(onlineConsultationAvailable)) {
+            this.onlineConsultationAvailable = onlineConsultationAvailable;
+        } else {
+            System.out.println("Online consultation availability must be specified.");
+        }
     }
 
     public int getConsultationDuration() {
@@ -34,7 +44,11 @@ public class Consultant extends Doctor implements Displayable {
     }
 
     public void setConsultationDuration(int consultationDuration) {
-        this.consultationDuration = consultationDuration;
+        if(HelperUtils.isPositive(consultationDuration)) {
+            this.consultationDuration = consultationDuration;
+        } else {
+            System.out.println("Consultation duration must be a positive integer.");
+        }
     }
 
     @Override

@@ -49,7 +49,8 @@ public class MedicalRecord implements Displayable {
         } else {
             this.patientId = "";
             System.out.println("Invalid patient ID.");
-        }    }
+        }
+    }
 
     public String getDoctorId() {
         return doctorId;
@@ -61,19 +62,21 @@ public class MedicalRecord implements Displayable {
         } else {
             this.doctorId = "";
             System.out.println("Invalid doctor ID.");
-        }    }
+        }
+    }
 
     public LocalDate getVisitDate() {
         return visitDate;
     }
 
     public void setVisitDate(LocalDate visitDate) {
-        if (visitDate != null && !visitDate.isAfter(LocalDate.now())) {
+        if (HelperUtils.isNotNull(visitDate) && !visitDate.isAfter(LocalDate.now())) {
             this.visitDate = visitDate;
         } else {
             this.visitDate = LocalDate.now();
             System.out.println("Invalid visit date. Setting to today.");
-        }    }
+        }
+    }
 
     public String getDiagnosis() {
         return diagnosis;
@@ -111,7 +114,8 @@ public class MedicalRecord implements Displayable {
         } else {
             this.testResults = "";
             System.out.println("Invalid test results.");
-        }    }
+        }
+    }
 
     public String getNotes() {
         return notes;
@@ -123,7 +127,8 @@ public class MedicalRecord implements Displayable {
         } else {
             this.notes = "";
             System.out.println("Invalid notes.");
-        }    }
+        }
+    }
 
     public void displayInfo() {
         System.out.println("Record Id: " + recordId);

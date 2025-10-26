@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,7 +40,11 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setEmergencyType(String emergencyType) {
-        this.emergencyType = emergencyType;
+        if(HelperUtils.isValidString(emergencyType, 3, 50)) {
+            this.emergencyType = emergencyType;
+        } else {
+            System.out.println("Emergency type must be between 3 and 50 characters.");
+        }
     }
 
     public String getArrivalMode() {
@@ -47,7 +52,11 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setArrivalMode(String arrivalMode) {
-        this.arrivalMode = arrivalMode;
+        if(HelperUtils.isValidString(arrivalMode, 3, 20)) {
+            this.arrivalMode = arrivalMode;
+        } else {
+            System.out.println("Arrival mode must be between 3 and 20 characters.");
+        }
     }
 
     public int getTriageLevel() {
@@ -55,7 +64,11 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setTriageLevel(int triageLevel) {
-        this.triageLevel = triageLevel;
+        if(triageLevel >= 1 && triageLevel <= 5) {
+            this.triageLevel = triageLevel;
+        } else {
+            System.out.println("Triage level must be between 1 and 5.");
+        }
     }
 
     public boolean isAdmittedViaER() {
@@ -63,7 +76,11 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setAdmittedViaER(boolean admittedViaER) {
-        this.admittedViaER = admittedViaER;
+        if(HelperUtils.isNotNull(admittedViaER)) {
+            this.admittedViaER = admittedViaER;
+        } else {
+            System.out.println("Admitted via ER must be specified.");
+        }
     }
 
     @Override
