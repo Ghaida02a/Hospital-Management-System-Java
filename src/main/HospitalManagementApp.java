@@ -82,11 +82,10 @@ public class HospitalManagementApp {
             switch (option) {
                 case 1 -> {
                     Patient patient = PatientService.addPatient();
-                    PatientService.save(patient);
-
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
+                    PatientService.save(patient);
                 }
                 case 2 -> System.out.println("Register InPatient – coming soon...");
                 case 3 -> System.out.println("Register OutPatient – coming soon...");

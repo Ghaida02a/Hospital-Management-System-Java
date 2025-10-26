@@ -25,6 +25,10 @@ public class Appointment implements Displayable {
         this.notes = notes;
     }
 
+    public Appointment() {
+
+    }
+
     public String getAppointmentId() {
         return appointmentId;
     }
