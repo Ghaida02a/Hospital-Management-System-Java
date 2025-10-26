@@ -1,6 +1,7 @@
 package Utils;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -63,6 +64,18 @@ public class InputHandler {
             String validation = HelperUtils.isValidDate(input);
             if (validation == null) {
                 return LocalDate.parse(input);
+            } else {
+                System.out.println(validation);
+            }
+        }
+    }
+
+    public static LocalTime getTimeInput(String prompt) {
+        while (true) {
+            String input = getStringInput(prompt + " (HH:mm): ");
+            String validation = HelperUtils.isValidTime(input);
+            if (validation == null) {
+                return LocalTime.parse(input);
             } else {
                 System.out.println(validation);
             }

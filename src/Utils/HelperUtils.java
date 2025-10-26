@@ -56,7 +56,7 @@ public class HelperUtils {
     }
 
     public static String generateId() {
-        return UUID.randomUUID().toString(); // Example: "3f1f7e2b-1b8a-4d2f-bf87-5f0a4e3c8f1d"
+        return UUID.randomUUID().toString();
     }
 
     // Generate ID with prefix (e.g., PAT-12345)
@@ -240,5 +240,11 @@ public class HelperUtils {
 
     public static boolean isValidEmail(String email) {
         return email != null && email.contains("@") && email.contains(".");
+    }
+
+    public static String isValidTime(String time) {
+        return (time != null && time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$"))
+                ? null
+                : "Invalid time format. Use HH:mm (24-hour format).";
     }
 }
