@@ -1,7 +1,11 @@
 package Interface;
 
+import entity.Appointment;
+
+import java.time.LocalDate;
+
 public interface Appointable {
-    //- scheduleAppointment(Appointment appointment)
-    //- cancelAppointment(String appointmentId)
-    //- rescheduleAppointment(String appointmentId, LocalDate newDate)
+    void scheduleAppointment(Appointment appointment);
+    void cancelAppointment(String appointmentId);
+    void rescheduleAppointment(String appointmentId, LocalDate newDate);
 }

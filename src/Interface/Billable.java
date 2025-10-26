@@ -1,7 +1,7 @@
 package Interface;
 
 public interface Billable {
-    //- calculateCharges()
-    //- generateBill()
-    //- processPayment(double amount)
+    double calculateCharges();
+    void generateBill();
+    void processPayment(double amount);
 }
