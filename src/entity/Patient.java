@@ -25,6 +25,7 @@ public class Patient extends Person implements Displayable {
         this.appointment = new ArrayList<>();
         this.registrationDate = LocalDate.now();
     }
+
     public Patient(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address, String bloodGroup, List<Allergies> allergies, String emergencyContact, LocalDate registrationDate, String insuranceId, List<MedicalRecord> medicalRecord, List<Appointment> appointment) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
         // Use setters to apply validations and normalization
@@ -36,8 +37,6 @@ public class Patient extends Person implements Displayable {
         setMedicalRecord(medicalRecord);
         setAppointment(appointment);
     }
-
-
 
 
     public String getBloodGroup() {
@@ -249,5 +248,27 @@ public class Patient extends Person implements Displayable {
     public int hashCode() {
         // Generate the hash based on the ID, since it's the primary key
         return Objects.hash(super.hashCode(), this.getId());
+    }
+
+    // Overloaded methods to update contact information
+    public void updateContact(String phone) {
+        setPhoneNumber(phone);
+        System.out.println("Phone number updated to: " + phone);
+    }
+
+    public void updateContact(String phone, String email) {
+        setPhoneNumber(phone);
+        setEmail(email);
+        System.out.println("Phone number updated to: " + phone);
+        System.out.println("Email updated to: " + email);
+    }
+
+    public void updateContact(String phone, String email, String address) {
+        setPhoneNumber(phone);
+        setEmail(email);
+        setAddress(address);
+        System.out.println("Phone number updated to: " + phone);
+        System.out.println("Email updated to: " + email);
+        System.out.println("Address updated to: " + address);
     }
 }

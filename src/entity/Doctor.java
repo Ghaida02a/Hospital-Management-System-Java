@@ -1,5 +1,7 @@
 package entity;
+
 import Interface.Displayable;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Iterator;
 
+import Utils.HelperUtils;
 import service.AppointmentService;
 import service.MedicalRecordService;
 
@@ -27,6 +30,7 @@ public class Doctor extends Person implements Displayable {
         this.availableSlots = new ArrayList<>();
         this.assignedPatients = new ArrayList<>();
     }
+
     public Doctor(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
         // initialize lists
@@ -377,7 +381,52 @@ public class Doctor extends Person implements Displayable {
         return "Doctor{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
-    public void setAvailableSlots() {
+    // Overloaded methods for updating consultation fee
+    public void updateFee(double fee) {
+        setConsultationFee(fee);
+        System.out.println("Updated consultation fee to " + fee + " for doctor " + this.getDoctorId());
+    }
 
+    public void updateFee(double fee, String reason) {
+        setConsultationFee(fee);
+        System.out.println("Updated consultation fee to " + fee + " for doctor " + this.getDoctorId() + ". Reason: " + reason);
+    }
+
+    public void addAvailability(Integer slot) {
+        if (HelperUtils.isNull(slot) || slot < 0 || slot > 23) {
+            System.out.println("Invalid slot: " + slot + ". Must be between 0-23.");
+            return;
+        }
+        if (HelperUtils.isNull(availableSlots)) {
+            availableSlots = new ArrayList<>();
+        }
+        if (!availableSlots.contains(slot)) {
+            availableSlots.add(slot);
+            System.out.println("Added availability slot " + slot + " for doctor " + this.getDoctorId());
+        } else {
+            System.out.println("Slot " + slot + " already exists for doctor " + this.getDoctorId());
+        }
+    }
+
+    public void addAvailability(List<Integer> slots) {
+        if (HelperUtils.isNull(slots)) {
+            System.out.println("No slots provided to add.");
+            return;
+        }
+        if (HelperUtils.isNull(availableSlots)) {
+            availableSlots = new ArrayList<>();
+        }
+        for (Integer slot : slots) {
+            if (HelperUtils.isNull(slot) || slot < 0 || slot > 23) {
+                System.out.println("Invalid slot: " + slot + ". Must be between 0-23.");
+                continue;
+            }
+            if (!availableSlots.contains(slot)) {
+                availableSlots.add(slot);
+                System.out.println("Added availability slot " + slot + " for doctor " + this.getDoctorId());
+            } else {
+                System.out.println("Slot " + slot + " already exists for doctor " + this.getDoctorId());
+            }
+        }
     }
 }

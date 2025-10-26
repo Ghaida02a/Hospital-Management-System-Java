@@ -3,6 +3,7 @@ package entity;
 import Interface.Displayable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Appointment implements Displayable {
     private String appointmentId;
@@ -127,5 +128,18 @@ public class Appointment implements Displayable {
                 ", appointmentTime='" + appointmentTime + '\'' +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    // Methods Overloading
+    public void addNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public void addNotes(String notes, String addedBy) {
+        this.notes = notes + " (Added by: " + addedBy + ")";
+    }
+
+    public void addNotes(String notes, String addedBy, LocalDateTime timestamp) {
+        this.notes = notes + " (Added by: " + addedBy + " on " + timestamp + ")";
     }
 }
