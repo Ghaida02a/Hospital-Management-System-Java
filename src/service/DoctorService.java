@@ -1,5 +1,7 @@
 package service;
 
+import Interface.Manageable;
+import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Doctor;
@@ -10,7 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DoctorService {
+public class DoctorService implements Manageable, Searchable {
     public static List<Doctor> doctorsList = new ArrayList<>();
     private static Doctor initializeDoctor(Doctor doctor) {
         // Generate ID
@@ -56,7 +58,7 @@ public class DoctorService {
 
         // Available slots (comma-separated integers 0-23)
 //        System.out.print("Enter available slots as comma-separated integers (0-23) or leave blank: ");
-        String slotsInput = String.valueOf(InputHandler.getIntInput("Enter available slots (comma-separated 0-23): ", 0, 23));
+        String slotsInput = InputHandler.getStringInput("Enter available slots (comma-separated 0-23): ");
         List<Integer> slots = new ArrayList<>();
         if (!slotsInput.isEmpty()) {
             String[] parts = slotsInput.split(",");
@@ -201,8 +203,17 @@ public class DoctorService {
         }
      }
     public static void save(Doctor doctor) {
+        if (HelperUtils.isNull(doctor)) {
+            System.out.println("Cannot save null doctor.");
+            return;
+        }
+        if (getDoctorById(doctor.getId()) != null) {
+            System.out.println("Doctor with ID " + doctor.getId() + " already exists.");
+            return;
+        }
         doctorsList.add(doctor);
         System.out.println("\n===== Doctor Added Successfully =====\n");
+
     }
 
     public static void editDoctor(String doctorId, Doctor updatedDoctor) {
@@ -315,4 +326,53 @@ public class DoctorService {
         }
         return availableDoctors;
     }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof Doctor doctor) {
+            save(doctor);
+            return "Doctor added successfully: " + doctor.getId();
+        }
+        return "Invalid entity type.";
+    }
+
+    @Override
+    public String remove(String id) {
+        Doctor doctor = getDoctorById(id);
+        if (doctor != null) {
+            doctorsList.remove(doctor);
+            return "Doctor " + id + " removed successfully.";
+        }
+        return "Doctor not found.";
+    }
+
+    @Override
+    public String getAll() {
+        if (doctorsList.isEmpty()) return "No doctors found.";
+        StringBuilder sb = new StringBuilder("===== All Doctors =====\n");
+        for (Doctor d : doctorsList) {
+            sb.append(d.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String search(String keyword) {
+        StringBuilder sb = new StringBuilder();
+        for (Doctor d : doctorsList) {
+            if (d.getFirstName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    d.getLastName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    d.getSpecialization().toLowerCase().contains(keyword.toLowerCase())) {
+                sb.append(d.toString()).append("\n");
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : "No matches found for keyword: " + keyword;
+    }
+
+    @Override
+    public String searchById(String id) {
+        Doctor doctor = getDoctorById(id);
+        return (doctor != null) ? doctor.toString() : "Doctor not found with ID: " + id;
+    }
+
 }

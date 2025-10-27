@@ -1,17 +1,16 @@
 package service;
 
+import Interface.Manageable;
+import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Nurse;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class NurseService {
+public class NurseService implements Manageable, Searchable {
     public static List<Nurse> nurseList = new ArrayList<>();
-    public static Scanner scanner = new Scanner(System.in);
 
     public static Nurse addNurse() {
         Nurse nurse = new Nurse();
@@ -41,8 +40,7 @@ public class NurseService {
 
         nurse.setShift(InputHandler.getStringInput("Enter Shift (Morning/Evening/Night): "));
 
-        System.out.print("Enter Qualification: ");
-        nurse.setQualification(scanner.nextLine());
+        nurse.setQualification(InputHandler.getStringInput("Enter Qualification: "));
 
         // initialize assigned patients list
         nurse.setAssignedPatients(new ArrayList<>());
@@ -51,7 +49,7 @@ public class NurseService {
     }
 
     public static void save(Nurse nurse) {
-        if (nurse != null) {
+        if (HelperUtils.isNotNull(nurse)) {
             nurseList.add(nurse);
             System.out.println("Nurse added successfully!\n");
         }
@@ -72,7 +70,7 @@ public class NurseService {
 
     public static void removeNurse(String nurseId) {
         Nurse nurse = getNurseById(nurseId); // use the method
-        if (nurse != null) {
+        if (HelperUtils.isNotNull(nurse)) {
             nurseList.remove(nurse);
             System.out.println("Nurse with ID " + nurseId + " removed successfully!");
         }
@@ -117,7 +115,9 @@ public class NurseService {
 
     public static List<Nurse> getNursesByShift(String shift) {
         List<Nurse> result = new ArrayList<>();
-        if (shift == null) return result;
+        if (HelperUtils.isNull(shift)){
+            return result;
+        }
         for (Nurse nurse : nurseList) {
             if (nurse.getShift() != null && nurse.getShift().equalsIgnoreCase(shift)) {
                 result.add(nurse);
@@ -127,5 +127,70 @@ public class NurseService {
             System.out.println("No nurses found with shift: " + shift);
         }
         return result;
+    }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof Nurse nurse) {
+            if (HelperUtils.isNotNull(nurse.getId())) {
+                nurseList.add(nurse);
+                return "Nurse added successfully!";
+            } else {
+                return "Invalid nurse data. Cannot add.";
+            }
+        }
+        return "Invalid entity type.";
+    }
+
+    @Override
+    public String remove(String id) {
+        Nurse nurse = getNurseById(id);
+        if (HelperUtils.isNotNull(nurse)) {
+            nurseList.remove(nurse);
+            return "Nurse with ID " + id + " removed successfully!";
+        }
+        return "Nurse not found.";
+    }
+
+    @Override
+    public String getAll() {
+        if (nurseList.isEmpty()) {
+            return "No nurses available.";
+        }
+        StringBuilder sb = new StringBuilder("===== Nurse List =====\n");
+        for (Nurse nurse : nurseList) {
+            sb.append(nurse.getId()).append(" - ")
+                    .append(nurse.getFirstName()).append(" ")
+                    .append(nurse.getLastName()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String search(String keyword) {
+        if (HelperUtils.isNull(keyword)) {
+            return "Invalid keyword.";
+        }
+
+        StringBuilder sb = new StringBuilder("Search Results:\n");
+        for (Nurse nurse : nurseList) {
+            if ((nurse.getFirstName() != null && nurse.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (nurse.getLastName() != null && nurse.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (nurse.getEmail() != null && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase()))) {
+                sb.append(nurse.getId()).append(" - ")
+                        .append(nurse.getFirstName()).append(" ")
+                        .append(nurse.getLastName()).append("\n");
+            }
+        }
+        return sb.length() > 16 ? sb.toString() : "No matching nurses found.";
+    }
+
+    @Override
+    public String searchById(String id) {
+        Nurse nurse = getNurseById(id);
+        if (HelperUtils.isNotNull(nurse)) {
+            return "Nurse found: " + nurse.getFirstName() + " " + nurse.getLastName();
+        }
+        return "Nurse not found with ID: " + id;
     }
 }

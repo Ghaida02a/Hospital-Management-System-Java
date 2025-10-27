@@ -14,75 +14,6 @@ import Interface.Searchable;
 public class AppointmentService implements Manageable, Searchable {
     public static List<Appointment> appointmentList = new ArrayList<>();
 
-    @Override
-    public String add(Object entity) {
-        if (entity instanceof Appointment) {
-            Appointment appt = (Appointment) entity;
-            save(appt);
-            return "Appointment added: " + appt.getAppointmentId();
-        }
-        return "Invalid entity type for AppointmentService.add";
-    }
-
-    @Override
-    public String remove(String id) {
-        if (id == null) {
-            return "Invalid id";
-        }
-        boolean removed = appointmentList.removeIf(a -> a.getAppointmentId() != null && a.getAppointmentId().equals(id));
-        return removed ? "Appointment " + id + " removed." : "Appointment " + id + " not found.";
-    }
-
-    @Override
-    public String getAll() {
-        if (appointmentList.isEmpty()) {
-            return "No appointments found.";
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Appointment a : appointmentList) {
-            sb.append("Appointment ID: ").append(a.getAppointmentId())
-                    .append(", Patient ID: ").append(a.getPatientId())
-                    .append(", Doctor ID: ").append(a.getDoctorId())
-                    .append(", Date: ").append(a.getAppointmentDate())
-                    .append(", Time: ").append(a.getAppointmentTime())
-                    .append(", Status: ").append(a.getStatus())
-                    .append("\n");
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public String search(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) return "No search keyword provided.";
-        String key = keyword.toLowerCase();
-        StringBuilder sb = new StringBuilder();
-        for (Appointment a : appointmentList) {
-            if ((a.getAppointmentId() != null && a.getAppointmentId().toLowerCase().contains(key))
-                    || (a.getPatientId() != null && a.getPatientId().toLowerCase().contains(key))
-                    || (a.getDoctorId() != null && a.getDoctorId().toLowerCase().contains(key))
-                    || (a.getReason() != null && a.getReason().toLowerCase().contains(key))
-                    || (a.getStatus() != null && a.getStatus().toLowerCase().contains(key))
-                    || (a.getAppointmentDate() != null && a.getAppointmentDate().toString().contains(key))) {
-                sb.append("Appointment ID: ").append(a.getAppointmentId())
-                        .append(", Patient ID: ").append(a.getPatientId())
-                        .append(", Doctor ID: ").append(a.getDoctorId())
-                        .append(", Date: ").append(a.getAppointmentDate())
-                        .append(", Time: ").append(a.getAppointmentTime())
-                        .append(", Status: ").append(a.getStatus())
-                        .append("\n");
-            }
-        }
-        return sb.length() == 0 ? "No appointments matched '" + keyword + "'." : sb.toString();
-    }
-
-
-    @Override
-    public String searchById(String id) {
-        Appointment found = getAppointmentById(id);
-        return found != null
-                ? "Found appointment: " + found.getAppointmentId()
-                : "Appointment not found.";
-    }
 
     public static Appointment addAppointment() {
         Appointment appointment = new Appointment();
@@ -111,11 +42,18 @@ public class AppointmentService implements Manageable, Searchable {
     }
 
     public static void save(Appointment appointment) {
-        if (appointment != null) {
-            appointmentList.add(appointment);
-            System.out.println("Appointment saved successfully!\n");
+        if (HelperUtils.isNull(appointment)) {
+            System.out.println("Cannot save null appointment.");
+            return;
         }
+        if (getAppointmentById(appointment.getAppointmentId()) != null) {
+            System.out.println("Appointment ID already exists: " + appointment.getAppointmentId());
+            return;
+        }
+        appointmentList.add(appointment);
+        System.out.println("Appointment saved successfully!\n");
     }
+
 
     public static Appointment getAppointmentById(String appointmentId) {
         for (Appointment appointment : appointmentList) {
@@ -314,4 +252,54 @@ public class AppointmentService implements Manageable, Searchable {
             System.out.println("No appointments found for this range.");
         }
     }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof Appointment) {
+            Appointment appointment = (Appointment) entity;
+            save(appointment);
+            return "Appointment added successfully: " + appointment.getAppointmentId();
+        }
+        return "Invalid entity type. Expected Appointment.";
+    }
+
+    @Override
+    public String remove(String id) {
+        Appointment a = getAppointmentById(id);
+        if (a != null) {
+            appointmentList.remove(a);
+            return "Appointment deleted: " + id;
+        }
+        return "Appointment not found: " + id;
+    }
+
+    @Override
+    public String getAll() {
+        if (appointmentList.isEmpty()) {
+            return "No appointments available.";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Appointment a : appointmentList) {
+            sb.append(a.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String search(String keyword) {
+        StringBuilder sb = new StringBuilder();
+        for (Appointment a : appointmentList) {
+            if (a.getReason() != null && a.getReason().toLowerCase().contains(keyword.toLowerCase())) {
+                sb.append(a.toString()).append("\n");
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : "No appointments found for keyword: " + keyword;
+    }
+
+    @Override
+    public String searchById(String id) {
+        Appointment a = getAppointmentById(id);
+        return a != null ? a.toString() : "Appointment not found: " + id;
+    }
+
 }

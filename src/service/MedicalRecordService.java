@@ -1,5 +1,7 @@
 package service;
 
+import Interface.Manageable;
+import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.MedicalRecord;
@@ -9,9 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MedicalRecordService {
+public class MedicalRecordService implements Manageable, Searchable {
     public static List<MedicalRecord> medicalRecordList = new ArrayList<>();
-    public static Scanner scanner = new Scanner(System.in);
 
     public static MedicalRecord createRecord() {
         MedicalRecord medicalRecord = new MedicalRecord();
@@ -50,6 +51,12 @@ public class MedicalRecordService {
         String notes = InputHandler.getStringInput("Enter Notes: ");
         medicalRecord.setNotes(notes);
 
+        if (!HelperUtils.isNotNull(medicalRecord.getPatientId()) ||
+                !HelperUtils.isNotNull(medicalRecord.getDoctorId())) {
+            System.out.println("Error: Patient ID or Doctor ID cannot be empty.");
+            return null;
+        }
+
 
         return medicalRecord;
     }
@@ -70,7 +77,7 @@ public class MedicalRecordService {
 
     // get by id
     public static MedicalRecord getRecordById(String recordId) {
-        if (recordId == null) {
+        if (!HelperUtils.isNotNull(recordId)) {
             return null;
         }
         for (MedicalRecord record : medicalRecordList) {
@@ -136,19 +143,17 @@ public class MedicalRecordService {
 //    }
 
     public static boolean updateRecord(String recordId, MedicalRecord updated) {
-        if (HelperUtils.isNull(recordId) || updated == null) {
+        if (HelperUtils.isNull(recordId) || HelperUtils.isNull(updated)) {
             System.out.println("Invalid input: record ID or updated record is null.");
             return false;
         }
 
         MedicalRecord record = getRecordById(recordId);
 
-        if (record == null) {
+        if (HelperUtils.isNull(record)) {
             System.out.println("Medical Record ID not found!");
             return false;
         }
-
-        Scanner sc = new Scanner(System.in);
 
         System.out.println("Updating Medical Record: " + recordId);
         System.out.println("Patient ID (cannot change): " + record.getPatientId());
@@ -207,7 +212,7 @@ public class MedicalRecordService {
     //patient history report
     public static void generatePatientHistoryReport(String patientId) {
         // Check for null or empty input
-        if (patientId == null || patientId.trim().isEmpty()) {
+        if (!HelperUtils.isNotNull(patientId)) {
             System.out.println("Invalid patient ID.");
             return;
         }
@@ -215,7 +220,7 @@ public class MedicalRecordService {
         // Get records by patient ID
         List<MedicalRecord> records = displayRecordsByPatient(patientId);
 
-        if (records == null || records.isEmpty()) {
+        if (records == null || records.isEmpty()){
             System.out.println("No medical records found for patient: " + patientId);
             return;
         }
@@ -223,7 +228,7 @@ public class MedicalRecordService {
         // Display patient history
         System.out.println("=== Medical History for Patient: " + patientId + " ===");
         for (MedicalRecord record : records) {
-            if (record != null) {
+            if (HelperUtils.isNotNull(record)) {
                 record.displayInfo("");
                 System.out.println("---------------------------");
             }
@@ -242,4 +247,47 @@ public class MedicalRecordService {
             System.out.println("---------------------------");
         }
     }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof MedicalRecord record) {
+            return saveRecord(record) ? "Record added successfully." : "Failed to add record.";
+        }
+        return "Invalid object type.";
+    }
+
+    @Override
+    public String remove(String id) {
+        return deleteRecord(id) ? "Record deleted successfully." : "Failed to delete record.";
+    }
+
+    @Override
+    public String getAll() {
+        displayAllRecords();
+        return "Displayed all medical records.";
+    }
+
+    @Override
+    public String search(String keyword) {
+        List<MedicalRecord> results = new ArrayList<>();
+        for (MedicalRecord record : medicalRecordList) {
+            if ((record.getDiagnosis() != null && record.getDiagnosis().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (record.getPrescription() != null && record.getPrescription().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (record.getNotes() != null && record.getNotes().toLowerCase().contains(keyword.toLowerCase()))) {
+                results.add(record);
+            }
+        }
+        if (results.isEmpty()) return "No records found for keyword: " + keyword;
+        for (MedicalRecord record : results) record.displayInfo("");
+        return "Search complete.";
+    }
+
+    @Override
+    public String searchById(String id) {
+        MedicalRecord record = getRecordById(id);
+        if (record == null) return "Record not found for ID: " + id;
+        record.displayInfo("");
+        return "Search complete.";
+    }
+
 }

@@ -1,5 +1,7 @@
 package service;
 
+import Interface.Manageable;
+import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Department;
@@ -10,9 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DepartmentService {
+public class DepartmentService implements Manageable, Searchable {
     public static List<Department> departmentList = new ArrayList<>();
-    public static Scanner scanner = new Scanner(System.in);
 
     public static Department addDepartment() {
         Department department = new Department();
@@ -205,4 +206,52 @@ public class DepartmentService {
         System.out.println("Nurse " + nurseId + " assigned to department " + departmentId);
         return true;
     }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof Department) {
+            Department dept = (Department) entity;
+            if (saveDepartment(dept)) {
+                return "Department added successfully: " + dept.getDepartmentId();
+            } else {
+                return "Failed to add department.";
+            }
+        }
+        return "Invalid entity type.";
+    }
+
+    @Override
+    public String remove(String id) {
+        return deleteDepartment(id) ? "Department deleted: " + id : "Department not found.";
+    }
+
+    @Override
+    public String getAll() {
+        if (departmentList.isEmpty()){
+            return "No departments available.";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Department d : departmentList) {
+            sb.append(d.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String search(String keyword) {
+        StringBuilder sb = new StringBuilder();
+        for (Department d : departmentList) {
+            if (d.getDepartmentName().toLowerCase().contains(keyword.toLowerCase())) {
+                sb.append(d.toString()).append("\n");
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : "No departments found for: " + keyword;
+    }
+
+    @Override
+    public String searchById(String id) {
+        Department dept = getDepartmentById(id);
+        return dept != null ? dept.toString() : "Department not found: " + id;
+    }
+
 }

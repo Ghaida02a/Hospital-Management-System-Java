@@ -1,17 +1,17 @@
 package service;
 
+import Interface.Manageable;
+import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Allergies;
 import entity.Patient;
 
-import java.lang.ref.SoftReference;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class PatientService {
+public class PatientService implements Manageable, Searchable {
     public static List<Patient> patientList = new ArrayList<>();
 
     public static Patient addPatient() {
@@ -122,7 +122,14 @@ public class PatientService {
 
     // display all
     public static void displayPatients() {
-        displayPatients(patientList.toString());
+        if (patientList.isEmpty()) {
+            System.out.println("No patients found!\n");
+            return;
+        }
+        for (Patient p : patientList) {
+            System.out.println(p); // requires Patient.toString()
+            System.out.println("------------------------");
+        }
     }
 
     // display filtered by criteria
@@ -133,11 +140,16 @@ public class PatientService {
         }
 
         System.out.println("===== Patients List (Filtered by: " + filter + ") =====");
+        boolean found = false;
         for (Patient p : patientList) {
             if (p.getBloodGroup() != null && p.getBloodGroup().equalsIgnoreCase(filter)) {
-                System.out.println(p); // make sure Patient.toString() is implemented
+                System.out.println(p);
                 System.out.println("------------------------");
+                found = true;
             }
+        }
+        if (!found) {
+            System.out.println("No patients found with filter: " + filter);
         }
         System.out.println("========================\n");
         return null;
@@ -171,8 +183,8 @@ public class PatientService {
 
         System.out.println("\n--- Adding Allergy for " + patient.getFirstName() + " ---");
 
-        System.out.println("Allergy Id:");
         String allergyId = HelperUtils.getRandomNumber(2);
+        System.out.println("Allergy ID assigned: " + allergyId);
 
         String allergyName = InputHandler.getStringInput("Enter Allergy Name (e.g., Peanuts): ");
 
@@ -200,6 +212,7 @@ public class PatientService {
         }
         for (int i = 0; i < patientList.size(); i++) {
             if (patientList.get(i).getId().equals(patientId)) {
+                updatedPatient.setId(patientId);
                 patientList.set(i, updatedPatient);
                 System.out.println("Patient updated successfully!\n");
                 return;
@@ -281,5 +294,49 @@ public class PatientService {
 
             System.out.println("===================================\n");
         }
+    }
+
+    @Override
+    public String add(Object entity) {
+        if (entity instanceof Patient patient) {
+            patientList.add(addPatient(patient)); // ensure ID & registration date
+            return "Patient added successfully!";
+        }
+        return "Invalid entity type.";
+    }
+
+    @Override
+    public String remove(String id) {
+        boolean removed = patientList.removeIf(p -> p.getId().equals(id));
+        return removed ? "Patient removed successfully!" : "Patient not found!";
+    }
+
+    @Override
+    public String getAll() {
+        if (patientList.isEmpty()) return "No patients available.";
+        StringBuilder sb = new StringBuilder("===== Patient List =====\n");
+        for (Patient p : patientList) {
+            sb.append(p.getId()).append(" - ").append(p.getFirstName())
+                    .append(" ").append(p.getLastName()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String search(String keyword) {
+        List<Patient> results = searchPatients(keyword);
+        if (results.isEmpty()) return "No patients found for keyword: " + keyword;
+        StringBuilder sb = new StringBuilder("Search Results:\n");
+        for (Patient p : results) sb.append(p.getId()).append(" - ")
+                .append(p.getFirstName()).append(" ")
+                .append(p.getLastName()).append("\n");
+        return sb.toString();
+    }
+
+    @Override
+    public String searchById(String id) {
+        Patient patient = getPatientById(id);
+        return (patient != null) ? "Patient found: " + patient.getFirstName() + " " + patient.getLastName()
+                : "Patient not found for ID: " + id;
     }
 }
