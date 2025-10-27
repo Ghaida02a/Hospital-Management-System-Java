@@ -1,5 +1,6 @@
 package service;
 
+import Interface.Appointable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Appointment;
@@ -11,7 +12,7 @@ import java.util.List;
 import Interface.Manageable;
 import Interface.Searchable;
 
-public class AppointmentService implements Manageable, Searchable {
+public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> appointmentList = new ArrayList<>();
 
 
@@ -116,7 +117,43 @@ public class AppointmentService implements Manageable, Searchable {
         return true;
     }
 
-    public static boolean cancelAppointment(String appointmentId) {
+    @Override
+    public void scheduleAppointment(Appointment appointment) {
+        if (HelperUtils.isNull(appointment)) {
+            System.out.println("Cannot schedule a null appointment.");
+            return;
+        }
+
+        if (HelperUtils.isNull(appointment.getAppointmentId()) || appointment.getAppointmentId().isEmpty()) {
+            appointment.setAppointmentId(HelperUtils.generateId("Appt"));
+        }
+
+        if (HelperUtils.isNull(appointment.getPatientId()) || HelperUtils.isNull(appointment.getDoctorId())) {
+            System.out.println("Patient ID and Doctor ID are required to schedule an appointment.");
+            return;
+        }
+
+        if (HelperUtils.isNull(appointment.getAppointmentDate())) {
+            System.out.println("Appointment date is required.");
+            return;
+        }
+
+        appointment.setStatus("Scheduled");
+        save(appointment);
+    }
+
+    @Override
+    public void cancelAppointment(String appointmentId) {
+        AppointmentService.cancelAppointmentById(appointmentId);
+    }
+
+    @Override
+    public void rescheduleAppointment(String appointmentId, LocalDate newDate) {
+        AppointmentService.rescheduleAppointmentById(appointmentId, newDate);
+    }
+
+
+    public static boolean cancelAppointmentById(String appointmentId){
         Appointment a = getAppointmentById(appointmentId);
         if (a == null) {
             System.out.println("Appointment with ID " + appointmentId + " not found.");
@@ -195,8 +232,8 @@ public class AppointmentService implements Manageable, Searchable {
         return appointment;
     }
 
-    public static boolean rescheduleAppointment(String appointmentId, LocalDate newDate) {
-        return rescheduleAppointment(appointmentId, newDate, "09:00"); // default time
+    public static boolean rescheduleAppointmentById(String appointmentId, LocalDate newDate){
+        return rescheduleAppointmentById(appointmentId, newDate); // default time
     }
 
     public static boolean rescheduleAppointment(Appointment appointment, LocalDate newDate, String newTime, String reason) {

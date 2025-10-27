@@ -345,7 +345,7 @@ public class HospitalManagementApp {
                 }
                 case 7 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to cancel: ");
-                    AppointmentService.cancelAppointment(aid);
+                    AppointmentService.cancelAppointmentById(aid);
                 }
                 case 8 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to complete: ");
