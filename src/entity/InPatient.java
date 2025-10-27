@@ -1,12 +1,13 @@
 package entity;
 
+import Interface.Billable;
 import Interface.Displayable;
 import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class InPatient extends Patient implements Displayable {
+public class InPatient extends Patient implements Displayable, Billable {
     private LocalDate admissionDate;
     private LocalDate dischargeDate;
     private String roomNumber;
@@ -65,7 +66,7 @@ public class InPatient extends Patient implements Displayable {
     }
 
     public void setRoomNumber(String roomNumber) {
-        if (HelperUtils.isNull(roomNumber) || HelperUtils.isPositive(Integer.parseInt(roomNumber)) || roomNumber.isEmpty()) {
+        if (HelperUtils.isNull(roomNumber) || roomNumber.trim().isEmpty()) {
             System.out.println("Room number cannot be empty.");
         } else {
             this.roomNumber = roomNumber;
@@ -77,7 +78,7 @@ public class InPatient extends Patient implements Displayable {
     }
 
     public void setBedNumber(String bedNumber) {
-        if (HelperUtils.isNull(bedNumber) || HelperUtils.isPositive(Integer.parseInt(bedNumber)) || bedNumber.isEmpty()) {
+        if (HelperUtils.isNull(bedNumber) || bedNumber.trim().isEmpty()) {
             System.out.println("Bed number cannot be empty.");
         } else {
             this.bedNumber = bedNumber;
@@ -108,6 +109,23 @@ public class InPatient extends Patient implements Displayable {
         }
     }
 
+    public long calculateStayDuration() {
+        if (admissionDate == null || dischargeDate == null) {
+            System.out.println("Cannot calculate stay duration — missing dates.");
+            return 0;
+        }
+        return java.time.temporal.ChronoUnit.DAYS.between(admissionDate, dischargeDate);
+    }
+
+    public double calculateTotalCharges() {
+        long days = calculateStayDuration();
+        if (days <= 0){
+            days = 1; // at least 1 day charge
+        }
+        return days * dailyCharges;
+    }
+
+
     @Override
     public String displayInfo(String str) {
         StringBuilder sb = new StringBuilder();
@@ -128,8 +146,26 @@ public class InPatient extends Patient implements Displayable {
     public String displaySummary(String str) {
         return "InPatient{" + getId() + ": " + getFirstName() + " " + getLastName() + ", room=" + roomNumber + "}";
     }
-    /**
-     * Override methods
-     * Add: calculateStayDuration(), calculateTotalCharges()
-     */
+
+    @Override
+    public double calculateCharges() {
+        return calculateTotalCharges();
+    }
+
+    @Override
+    public void generateBill() {
+        double total = calculateTotalCharges();
+        System.out.println("Generated Bill for " + getFirstName() + " " + getLastName() +
+                ": OMR " + total + " (" + calculateStayDuration() + " days)");
+    }
+
+    @Override
+    public void processPayment(double amount) {
+        double total = calculateTotalCharges();
+        if (amount < total) {
+            System.out.println("Insufficient payment. Remaining: OMR " + (total - amount));
+        } else {
+            System.out.println("Payment successful. Change: OMR " + (amount - total));
+        }
+    }
 }
