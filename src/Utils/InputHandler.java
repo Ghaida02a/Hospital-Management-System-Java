@@ -141,4 +141,12 @@ public class InputHandler {
             System.out.println("Invalid email format. Try again.");
         }
     }
+
+    public static boolean getBooleanInput(String s) {
+        if(s.equalsIgnoreCase("true") || s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("y")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

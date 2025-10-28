@@ -77,24 +77,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setEmergencyContact(String emergencyContact) {
-        if (HelperUtils.isNull(emergencyContact)|| emergencyContact.isEmpty()) {
-            this.emergencyContact = null;
-            return;
-        }
-        String normalized = emergencyContact.trim();
-        // Allow digits, spaces, dashes and leading +. Require at least 7 digits overall.
-        String digitsOnly = normalized.replaceAll("[^0-9]", "");
-        if (digitsOnly.length() == 8) {
-            System.out.println("Warning: emergency contact '" + emergencyContact + "' appears too short. Setting to null.");
-            this.emergencyContact = null;
-            return;
-        }
-        if (normalized.matches("^[+]?[0-9][0-9\\s-]{5,}$")) {
-            this.emergencyContact = normalized;
-        } else {
-            System.out.println("Warning: emergency contact '" + emergencyContact + "' contains invalid characters. Setting to null.");
-            this.emergencyContact = null;
-        }
+        this.phoneNumber = HelperUtils.isValidString(phoneNumber) ? phoneNumber : "";
     }
 
     public LocalDate getRegistrationDate() {
@@ -121,16 +104,17 @@ public class Patient extends Person implements Displayable {
 
     public void setInsuranceId(String insuranceId) {
         if (HelperUtils.isNull(insuranceId) || insuranceId.trim().isEmpty()) {
+            System.out.println("Insurance ID cannot be empty.");
             this.insuranceId = null;
             return;
         }
-        // Basic validation: length between 3 and 50 and no control characters
-        String insuranceId = insuranceId;
-        if (insuranceId.length() < 3 || insuranceId.length() > 50 || insuranceId.matches(".*\\p{Cntrl}.*")) {
-            System.out.println("Warning: insurance ID appears invalid. Setting to null.");
+
+        // Accept IDs between 2 and 30 characters
+        if (insuranceId.length() < 2 || insuranceId.length() > 30) {
+            System.out.println("Warning: insurance ID length must be between 2 and 30.");
             this.insuranceId = null;
         } else {
-            this.insuranceId = insuranceId;
+            this.insuranceId = insuranceId.trim();
         }
     }
 

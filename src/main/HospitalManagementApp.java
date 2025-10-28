@@ -1,25 +1,24 @@
 package main;
 
-import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
 import service.*;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+
+import static service.PatientService.*;
 
 public class HospitalManagementApp {
     public static Scanner scanner = new Scanner(System.in);
     public static Integer mainMenuOption = 0;
+    public static Integer option = 0;
 
     public static void main(String[] args) {
         System.out.println("Welcome to the Hospital Management System");
         while (mainMenuOption != 8) {
             showMainMenu();
-            mainMenuOption = scanner.nextInt();
-            scanner.nextLine();
             switch (mainMenuOption) {
                 case 1 -> showPatientManagementMenu();
                 case 2 -> showDoctorManagementMenu();
@@ -50,11 +49,11 @@ public class HospitalManagementApp {
                 8- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        mainMenuOption = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void patientManagementMenu() {
-        System.out.println("===== Main Menu =====");
+        System.out.println("===== Patient Menu =====");
         System.out.print("""
                 1- Register New Patient
                 2- Register InPatient
@@ -68,28 +67,23 @@ public class HospitalManagementApp {
                 10- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showPatientManagementMenu() {
-        int option = 0;
-
         while (option != 10) {
             patientManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
-
             switch (option) {
                 case 1 -> {
                     Patient patient = PatientService.addPatient();
+                    PatientService.save(patient);
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
-                    PatientService.save(patient);
                 }
-                case 2 -> System.out.println("Register InPatient – coming soon...");
-                case 3 -> System.out.println("Register OutPatient – coming soon...");
-                case 4 -> System.out.println("Register Emergency Patient – coming soon...");
+                case 2 -> PatientService.save(InpatientRegistration());
+                case 3 -> PatientService.save(OutPatientRegistration());
+                case 4 -> PatientService.save(EmergencyPatientRegistration());
                 case 5 -> PatientService.displayAllPatients();
                 case 6 -> {
                     String name = InputHandler.getStringInput("Enter patient name to search: ").toString();
@@ -140,7 +134,7 @@ public class HospitalManagementApp {
                 11- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showDoctorManagementMenu() {
@@ -148,9 +142,6 @@ public class HospitalManagementApp {
 
         while (option != 11) {
             doctorManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
-
             switch (option) {
                 case 1 -> {
                     Doctor doctor = DoctorService.addDoctor();
@@ -221,7 +212,7 @@ public class HospitalManagementApp {
                 7- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showNurseManagementMenu() {
@@ -229,9 +220,6 @@ public class HospitalManagementApp {
 
         while (option != 7) {
             nurseManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
-
             switch (option) {
                 case 1 -> {
                     Nurse nurse = NurseService.addNurse();
@@ -294,15 +282,13 @@ public class HospitalManagementApp {
                 10- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showAppointmentManagementMenu() {
         int option = 0;
         while (option != 10) {
             appointmentManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
             switch (option) {
                 case 1 -> {
                     Appointment appt = AppointmentService.addAppointment();
@@ -371,15 +357,13 @@ public class HospitalManagementApp {
                 8- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showMedicalRecordsManagementMenu() {
         int option = 0;
         while (option != 8) {
             medicalRecordsManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
             switch (option) {
                 case 1 -> {
                     MedicalRecord record = MedicalRecordService.createRecord();
@@ -445,15 +429,13 @@ public class HospitalManagementApp {
                 8- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showDepartmentManagementMenu() {
         int option = 0;
         while (option != 8) {
             departmentManagementMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
             switch (option) {
                 case 1 -> {
                     Department dept = DepartmentService.addDepartment();
@@ -529,15 +511,13 @@ public class HospitalManagementApp {
                 6- Exit
                 """);
         System.out.println("===============");
-        System.out.print("Please enter your choice: ");
+        option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showReportsAndStatisticsMenu() {
         int option = 0;
         while (option != 6) {
             reportsAndStatisticsMenu();
-            option = scanner.nextInt();
-            scanner.nextLine();
             switch (option) {
                 case 1 -> System.out.println("still");
                 case 2 -> System.out.println("still");

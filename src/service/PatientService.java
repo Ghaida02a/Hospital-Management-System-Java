@@ -4,8 +4,7 @@ import Interface.Manageable;
 import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
-import entity.Allergies;
-import entity.Patient;
+import entity.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,6 +12,10 @@ import java.util.List;
 
 public class PatientService implements Manageable, Searchable {
     public static List<Patient> patientList = new ArrayList<>();
+    public static List<InPatient> inPatientList = new ArrayList<>();
+    public static List<OutPatient> outPatientList = new ArrayList<>();
+    public static List<EmergencyPatient> emergencyPatientList = new ArrayList<>();
+
 
     public static Patient addPatient() {
         Patient patient = new Patient();
@@ -45,7 +48,8 @@ public class PatientService implements Manageable, Searchable {
         patient.setEmergencyContact(InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: "));
 
         // Insurance ID
-        patient.setInsuranceId(InputHandler.getStringInput("Enter Insurance ID: "));
+        patient.setInsuranceId(HelperUtils.generateId("INS"));
+        System.out.println("Assigned Insurance ID: " + patient.getInsuranceId());
 
         return patient;
     }
@@ -198,10 +202,31 @@ public class PatientService implements Manageable, Searchable {
         System.out.println("Successfully added allergy '" + allergyName + "' to patient " + patientId + ".\n");
     }
 
-    public static void save(Patient patient) {
+    public static void save(Patient patient) { //save Patient
         if (HelperUtils.isNotNull(patient)) {
             patientList.add(patient);
-            System.out.println("Patient added successfully!\n");
+            System.out.println("Patient registered successfully!\n");
+        }
+    }
+
+    public static void save(InPatient inPatient) { //save InPatient
+        if (HelperUtils.isNotNull(inPatient)) {
+            inPatientList.add(inPatient);
+            System.out.println("InPatient registered successfully!\n");
+        }
+    }
+
+    public static void save(OutPatient outPatient) { //save OutPatient
+        if (HelperUtils.isNotNull(outPatient)) {
+            outPatientList.add(outPatient);
+            System.out.println("OutPatient registered successfully!\n");
+        }
+    }
+
+    public static void save(EmergencyPatient emergencyPatient) { //save Emergency Patient
+        if (HelperUtils.isNotNull(emergencyPatient)) {
+            emergencyPatientList.add(emergencyPatient);
+            System.out.println("Emergency patient registered successfully!\n");
         }
     }
 
@@ -246,22 +271,71 @@ public class PatientService implements Manageable, Searchable {
         return null;
     }
 
+//    public static void displayAllPatients() {
+//        if (patientList.isEmpty()) {
+//            System.out.println("===== Patients List =====");
+//            System.out.println("------------------------");
+//            System.out.println("No patients found!");
+//            System.out.println("========================\n");
+//            return;
+//        }
+//
+//        System.out.println("===== Patients List =====");
+//        for (Patient p : patientList) {
+//            System.out.println(p); // make sure Patient.toString() is implemented
+//            System.out.println("------------------------");
+//        }
+//        System.out.println("========================\n");
+
     public static void displayAllPatients() {
-        if (patientList.isEmpty()) {
+        System.out.println("\n===== All Patients =====\n");
+
+        // --- General Patients ---
+        if (!patientList.isEmpty()) {
             System.out.println("===== Patients List =====");
-            System.out.println("------------------------");
-            System.out.println("No patients found!");
+            for (Patient p : patientList) {
+                System.out.println(p);
+                System.out.println("------------------------");
+            }
             System.out.println("========================\n");
-            return;
         }
 
-        System.out.println("===== Patients List =====");
-        for (Patient p : patientList) {
-            System.out.println(p); // make sure Patient.toString() is implemented
-            System.out.println("------------------------");
+        // --- InPatients ---
+        if (!inPatientList.isEmpty()) {
+            System.out.println("===== InPatients List =====");
+            for (InPatient p : inPatientList) {
+                System.out.println(p);
+                System.out.println("------------------------");
+            }
+            System.out.println("========================\n");
         }
-        System.out.println("========================\n");
+
+        // --- OutPatients ---
+        if (!outPatientList.isEmpty()) {
+            System.out.println("===== OutPatients List =====");
+            for (OutPatient p : outPatientList) {
+                System.out.println(p);
+                System.out.println("------------------------");
+            }
+            System.out.println("========================\n");
+        }
+
+        // --- Emergency Patients ---
+        if (!emergencyPatientList.isEmpty()) {
+            System.out.println("===== Emergency Patients List =====");
+            for (EmergencyPatient p : emergencyPatientList) {
+                System.out.println(p);
+                System.out.println("------------------------");
+            }
+            System.out.println("========================\n");
+        }
+
+        // Optional: if no patients at all
+        if (patientList.isEmpty() && inPatientList.isEmpty() && outPatientList.isEmpty() && emergencyPatientList.isEmpty()) {
+            System.out.println("No patients found in the system.");
+        }
     }
+
 
     public static List<Patient> searchPatientsByName(String name) {
         List<Patient> searchResults = new ArrayList<>();
@@ -296,6 +370,98 @@ public class PatientService implements Manageable, Searchable {
         }
     }
 
+    public static InPatient InpatientRegistration() {
+        InPatient inPatient = new InPatient();
+        System.out.println("\n--- Inpatient Registration ---");
+
+        Patient basePatient = PatientService.addPatient();// fill basic patient info
+        inPatient.setId(basePatient.getId());
+        inPatient.setFirstName(basePatient.getFirstName());
+        inPatient.setLastName(basePatient.getLastName());
+        inPatient.setDateOfBirth(basePatient.getDateOfBirth());
+        inPatient.setGender(basePatient.getGender());
+        inPatient.setPhoneNumber(basePatient.getPhoneNumber());
+        inPatient.setEmail(basePatient.getEmail());
+        inPatient.setAddress(basePatient.getAddress());
+        inPatient.setBloodGroup(basePatient.getBloodGroup());
+        inPatient.setEmergencyContact(basePatient.getEmergencyContact());
+        inPatient.setInsuranceId(basePatient.getInsuranceId());
+        inPatient.setRegistrationDate(basePatient.getRegistrationDate());
+
+        do {
+            inPatient.setAdmissionDate(InputHandler.getDateInput("Enter Admission Date: "));
+        } while (inPatient.getAdmissionDate() == null);
+        inPatient.setDischargeDate(InputHandler.getDateInput("Enter Discharge Date: "));
+        inPatient.setRoomNumber(InputHandler.getStringInput("Enter Room Number: "));
+        inPatient.setBedNumber(InputHandler.getStringInput("Enter Bed Number: "));
+        inPatient.setAdmittingDoctorId(InputHandler.getStringInput("Enter Admitting Doctor ID: "));
+        inPatient.setDailyCharges(InputHandler.getDoubleInput("Enter Daily Charges: "));
+
+        return inPatient;
+    }
+
+    public static OutPatient OutPatientRegistration() {
+        OutPatient outPatient = new OutPatient();
+        System.out.println("\n--- OutPatient Registration ---");
+
+        Patient basePatient = PatientService.addPatient();// fill basic patient info
+        outPatient.setId(basePatient.getId());
+        outPatient.setFirstName(basePatient.getFirstName());
+        outPatient.setLastName(basePatient.getLastName());
+        outPatient.setDateOfBirth(basePatient.getDateOfBirth());
+        outPatient.setGender(basePatient.getGender());
+        outPatient.setPhoneNumber(basePatient.getPhoneNumber());
+        outPatient.setEmail(basePatient.getEmail());
+        outPatient.setAddress(basePatient.getAddress());
+        outPatient.setBloodGroup(basePatient.getBloodGroup());
+        outPatient.setEmergencyContact(basePatient.getEmergencyContact());
+        outPatient.setInsuranceId(basePatient.getInsuranceId());
+        outPatient.setRegistrationDate(basePatient.getRegistrationDate());
+
+        outPatient.setVisitCount(InputHandler.getIntInput("Enter Visit Count: "));
+        outPatient.setLastVisitDate(InputHandler.getDateInput("Enter Last Visit Date: "));
+        outPatient.setPreferredDoctorId(InputHandler.getStringInput("Enter Preferred Doctor ID: "));
+        return outPatient;
+    }
+
+    public static EmergencyPatient EmergencyPatientRegistration() {
+        EmergencyPatient emergencyPatient = new EmergencyPatient();
+        System.out.println("\n--- Emergency Patient Registration ---");
+
+        InPatient inPatient = InpatientRegistration();
+
+        //Initialize base Patient fields from InPatient
+        emergencyPatient.setId(inPatient.getId());
+        emergencyPatient.setFirstName(inPatient.getFirstName());
+        emergencyPatient.setLastName(inPatient.getLastName());
+        emergencyPatient.setDateOfBirth(inPatient.getDateOfBirth());
+        emergencyPatient.setGender(inPatient.getGender());
+        emergencyPatient.setPhoneNumber(inPatient.getPhoneNumber());
+        emergencyPatient.setEmail(inPatient.getEmail());
+        emergencyPatient.setAddress(inPatient.getAddress());
+        emergencyPatient.setBloodGroup(inPatient.getBloodGroup());
+        emergencyPatient.setEmergencyContact(inPatient.getEmergencyContact());
+        emergencyPatient.setInsuranceId(inPatient.getInsuranceId());
+        emergencyPatient.setRegistrationDate(inPatient.getRegistrationDate());
+
+        // InPatient-specific fields
+        emergencyPatient.setAdmissionDate(inPatient.getAdmissionDate());
+        emergencyPatient.setDischargeDate(inPatient.getDischargeDate());
+        emergencyPatient.setRoomNumber(inPatient.getRoomNumber());
+        emergencyPatient.setBedNumber(inPatient.getBedNumber());
+        emergencyPatient.setAdmittingDoctorId(inPatient.getAdmittingDoctorId());
+        emergencyPatient.setDailyCharges(inPatient.getDailyCharges());
+
+        // Emergency-specific fields
+        emergencyPatient.setEmergencyType(InputHandler.getStringInput("Enter Emergency Type: "));
+        emergencyPatient.setArrivalMode(InputHandler.getStringInput("Enter Arrival Mode (Ambulance/Walk-in): "));
+        emergencyPatient.setTriageLevel(InputHandler.getIntInput("Enter Triage Level (1-5): "));
+        emergencyPatient.setAdmittedViaER(InputHandler.getBooleanInput("Admitted via ER (true/false): "));
+
+        return emergencyPatient;
+    }
+
+
     @Override
     public String add(Object entity) {
         if (entity instanceof Patient patient) {
@@ -327,9 +493,10 @@ public class PatientService implements Manageable, Searchable {
         List<Patient> results = searchPatients(keyword);
         if (results.isEmpty()) return "No patients found for keyword: " + keyword;
         StringBuilder sb = new StringBuilder("Search Results:\n");
-        for (Patient p : results) sb.append(p.getId()).append(" - ")
-                .append(p.getFirstName()).append(" ")
-                .append(p.getLastName()).append("\n");
+        for (Patient p : results)
+            sb.append(p.getId()).append(" - ")
+                    .append(p.getFirstName()).append(" ")
+                    .append(p.getLastName()).append("\n");
         return sb.toString();
     }
 

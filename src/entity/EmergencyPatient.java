@@ -12,6 +12,10 @@ public class EmergencyPatient extends InPatient implements Displayable {
     private int triageLevel; // 1 to 5
     private boolean admittedViaER;
 
+    public EmergencyPatient(){
+        super();
+    }
+
     public EmergencyPatient(LocalDate admissionDate, LocalDate dischargeDate, String roomNumber, String bedNumber, String admittingDoctorId, double dailyCharges, String emergencyType, String arrivalMode, int triageLevel, boolean admittedViaER) {
         super(admissionDate, dischargeDate, roomNumber, bedNumber, admittingDoctorId, dailyCharges);
         this.emergencyType = emergencyType;

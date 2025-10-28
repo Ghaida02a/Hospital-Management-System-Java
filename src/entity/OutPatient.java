@@ -11,6 +11,9 @@ public class OutPatient extends Patient implements Displayable{
     private LocalDate lastVisitDate;
     private String preferredDoctorId;
 
+    public OutPatient() {
+        super();
+    }
     public OutPatient(int visitCount, LocalDate lastVisitDate, String preferredDoctorId) {
         this.visitCount = visitCount;
         this.lastVisitDate = lastVisitDate;
