@@ -9,6 +9,9 @@ public class Consultant extends Doctor implements Displayable {
     private boolean onlineConsultationAvailable;
     private int consultationDuration; // in minutes
 
+    public Consultant(){
+        super();
+    }
     public Consultant(List<String> consultationTypes, boolean onlineConsultationAvailable, int consultationDuration) {
         this.consultationTypes = consultationTypes;
         this.onlineConsultationAvailable = onlineConsultationAvailable;

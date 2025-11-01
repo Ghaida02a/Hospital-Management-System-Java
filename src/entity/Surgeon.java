@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Utils.HelperUtils;
+import Utils.InputHandler;
 import service.MedicalRecordService;
 
 public class Surgeon extends Doctor implements Displayable {
@@ -63,6 +64,15 @@ public class Surgeon extends Doctor implements Displayable {
         } else {
             this.surgeryTypes = surgeryTypes;
         }
+    }
+    public static void setSurgeryTypeForSurgeon(Surgeon surgeon) {
+        String type = InputHandler.getStringInput("Enter surgery type: ");
+        if (HelperUtils.isNull(type) || type.isEmpty()) {
+            System.out.println("Invalid input. Surgery type cannot be empty.");
+            return;
+        }
+        surgeon.setSurgeryTypes(List.of(type));
+        System.out.println("Surgery type set to: " + type);
     }
 
     public boolean isOperationTheatreAccess() {

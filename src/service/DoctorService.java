@@ -4,8 +4,7 @@ import Interface.Manageable;
 import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
-import entity.Doctor;
-import entity.Patient;
+import entity.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -14,6 +13,9 @@ import java.util.Set;
 
 public class DoctorService implements Manageable, Searchable {
     public static List<Doctor> doctorsList = new ArrayList<>();
+    public static List<Surgeon> surgeonList = new ArrayList<>();
+    public static List<Consultant> consultantList = new ArrayList<>();
+    public static List<GeneralPractitioner> generalPractitionerList = new ArrayList<>();
     private static Doctor initializeDoctor(Doctor doctor) {
         // Generate ID
         String generatedId;
@@ -213,7 +215,25 @@ public class DoctorService implements Manageable, Searchable {
         }
         doctorsList.add(doctor);
         System.out.println("\n===== Doctor Added Successfully =====\n");
+    }
+    public static void save(Surgeon surgeon) { //save Surgeon
+        if (HelperUtils.isNotNull(surgeon)) {
+            surgeonList.add(surgeon);
+            System.out.println("Surgeon Added successfully!\n");
+        }
+    }
+    public static void save(Consultant consultant) { //save Consultant
+        if (HelperUtils.isNotNull(consultant)) {
+            consultantList.add(consultant);
+            System.out.println("Consultant Added successfully!\n");
+        }
+    }
 
+    public static void save(GeneralPractitioner generalPractitioner) { //save General Practitioner
+        if (HelperUtils.isNotNull(generalPractitioner)) {
+            generalPractitionerList.add(generalPractitioner);
+            System.out.println("General Practitioner Added successfully!\n");
+        }
     }
 
     public static void editDoctor(String doctorId, Doctor updatedDoctor) {
@@ -325,6 +345,97 @@ public class DoctorService implements Manageable, Searchable {
             }
         }
         return availableDoctors;
+    }
+
+    public static Surgeon addSurgeon() {
+        Surgeon surgeon = new Surgeon();
+        System.out.println("\n--- Surgeon Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        surgeon.setId(baseDoctor.getId());
+        surgeon.setFirstName(baseDoctor.getFirstName());
+        surgeon.setLastName(baseDoctor.getLastName());
+        surgeon.setDateOfBirth(baseDoctor.getDateOfBirth());
+        surgeon.setGender(baseDoctor.getGender());
+        surgeon.setPhoneNumber(baseDoctor.getPhoneNumber());
+        surgeon.setEmail(baseDoctor.getEmail());
+        surgeon.setAddress(baseDoctor.getAddress());
+        surgeon.setSpecialization(baseDoctor.getSpecialization());
+        surgeon.setQualification(baseDoctor.getQualification());
+        surgeon.setExperienceYears(baseDoctor.getExperienceYears());
+        surgeon.setDepartmentId(baseDoctor.getDepartmentId());
+        surgeon.setConsultationFee(baseDoctor.getConsultationFee());
+        surgeon.setAvailableSlots(baseDoctor.getAvailableSlots());
+        surgeon.setAvailable(baseDoctor.isAvailable());
+
+        // Surgeon-specific info
+        surgeon.setSurgeriesPerformed(InputHandler.getIntInput("Enter Number of Surgeries Performed: "));
+        surgeon.setSurgeryTypeForSurgeon(surgeon);
+        surgeon.setOperationTheatreAccess(InputHandler.getConfirmation("Does the surgeon have Operation Theatre Access? "));
+
+        return surgeon;
+    }
+
+    public static Consultant addConsultant() {
+        Consultant consultant = new Consultant();
+        System.out.println("\n--- Consultant Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        consultant.setId(baseDoctor.getId());
+        consultant.setFirstName(baseDoctor.getFirstName());
+        consultant.setLastName(baseDoctor.getLastName());
+        consultant.setDateOfBirth(baseDoctor.getDateOfBirth());
+        consultant.setGender(baseDoctor.getGender());
+        consultant.setPhoneNumber(baseDoctor.getPhoneNumber());
+        consultant.setEmail(baseDoctor.getEmail());
+        consultant.setAddress(baseDoctor.getAddress());
+        consultant.setSpecialization(baseDoctor.getSpecialization());
+        consultant.setQualification(baseDoctor.getQualification());
+        consultant.setExperienceYears(baseDoctor.getExperienceYears());
+        consultant.setDepartmentId(baseDoctor.getDepartmentId());
+        consultant.setConsultationFee(baseDoctor.getConsultationFee());
+        consultant.setAvailableSlots(baseDoctor.getAvailableSlots());
+        consultant.setAvailable(baseDoctor.isAvailable());
+
+        // Consultant-specific info
+        //   private boolean onlineConsultationAvailable;
+        //    private int consultationDuration; // in minutes
+        //consultant.setConsultationTypes(InputHandler.getStringInput(""));
+        consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes)"));
+
+        return consultant;
+    }
+
+    public static GeneralPractitioner addGeneralPractitioner() {
+        GeneralPractitioner generalPractitioner = new GeneralPractitioner();
+        System.out.println("\n--- General Practitioner Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        generalPractitioner.setId(baseDoctor.getId());
+        generalPractitioner.setFirstName(baseDoctor.getFirstName());
+        generalPractitioner.setLastName(baseDoctor.getLastName());
+        generalPractitioner.setDateOfBirth(baseDoctor.getDateOfBirth());
+        generalPractitioner.setGender(baseDoctor.getGender());
+        generalPractitioner.setPhoneNumber(baseDoctor.getPhoneNumber());
+        generalPractitioner.setEmail(baseDoctor.getEmail());
+        generalPractitioner.setAddress(baseDoctor.getAddress());
+        generalPractitioner.setSpecialization(baseDoctor.getSpecialization());
+        generalPractitioner.setQualification(baseDoctor.getQualification());
+        generalPractitioner.setExperienceYears(baseDoctor.getExperienceYears());
+        generalPractitioner.setDepartmentId(baseDoctor.getDepartmentId());
+        generalPractitioner.setConsultationFee(baseDoctor.getConsultationFee());
+        generalPractitioner.setAvailableSlots(baseDoctor.getAvailableSlots());
+        generalPractitioner.setAvailable(baseDoctor.isAvailable());
+
+        // generalPractitioner-specific info
+        generalPractitioner.setWalkinAvailable(InputHandler.getConfirmation("Is Walk-in Available? "));
+        generalPractitioner.setHomeVisitAvailable(InputHandler.getConfirmation("Is Home Visit Available? "));
+        generalPractitioner.setVaccinationCertified(InputHandler.getConfirmation("Is Vaccination Certified? "));
+
+        return generalPractitioner;
     }
 
     @Override

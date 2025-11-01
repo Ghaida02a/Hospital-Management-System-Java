@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import static service.DoctorService.*;
 import static service.PatientService.*;
 
 public class HospitalManagementApp {
@@ -138,8 +139,6 @@ public class HospitalManagementApp {
     }
 
     private static void showDoctorManagementMenu() {
-        int option = 0;
-
         while (option != 11) {
             doctorManagementMenu();
             switch (option) {
@@ -147,15 +146,9 @@ public class HospitalManagementApp {
                     Doctor doctor = DoctorService.addDoctor();
                     DoctorService.save(doctor);
                 }
-                case 2 -> {
-                    //Surgeon surgeon = SurgeonService.addSurgeon();
-                    //DoctorService.save(surgeon);
-                }
-                case 3 -> {
-//                    Consultant consultant = ConsultantService.addConsultant();
-//                    DoctorService.save(consultant);
-                }
-                case 4 -> System.out.println(" Add General Practitioner – coming soon...");
+                case 2 -> DoctorService.save(addSurgeon());
+                case 3 -> DoctorService.save(addConsultant());
+                case 4 -> DoctorService.save(addGeneralPractitioner());
                 case 5 -> DoctorService.displayAllDoctors();
                 case 6 -> {
                     String specialization = InputHandler.getStringInput("Enter specialization to search:");

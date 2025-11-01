@@ -7,6 +7,9 @@ public class GeneralPractitioner extends Doctor implements Displayable {
     private boolean homeVisitAvailable;
     private boolean vaccinationCertified;
 
+    public GeneralPractitioner(){
+        super();
+    }
     public GeneralPractitioner(boolean walkinAvailable, boolean homeVisitAvailable, boolean vaccinationCertified) {
         this.walkinAvailable = walkinAvailable;
         this.homeVisitAvailable = homeVisitAvailable;
