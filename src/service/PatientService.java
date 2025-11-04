@@ -74,7 +74,7 @@ public class PatientService implements Manageable, Searchable {
         while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
         patient.setPatientId(generatedId);
         System.out.println("Person ID: " + patient.getId());
-        System.out.println("Patient ID: " + patient.getId());
+        System.out.println("Patient ID: " + patient.getPatientId());
 
         // Registration Date
         patient.setRegistrationDate(LocalDate.now());
