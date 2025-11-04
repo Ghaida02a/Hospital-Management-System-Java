@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Patient extends Person implements Displayable {
+    private String patientId;
     private String bloodGroup;
     private List<Allergies> allergies;
     private String emergencyContact;
@@ -28,6 +29,29 @@ public class Patient extends Person implements Displayable {
         this.registrationDate = LocalDate.now();
     }
 
+    public Patient(String patientId, String bloodGroup, List<Allergies> allergies, String emergencyContact, LocalDate registrationDate, String insuranceId, List<MedicalRecord> medicalRecord, List<Appointment> appointment) {
+        this.patientId = patientId;
+        this.bloodGroup = bloodGroup;
+        this.allergies = allergies;
+        this.emergencyContact = emergencyContact;
+        this.registrationDate = registrationDate;
+        this.insuranceId = insuranceId;
+        this.medicalRecord = medicalRecord;
+        this.appointment = appointment;
+    }
+
+    public Patient(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address, String patientId, String bloodGroup, List<Allergies> allergies, String emergencyContact, LocalDate registrationDate, String insuranceId, List<MedicalRecord> medicalRecord, List<Appointment> appointment) {
+        super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
+        this.patientId = patientId;
+        this.bloodGroup = bloodGroup;
+        this.allergies = allergies;
+        this.emergencyContact = emergencyContact;
+        this.registrationDate = registrationDate;
+        this.insuranceId = insuranceId;
+        this.medicalRecord = medicalRecord;
+        this.appointment = appointment;
+    }
+
     public Patient(String id, String firstName, String lastName, LocalDate dateOfBirth, String gender, String phoneNumber, String email, String address, String bloodGroup, List<Allergies> allergies, String emergencyContact, LocalDate registrationDate, String insuranceId, List<MedicalRecord> medicalRecord, List<Appointment> appointment) {
         super(id, firstName, lastName, dateOfBirth, gender, phoneNumber, email, address);
         // Use setters to apply validations and normalization
@@ -40,6 +64,13 @@ public class Patient extends Person implements Displayable {
         setAppointment(appointment);
     }
 
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId("PAT") : id;
+    }
 
     public String getBloodGroup() {
         return bloodGroup;

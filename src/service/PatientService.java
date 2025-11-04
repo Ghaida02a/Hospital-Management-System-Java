@@ -20,6 +20,7 @@ public class PatientService implements Manageable, Searchable {
     public static Patient addPatient() {
         Patient patient = new Patient();
 
+        System.out.println("\n--- Patient Registration ---");
         initializePatient(patient);
 
         // Name
@@ -64,12 +65,15 @@ public class PatientService implements Manageable, Searchable {
 
     private static Patient initializePatient(Patient patient) {
         // Generate ID
+        patient.setId(HelperUtils.getRandomNumber(10));
+        // Patient ID
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("PAT");
         }
         while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
-        patient.setId(generatedId);
+        patient.setPatientId(generatedId);
+        System.out.println("Person ID: " + patient.getId());
         System.out.println("Patient ID: " + patient.getId());
 
         // Registration Date

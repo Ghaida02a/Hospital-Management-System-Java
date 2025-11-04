@@ -18,12 +18,15 @@ public class DoctorService implements Manageable, Searchable {
     public static List<GeneralPractitioner> generalPractitionerList = new ArrayList<>();
     private static Doctor initializeDoctor(Doctor doctor) {
         // Generate ID
+        doctor.setId(HelperUtils.getRandomNumber(10));
+        // Doctor ID
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("DR");
         }
         while (HelperUtils.checkIfIdExists(doctorsList, generatedId)); // ensure uniqueness
-        doctor.setId(generatedId);
+        doctor.setDoctorId(generatedId);
+        System.out.println("Person ID: " + doctor.getId());
         System.out.println("Doctor ID: " + doctor.getId());
 
         return doctor;
@@ -31,7 +34,7 @@ public class DoctorService implements Manageable, Searchable {
 
     public static Doctor addDoctor() {
         Doctor doctor = new Doctor();
-
+        System.out.println("\n--- Doctor Registration ---");
         initializeDoctor(doctor);
 
         doctor.setFirstName(InputHandler.getStringInput("Enter First Name: "));

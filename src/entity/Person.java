@@ -39,7 +39,7 @@ public class Person implements Displayable {
     }
 
     public void setId(String id) {
-        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId("P") : id;
+        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId() : id;
     }
 
     public String getFirstName() {
