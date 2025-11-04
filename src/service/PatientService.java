@@ -461,6 +461,10 @@ public class PatientService implements Manageable, Searchable {
         return emergencyPatient;
     }
 
+    public static List<Patient> getAllPatients() {
+        return new ArrayList<>(patientList);
+    }
+
 
     @Override
     public String add(Object entity) {

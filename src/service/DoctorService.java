@@ -213,12 +213,14 @@ public class DoctorService implements Manageable, Searchable {
             System.out.println("Doctor with ID " + doctor.getId() + " already exists.");
             return;
         }
-        doctorsList.add(doctor);
-        System.out.println("\n===== Doctor Added Successfully =====\n");
+        if (HelperUtils.isNotNull(doctor)) {
+            doctorsList.add(doctor);
+            System.out.println("Doctor Added successfully!\n");
+        }
     }
     public static void save(Surgeon surgeon) { //save Surgeon
         if (HelperUtils.isNotNull(surgeon)) {
-            surgeonList.add(surgeon);
+            //surgeonList.add(surgeon);
             System.out.println("Surgeon Added successfully!\n");
         }
     }
@@ -298,15 +300,36 @@ public class DoctorService implements Manageable, Searchable {
     }
 
     public static void displayAllDoctors() {
-        if (doctorsList.isEmpty()) {
-            System.out.println("No doctors found.\n");
-            return;
+        if (!doctorsList.isEmpty()) {
+            System.out.println("===== Doctors List =====");
+            for (Doctor doctor : doctorsList) {
+                doctor.displayInfo();
+                System.out.println("------------------------");
+            }
         }
 
-        System.out.println("===== Doctors List =====");
-        for (Doctor doctor : doctorsList) {
-            doctor.displayInfo("");
-            System.out.println("------------------------");
+        if (!surgeonList.isEmpty()) {
+            System.out.println("----- Surgeons -----");
+            for (Surgeon surgeon : surgeonList) {
+                surgeon.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!consultantList.isEmpty()) {
+            System.out.println("----- Consultants -----");
+            for (Consultant consultant : consultantList) {
+                consultant.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!generalPractitionerList.isEmpty()) {
+            System.out.println("----- General Practitioners -----");
+            for (GeneralPractitioner gp : generalPractitionerList) {
+                gp.displayInfo();
+                System.out.println("------------------------");
+            }
         }
     }
 
@@ -334,14 +357,6 @@ public class DoctorService implements Manageable, Searchable {
         for (Doctor doctor : doctorsList) {
             if (doctor.isAvailable()) {
                 availableDoctors.add(doctor);
-            }
-        }
-        if (availableDoctors.isEmpty()) {
-            System.out.println("No available doctors found.");
-        } else {
-            System.out.println("Available Doctors:");
-            for (Doctor doc : availableDoctors) {
-                System.out.println(doc);
             }
         }
         return availableDoctors;
@@ -404,7 +419,7 @@ public class DoctorService implements Manageable, Searchable {
         //    private int consultationDuration; // in minutes
         //consultant.setConsultationTypes(InputHandler.getStringInput(""));
         consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes)"));
-
+        save(consultant);
         return consultant;
     }
 
@@ -436,6 +451,10 @@ public class DoctorService implements Manageable, Searchable {
         generalPractitioner.setVaccinationCertified(InputHandler.getConfirmation("Is Vaccination Certified? "));
 
         return generalPractitioner;
+    }
+
+    public static List<Doctor> getAllDoctors() {
+        return new ArrayList<>(doctorsList);
     }
 
     @Override

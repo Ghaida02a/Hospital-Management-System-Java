@@ -143,11 +143,10 @@ public class HospitalManagementApp {
             doctorManagementMenu();
             switch (option) {
                 case 1 -> {
-                    Doctor doctor = DoctorService.addDoctor();
-                    DoctorService.save(doctor);
+                    DoctorService.save(DoctorService.addDoctor());
                 }
                 case 2 -> DoctorService.save(addSurgeon());
-                case 3 -> DoctorService.save(addConsultant());
+                case 3 -> DoctorService.addConsultant();
                 case 4 -> DoctorService.save(addGeneralPractitioner());
                 case 5 -> DoctorService.displayAllDoctors();
                 case 6 -> {
@@ -165,11 +164,17 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 7 -> {
-                    System.out.println("Available Doctors:");
-                    for (Doctor doc : DoctorService.getAvailableDoctors()) {
-                        System.out.println("- Dr. " + doc.getFirstName() + " " + doc.getLastName() + " (ID: " + doc.getId() + ")");
+                    List<Doctor> availableDoctors = DoctorService.getAvailableDoctors();
+
+                    System.out.println("===== Available Doctors =====");
+                    if (availableDoctors.isEmpty()) {
+                        System.out.println("No available doctors found.\n");
+                    } else {
+                        for (Doctor doc : availableDoctors) {
+                            System.out.println("- Dr. " + doc.getFirstName() + " " + doc.getLastName() + " (ID: " + doc.getId() + ")");
+                        }
+                        System.out.println();
                     }
-                    System.out.println();
                 }
                 case 8 -> {
                     String doctorId = InputHandler.getIntInput("Enter Doctor ID: ").toString();
@@ -209,8 +214,6 @@ public class HospitalManagementApp {
     }
 
     private static void showNurseManagementMenu() {
-        int option = 0;
-
         while (option != 7) {
             nurseManagementMenu();
             switch (option) {
@@ -279,7 +282,6 @@ public class HospitalManagementApp {
     }
 
     private static void showAppointmentManagementMenu() {
-        int option = 0;
         while (option != 10) {
             appointmentManagementMenu();
             switch (option) {
@@ -354,7 +356,6 @@ public class HospitalManagementApp {
     }
 
     private static void showMedicalRecordsManagementMenu() {
-        int option = 0;
         while (option != 8) {
             medicalRecordsManagementMenu();
             switch (option) {
@@ -426,7 +427,6 @@ public class HospitalManagementApp {
     }
 
     private static void showDepartmentManagementMenu() {
-        int option = 0;
         while (option != 8) {
             departmentManagementMenu();
             switch (option) {
@@ -494,7 +494,7 @@ public class HospitalManagementApp {
     }
 
     private static void reportsAndStatisticsMenu() {
-        System.out.println("===== Department Management =====");
+        System.out.println("===== Report And Statistics =====");
         System.out.print("""
                 1- Daily Appointments Report
                 2- Doctor Performance Report
@@ -508,17 +508,31 @@ public class HospitalManagementApp {
     }
 
     private static void showReportsAndStatisticsMenu() {
-        int option = 0;
         while (option != 6) {
             reportsAndStatisticsMenu();
             switch (option) {
-                case 1 -> System.out.println("still");
-                case 2 -> System.out.println("still");
-                case 3 -> System.out.println("still");
-                case 4 -> System.out.println("still");
-                case 5 -> System.out.println("still");
+                case 1 ->{
+                    LocalDate date = InputHandler.getDateInput("Enter date for the report");
+                    ReportService.generateDailyAppointmentsReport(date);
+                }
+                case 2 -> {
+                    String doctorId = InputHandler.getStringInput("Enter Doctor ID for performance report (or leave blank for all doctors): ");
+                    ReportService.generateDoctorPerformanceReport(doctorId);
+                }
+                case 3 -> {
+                    String departmentId = InputHandler.getStringInput("Enter Department ID for occupancy report (or leave blank for all departments): ");
+                    ReportService.generateDepartmentOccupancyReport(departmentId);
+                }
+                case 4 -> {
+                    String patientId = InputHandler.getStringInput("Enter Patient ID for statistics report: ");
+                    ReportService.generatePatientStatisticsReport(patientId);
+                }
+                case 5 -> {
+                    String patientId = InputHandler.getStringInput("Enter Patient ID for emergency cases report: ");
+                    ReportService.generateEmergencyCasesReport(patientId);
+                }
                 case 6 -> System.out.println("Exiting Report Management...");
-                default -> System.out.println("Please enter a valid option (1-8).");
+                default -> System.out.println("Please enter a valid option (1-6).");
             }
         }
     }

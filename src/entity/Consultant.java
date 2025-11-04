@@ -54,17 +54,30 @@ public class Consultant extends Doctor implements Displayable {
         }
     }
 
-    @Override
-    public String displayInfo() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.displayInfo()).append(System.lineSeparator());
-        sb.append("Consultation Types: ").append(consultationTypes).append(System.lineSeparator());
-        sb.append("Online Consultation Available: ").append(onlineConsultationAvailable).append(System.lineSeparator());
-        sb.append("Consultation Duration: ").append(consultationDuration).append(" minutes");
-        String out = sb.toString();
-        System.out.println(out);
-        return out;
-    }
+//    @Override
+//    public String displayInfo() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(super.displayInfo()).append(System.lineSeparator());
+//        sb.append("Consultation Types: ").append(consultationTypes).append(System.lineSeparator());
+//        sb.append("Online Consultation Available: ").append(onlineConsultationAvailable).append(System.lineSeparator());
+//        sb.append("Consultation Duration: ").append(consultationDuration).append(" minutes");
+//        String out = sb.toString();
+//        System.out.println(out);
+//        return out;
+//    }
+@Override
+public String displayInfo() {
+    // Start with the base doctor information
+    StringBuilder info = new StringBuilder(super.displayInfo());
+
+    // Add consultant-specific details
+    info.append("Consultation Types: ").append(getConsultationTypes()).append("\n");
+    info.append("Online Consultation Available: ").append(isOnlineConsultationAvailable()).append("\n");
+    info.append("Consultation Duration: ").append(getConsultationDuration()).append(" minutes\n");
+
+    return info.toString();
+}
+
 
     @Override
     public String displaySummary(String str) {

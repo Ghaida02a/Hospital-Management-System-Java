@@ -77,7 +77,30 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setEmergencyContact(String emergencyContact) {
-        this.phoneNumber = HelperUtils.isValidString(phoneNumber) ? phoneNumber : "";
+        if (HelperUtils.isNull(emergencyContact) || emergencyContact.trim().isEmpty()) {
+            System.out.println("Warning: Emergency contact cannot be empty.");
+            this.emergencyContact = "";
+            return;
+        }
+
+        // Normalize input
+        emergencyContact = emergencyContact.trim();
+
+        // Validate: cannot be the same as patient’s phone number
+        if (this.getPhoneNumber() != null && this.getPhoneNumber().equals(emergencyContact)) {
+            System.out.println("Warning: Emergency contact cannot be the same as patient's phone number.");
+            this.emergencyContact = "";
+            return;
+        }
+
+        // Validate format (optional, if you want to use HelperUtils)
+        if (!HelperUtils.isValidString(emergencyContact)) {
+            System.out.println("Warning: Invalid emergency contact format.");
+            this.emergencyContact = "";
+            return;
+        }
+
+        this.emergencyContact = emergencyContact;
     }
 
     public LocalDate getRegistrationDate() {

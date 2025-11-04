@@ -207,6 +207,10 @@ public class DepartmentService implements Manageable, Searchable {
         return true;
     }
 
+    public static List<Department> getAllDepartments() {
+        return new ArrayList<>(departmentList);
+    }
+
     @Override
     public String add(Object entity) {
         if (entity instanceof Department) {
@@ -227,7 +231,7 @@ public class DepartmentService implements Manageable, Searchable {
 
     @Override
     public String getAll() {
-        if (departmentList.isEmpty()){
+        if (departmentList.isEmpty()) {
             return "No departments available.";
         }
         StringBuilder sb = new StringBuilder();

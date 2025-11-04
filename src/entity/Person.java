@@ -75,7 +75,7 @@ public class Person implements Displayable {
             this.dateOfBirth = dateOfBirth;
         } else {
             this.dateOfBirth = null;
-            System.out.println("⚠ Invalid date of birth.");
+            System.out.println("Invalid date of birth.");
         }
     }
 
