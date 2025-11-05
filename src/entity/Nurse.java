@@ -4,6 +4,7 @@ import Interface.Displayable;
 import Utils.HelperUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Nurse extends Person implements Displayable{
@@ -96,6 +97,30 @@ public class Nurse extends Person implements Displayable{
             this.assignedPatients = null;
             System.out.println("Warning: Assigned patients list cannot be null. Setting to null.");
         }
+    }
+
+    public boolean assignPatient(Patient patient) {
+        if (HelperUtils.isNull(patient)) {
+            System.out.println("Cannot assign null patient.");
+            return false;
+        }
+        if (assignedPatients == null) {
+            assignedPatients = new ArrayList<>();
+        }
+        if (!assignedPatients.contains(patient)) {
+            assignedPatients.add(patient);
+            System.out.println("Assigned patient " + patient.getId() + " to nurse " + this.getId());
+            return true;
+        } else {
+            System.out.println("Patient already assigned.");
+            return false;
+        }
+    }
+
+    public boolean removePatient(String patientId) {
+        if (HelperUtils.isNull(patientId)) return false;
+        if (assignedPatients == null) return false;
+        return assignedPatients.removeIf(p -> p.getId().equals(patientId));
     }
 
     // Displayable methods
