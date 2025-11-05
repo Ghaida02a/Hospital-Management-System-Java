@@ -56,7 +56,7 @@ public class Doctor extends Person implements Displayable {
 
     public void setDoctorId(String doctorId) {
         if (HelperUtils.isNull(doctorId) || doctorId.isEmpty()) {
-            this.doctorId = HelperUtils.generateId("DR"); // e.g., PAT-12345
+            this.doctorId = HelperUtils.generateId("DR"); // e.g., DR-12345
         } else {
             this.doctorId = doctorId;
         }

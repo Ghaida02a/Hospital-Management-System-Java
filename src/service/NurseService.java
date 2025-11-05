@@ -15,12 +15,15 @@ public class NurseService implements Manageable, Searchable {
     public static Nurse addNurse() {
         Nurse nurse = new Nurse();
 
+        System.out.println("\n--- Nurse Registration ---");
+        nurse.setId(HelperUtils.getRandomNumber(10));
+        System.out.println("ID: " + nurse.getId());
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("NUR");
         }
         while (HelperUtils.checkIfIdExists(nurseList, generatedId)); // ensure uniqueness
-        nurse.setId(generatedId);
+        nurse.setNurseId(generatedId);
         System.out.println("Nurse ID: " + nurse.getId());
 
         nurse.setFirstName(InputHandler.getStringInput("Enter First Name: "));
