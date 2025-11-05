@@ -21,6 +21,8 @@ public class PatientService implements Manageable, Searchable {
         Patient patient = new Patient();
 
         System.out.println("\n--- Patient Registration ---");
+        patient.setId(HelperUtils.getRandomNumber(10));
+        System.out.println("ID: " + patient.getId());
         initializePatient(patient);
 
         // Name
@@ -46,7 +48,14 @@ public class PatientService implements Manageable, Searchable {
         patient.setBloodGroup(InputHandler.getStringInput("Enter Blood Group: "));
 
         // Emergency Contact
-        patient.setEmergencyContact(InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: "));
+//        patient.setEmergencyContact(InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: "));
+        String emergencyContact = InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: ");
+        while (emergencyContact.equals(patient.getPhoneNumber())) {
+            System.out.println("Emergency contact cannot be the same as patient's phone number. Please enter a different number.");
+            emergencyContact = InputHandler.getPhoneNumberInput("Enter Emergency Contact Phone number: ");
+        }
+
+        patient.setEmergencyContact(emergencyContact);
 
         // Insurance ID
         patient.setInsuranceId(HelperUtils.generateId("INS"));
@@ -65,15 +74,12 @@ public class PatientService implements Manageable, Searchable {
 
     private static Patient initializePatient(Patient patient) {
         // Generate ID
-        patient.setId(HelperUtils.getRandomNumber(10));
-        // Patient ID
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("PAT");
         }
         while (HelperUtils.checkIfIdExists(patientList, generatedId)); // ensure uniqueness
         patient.setPatientId(generatedId);
-        System.out.println("Person ID: " + patient.getId());
         System.out.println("Patient ID: " + patient.getPatientId());
 
         // Registration Date

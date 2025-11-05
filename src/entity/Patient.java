@@ -2,6 +2,7 @@ package entity;
 
 import Interface.Displayable;
 import Utils.HelperUtils;
+import Utils.InputHandler;
 
 import javax.net.ssl.HandshakeCompletedEvent;
 import java.time.LocalDate;
@@ -69,7 +70,11 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setPatientId(String patientId) {
-        this.id = HelperUtils.isNull(id) ? HelperUtils.generateId("PAT") : id;
+        if (HelperUtils.isNull(patientId) || patientId.trim().isEmpty()) {
+            this.patientId = HelperUtils.generateId("PAT");
+        } else {
+            this.patientId = patientId.trim();
+        }
     }
 
     public String getBloodGroup() {
@@ -77,17 +82,25 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setBloodGroup(String bloodGroup) {
-        if (HelperUtils.isNull(bloodGroup) || bloodGroup.isEmpty()) {
-            this.bloodGroup = null;
-            return;
-        }
-        String normalized = bloodGroup.trim().toUpperCase().replaceAll("\\s+", "");
-        // Accept forms like A+, A-, B+, B-, AB+, AB-, O+, O-
-        if (normalized.matches("^(A|B|AB|O)[+-]$")) {
-            this.bloodGroup = normalized;
-        } else {
-            System.out.println("Warning: invalid blood group '" + bloodGroup + "'. Expected one of A+, A-, B+, B-, AB+, AB-, O+, O-. Setting to null.");
-            this.bloodGroup = null;
+        boolean valid = false; // flag to control the loop
+
+        while (!valid) {
+            if (HelperUtils.isNull(bloodGroup) || bloodGroup.isEmpty()) {
+                System.out.println("Blood group cannot be empty. Please enter again:");
+                bloodGroup = InputHandler.getStringInput("Enter blood group: ");
+            } else {
+                String normalized = bloodGroup.trim().toUpperCase().replaceAll("\\s+", "");
+
+                // Accept valid forms only
+                if (normalized.matches("^(A|B|AB|O)[+-]$")) {
+                    this.bloodGroup = normalized;
+                    valid = true;
+                } else {
+                    System.out.println("Invalid blood group '" + bloodGroup +
+                            "'. Expected one of: A+, A-, B+, B-, AB+, AB-, O+, O-");
+                    bloodGroup = InputHandler.getStringInput("Enter valid blood group: ");
+                }
+            }
         }
     }
 
@@ -108,7 +121,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void setEmergencyContact(String emergencyContact) {
-        if (HelperUtils.isNull(emergencyContact) || emergencyContact.trim().isEmpty()) {
+        if (HelperUtils.isNull(emergencyContact) || emergencyContact.isEmpty()) {
             System.out.println("Warning: Emergency contact cannot be empty.");
             this.emergencyContact = "";
             return;
