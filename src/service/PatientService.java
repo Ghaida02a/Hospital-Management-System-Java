@@ -259,19 +259,19 @@ public class PatientService implements Manageable, Searchable {
     }
 
     public static void removePatient(String patientId) {
-        if (patientList.isEmpty()) {
-            System.out.println("The list is empty. No patient removed.");
-            return;
-        }
-
-        boolean removed = patientList.removeIf(patient -> patient.getId().equals(patientId));
-
+        boolean removed = patientList.removeIf(patient -> patient.getPatientId().equals(patientId));
         if (removed) {
             System.out.println("Patient with ID " + patientId + " removed successfully!");
+
+            // Remove patient from all doctors
+            for (Doctor doctor : DoctorService.getAllDoctors()) {
+                doctor.removePatient(patientId);
+            }
         } else {
             System.out.println("Patient with ID " + patientId + " not found.");
         }
     }
+
 
     public static Patient getPatientById(String patientId) {
         for (Patient patient : patientList) {
@@ -346,7 +346,6 @@ public class PatientService implements Manageable, Searchable {
             System.out.println("No patients found in the system.");
         }
     }
-
 
     public static List<Patient> searchPatientsByName(String name) {
         List<Patient> searchResults = new ArrayList<>();

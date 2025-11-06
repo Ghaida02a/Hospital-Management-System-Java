@@ -189,19 +189,19 @@ public class HospitalManagementApp {
                     }
                 }
                 case 8 -> {
-                    String doctorId = InputHandler.getIntInput("Enter Doctor ID: ").toString();
-                    String patientId = InputHandler.getIntInput("Enter Patient ID to assign").toString();
+                    String doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+                    String patientId = InputHandler.getStringInput("Enter Patient ID to assign: ");
                     boolean ok = DoctorService.assignPatientToDoctor(doctorId, patientId);
                     if (ok) System.out.println("Assignment succeeded.");
                     else System.out.println("Assignment failed.");
                 }
                 case 9 -> {
-                    String id = InputHandler.getIntInput("Enter doctor ID to update: ").toString();
+                    String id = InputHandler.getStringInput("Enter doctor ID to update: ");
                     Doctor updatedDoctor = DoctorService.addDoctor();
                     DoctorService.editDoctor(id, updatedDoctor);
                 }
                 case 10 -> {
-                    String id = InputHandler.getIntInput("Enter doctor ID to remove: ").toString();
+                    String id = InputHandler.getStringInput("Enter doctor ID to remove: ");
                     DoctorService.removeDoctor(id);
                 }
                 case 11 -> System.out.println("Exiting Doctor Management...");

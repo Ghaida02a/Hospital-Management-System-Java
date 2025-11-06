@@ -249,7 +249,7 @@ public class MedicalRecordService implements Manageable, Searchable {
         }
     }
 
-    public static MedicalRecord createRecordForPatient(Patient patient) {
+    public static MedicalRecord createRecordForPatient(Patient patient) {//create record for existing patient
         MedicalRecord record = new MedicalRecord();
         record.setRecordId(HelperUtils.generateId("MR"));
         System.out.println("Medical Record ID: " + record.getRecordId());

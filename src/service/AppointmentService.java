@@ -11,6 +11,8 @@ import java.util.List;
 
 import Interface.Manageable;
 import Interface.Searchable;
+import entity.Doctor;
+import entity.Patient;
 
 public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> appointmentList = new ArrayList<>();
@@ -43,18 +45,18 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     }
 
     public static void save(Appointment appointment) {
-        if (HelperUtils.isNull(appointment)) {
-            System.out.println("Cannot save null appointment.");
-            return;
-        }
-        if (getAppointmentById(appointment.getAppointmentId()) != null) {
-            System.out.println("Appointment ID already exists: " + appointment.getAppointmentId());
-            return;
-        }
-        appointmentList.add(appointment);
-        System.out.println("Appointment saved successfully!\n");
-    }
+        if (HelperUtils.isNotNull(appointment)) {
+            appointmentList.add(appointment);
+            System.out.println("Appointment saved successfully.");
 
+            // Assign patient to doctor
+            Doctor doctor = DoctorService.getDoctorById(appointment.getDoctorId());
+            Patient patient = PatientService.getPatientById(appointment.getPatientId());
+            if (doctor != null && patient != null) {
+                doctor.assignPatient(patient);
+            }
+        }
+    }
 
     public static Appointment getAppointmentById(String appointmentId) {
         for (Appointment appointment : appointmentList) {
@@ -153,7 +155,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     }
 
 
-    public static boolean cancelAppointmentById(String appointmentId){
+    public static boolean cancelAppointmentById(String appointmentId) {
         Appointment a = getAppointmentById(appointmentId);
         if (a == null) {
             System.out.println("Appointment with ID " + appointmentId + " not found.");
@@ -232,7 +234,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         return appointment;
     }
 
-    public static boolean rescheduleAppointmentById(String appointmentId, LocalDate newDate){
+    public static boolean rescheduleAppointmentById(String appointmentId, LocalDate newDate) {
         return rescheduleAppointmentById(appointmentId, newDate); // default time
     }
 

@@ -3,6 +3,8 @@ package Utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class InputHandler {
@@ -148,5 +150,18 @@ public class InputHandler {
         } else {
             return false;
         }
+    }
+
+    public static List<Integer> getIntegerList(String s) {
+        List<Integer> integerList = new ArrayList<>();
+        String[] parts = s.split(",");
+        for (String part : parts) {
+            try {
+                integerList.add(Integer.parseInt(part.trim()));
+            } catch (NumberFormatException e) {
+                System.out.println("Warning: invalid integer '" + part + "' ignored.");
+            }
+        }
+        return integerList;
     }
 }

@@ -226,7 +226,7 @@ public class Doctor extends Person implements Displayable {
             System.out.println("Invalid patient ID provided for removal.");
             return false;
         }
-        if (HelperUtils.isNull(assignedPatients)|| assignedPatients.isEmpty()) {
+        if (HelperUtils.isNull(assignedPatients) || assignedPatients.isEmpty()) {
             System.out.println("No assigned patients to remove from doctor " + this.getDoctorId());
             return false;
         }
@@ -323,7 +323,7 @@ public class Doctor extends Person implements Displayable {
     }
 
     public Appointment scheduleConsultation(Appointment appt) {
-        if (HelperUtils.isNull(appt)){
+        if (HelperUtils.isNull(appt)) {
             return null;
         }
         if (appt.getDoctorId() == null || appt.getDoctorId().isBlank()) {
@@ -359,6 +359,7 @@ public class Doctor extends Person implements Displayable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("Doctor ID: ").append(doctorId).append(System.lineSeparator());
         sb.append("Specialization: ").append(specialization).append(System.lineSeparator());
         sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
         sb.append("Experience Years: ").append(experienceYears).append(System.lineSeparator());
