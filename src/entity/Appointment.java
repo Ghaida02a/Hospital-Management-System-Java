@@ -2,6 +2,7 @@ package entity;
 
 import Interface.Displayable;
 import Utils.HelperUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -126,18 +127,36 @@ public class Appointment implements Displayable {
         }
     }
 
-    public void reschedule(LocalDate newDate, String newTime) {
+    public boolean reschedule(LocalDate newDate, String newTime) {
+        if (HelperUtils.isNull(newDate) || HelperUtils.isNull(newTime)) {
+            System.out.println("Invalid date or time.");
+            return false;
+        }
         this.appointmentDate = newDate;
         this.appointmentTime = newTime;
         this.status = "Rescheduled";
+        System.out.println("Appointment rescheduled to " + newDate + " at " + newTime);
+        return true;
     }
 
-    public void cancel() {
+    public boolean cancel() {
+        if ("Cancelled".equalsIgnoreCase(this.status)) {
+            System.out.println("Appointment is already cancelled.");
+            return false;
+        }
         this.status = "Cancelled";
+        System.out.println("Appointment cancelled.");
+        return true;
     }
 
-    public void complete() {
+    public boolean complete() {
+        if ("Completed".equalsIgnoreCase(this.status)) {
+            System.out.println("Appointment is already completed.");
+            return false;
+        }
         this.status = "Completed";
+        System.out.println("Appointment marked as completed.");
+        return true;
     }
 
     @Override
@@ -155,13 +174,7 @@ public class Appointment implements Displayable {
 
     @Override
     public String displaySummary(String str) {
-        return "Appointment{" +
-                ", patientId='" + patientId + '\'' +
-                ", doctorId='" + doctorId + '\'' +
-                ", appointmentDate=" + appointmentDate +
-                ", appointmentTime='" + appointmentTime + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+        return "Appointment{" + ", patientId='" + patientId + '\'' + ", doctorId='" + doctorId + '\'' + ", appointmentDate=" + appointmentDate + ", appointmentTime='" + appointmentTime + '\'' + ", status='" + status + '\'' + '}';
     }
 
     // Methods Overloading

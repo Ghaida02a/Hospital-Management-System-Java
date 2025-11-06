@@ -7,6 +7,7 @@ import entity.Appointment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import Interface.Manageable;
@@ -16,7 +17,6 @@ import entity.Patient;
 
 public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> appointmentList = new ArrayList<>();
-
 
     public static Appointment addAppointment() {
         Appointment appointment = new Appointment();
@@ -29,7 +29,17 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
 
         appointment.setDoctorId(InputHandler.getStringInput("Enter Doctor ID: "));
 
-        appointment.setAppointmentDate(InputHandler.getDateInput("Enter Appointment Date"));
+        while (true) {
+            LocalDate date = InputHandler.getDateInput("Enter Appointment Date ");
+            if (HelperUtils.isNull(date)) {
+                System.out.println("Invalid date format. Please try again.");
+            } else if (date.isBefore(LocalDate.now())) {
+                System.out.println("Appointment date cannot be in the past. Please enter a future date.");
+            } else {
+                appointment.setAppointmentDate(date);
+                break;
+            }
+        }
 
         appointment.setAppointmentTime(InputHandler.getTimeInput("Enter Appointment Time").toString());
 
@@ -100,23 +110,19 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
 
     public static boolean rescheduleAppointment(String appointmentId, LocalDate newDate, String newTime) {
         Appointment appointment = getAppointmentById(appointmentId);
-        if (appointment == null) {
+        if (HelperUtils.isNull(appointment)) {
             System.out.println("Appointment with ID " + appointmentId + " not found.");
             return false;
         }
-        if (newDate == null) {
+        if (HelperUtils.isNull(newDate)) {
             System.out.println("New date cannot be null.");
             return false;
         }
-        if (newTime == null || !newTime.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
+        if (HelperUtils.isNull(newTime) || !newTime.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) {
             System.out.println("New time is invalid. Expected HH:mm (24-hour).");
             return false;
         }
-        appointment.setAppointmentDate(newDate);
-        appointment.setAppointmentTime(newTime);
-        appointment.setStatus("Rescheduled");
-        System.out.println("Appointment " + appointmentId + " rescheduled to " + newDate + " " + newTime);
-        return true;
+        return appointment.reschedule(newDate, newTime); // ✅ delegate to entity
     }
 
     @Override
@@ -154,38 +160,34 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         AppointmentService.rescheduleAppointmentById(appointmentId, newDate);
     }
 
-
     public static boolean cancelAppointmentById(String appointmentId) {
-        Appointment a = getAppointmentById(appointmentId);
-        if (a == null) {
-            System.out.println("Appointment with ID " + appointmentId + " not found.");
-            return false;
+        Appointment appointment = getAppointmentById(appointmentId);
+        if (HelperUtils.isNotNull(appointment)) {
+            return appointment.cancel();
         }
-        a.setStatus("Cancelled");
-        System.out.println("Appointment " + appointmentId + " cancelled.");
-        return true;
+        System.out.println("Appointment not found.");
+        return false;
     }
 
     public static boolean completeAppointment(String appointmentId) {
-        Appointment a = getAppointmentById(appointmentId);
-        if (a == null) {
-            System.out.println("Appointment with ID " + appointmentId + " not found.");
-            return false;
+        Appointment appointment = getAppointmentById(appointmentId);
+        if (HelperUtils.isNotNull(appointment)) {
+            return appointment.complete();
         }
-        a.setStatus("Completed");
-        System.out.println("Appointment " + appointmentId + " marked as completed.");
-        return true;
+        System.out.println("Appointment not found.");
+        return false;
     }
 
-    public static void viewUpcomingAppointments() {
+    public static List<Appointment> viewUpcomingAppointments() {
         LocalDate today = LocalDate.now();
         System.out.println("===== Upcoming Appointments =====");
         for (Appointment a : appointmentList) {
-            if (a.getAppointmentDate() != null && !a.getAppointmentDate().isBefore(today) && a.getStatus().equals("Scheduled")) {
+            if (HelperUtils.isNotNull(a.getAppointmentDate()) && !a.getAppointmentDate().isBefore(today) && a.getStatus().equals("Scheduled")) {
                 a.displayInfo("");
                 System.out.println("------------------------");
             }
         }
+        return null;
     }
 
     public static void displayAllAppointments() {

@@ -1,5 +1,6 @@
 package main;
 
+import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
 import service.*;
@@ -337,32 +338,55 @@ public class HospitalManagementApp {
                     }
                 }
                 case 5 -> {
-                    LocalDate date = null;
-                    String d = InputHandler.getStringInput("Enter date (yyyy-MM-dd): ");
-                    List<entity.Appointment> res = AppointmentService.getAppointmentsByDate(date);
+                    LocalDate date = InputHandler.getDateInput("Enter date (yyyy-MM-dd): ");
+                    if (HelperUtils.isNull(date)) {
+                        System.out.println("Invalid date format.");
+                        break;
+                    }
+                    List<Appointment> res = AppointmentService.getAppointmentsByDate(date);
                     if (res.isEmpty()) {
                         System.out.println("No appointments found on " + date);
                     } else {
-                        for (entity.Appointment a : res) {
+                        for (Appointment a : res) {
                             a.displayInfo("");
                         }
                     }
                 }
+
                 case 6 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to reschedule: ");
                     LocalDate newDate = InputHandler.getDateInput("Enter new date");
                     String newTime = InputHandler.getStringInput("Enter new time (HH:MM): ");
-                    AppointmentService.rescheduleAppointment(aid, newDate, newTime);
+                    boolean success = AppointmentService.rescheduleAppointment(aid, newDate, newTime);
+                    if (!success) {
+                        System.out.println("Rescheduling failed.");
+                    }
                 }
+
                 case 7 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to cancel: ");
-                    AppointmentService.cancelAppointmentById(aid);
+                    boolean success = AppointmentService.cancelAppointmentById(aid);
+                    if (!success) {
+                        System.out.println("Cancellation failed.");
+                    }
                 }
                 case 8 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to complete: ");
-                    AppointmentService.completeAppointment(aid);
+                    boolean success = AppointmentService.completeAppointment(aid);
+                    if (!success) {
+                        System.out.println("Completion failed.");
+                    }
                 }
-                case 9 -> AppointmentService.viewUpcomingAppointments();
+                case 9 -> {
+                    List<Appointment> upcoming = AppointmentService.viewUpcomingAppointments();
+                    if (HelperUtils.isNull(upcoming) || upcoming.isEmpty()) {
+                        System.out.println("No upcoming appointments found.");
+                    } else {
+                        for (Appointment appointment : upcoming) {
+                            appointment.displayInfo("");
+                        }
+                    }
+                }
                 case 10 -> System.out.println("Exiting Appointment Management...");
                 default -> System.out.println("Please enter a valid option (1-10).");
             }
