@@ -213,20 +213,21 @@ public class HospitalManagementApp {
     private static void nurseManagementMenu() {
         System.out.println("===== Nurse Management =====");
         System.out.print("""
-                1- Add Nurse
-                2- View All Nurses
-                3- Search Nurses by Department
-                4- Search Nurses by Shift
-                5- Update Nurse Information
-                6- Remove Nurse
-                7- Exit
+                1. Add Nurse
+                2. View All Nurses
+                3. View Nurses by Department
+                4. View Nurses by Shift
+                5. Assign Nurse to Patient
+                6. Update Nurse Information
+                7. Remove Nurse
+                8. Exit
                 """);
         System.out.println("===============");
         option = InputHandler.getIntInput("Please enter your choice: ");
     }
 
     private static void showNurseManagementMenu() {
-        while (option != 7) {
+        while (option != 8) {
             nurseManagementMenu();
             switch (option) {
                 case 1 -> {
@@ -242,7 +243,7 @@ public class HospitalManagementApp {
                     } else {
                         System.out.println("Found " + nursesByDepartment.size() + " nurse(s):");
                         for (Nurse n : nursesByDepartment) {
-                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (ID: " + n.getId() + ")");
+                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
                         }
                     }
                     System.out.println();
@@ -255,22 +256,34 @@ public class HospitalManagementApp {
                     } else {
                         System.out.println("Found " + res.size() + " nurse(s):");
                         for (Nurse n : res) {
-                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (ID: " + n.getId() + ")");
+                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
                         }
                     }
                     System.out.println();
                 }
                 case 5 -> {
+                    String nurseId = InputHandler.getStringInput("Enter Nurse ID: ");
+                    String patientId = InputHandler.getStringInput("Enter Patient ID to assign: ");
+                    Nurse nurse = NurseService.getNurseById(nurseId);
+                    Patient patient = PatientService.getPatientById(patientId);
+                    if (nurse.assignPatient(patient)) {
+                        System.out.println("Patient " + patient.getPatientId() + " assigned to Nurse " + nurse.getNurseId());
+                    } else {
+                        System.out.println("Assignment failed or patient already assigned.");
+                    }
+
+                }
+                case 6 -> {
                     String id = InputHandler.getStringInput("Enter nurse ID to update: ");
                     Nurse updated = NurseService.addNurse();
                     NurseService.editNurse(id, updated);
                 }
-                case 6 -> {
+                case 7 -> {
                     String id = InputHandler.getStringInput("Enter nurse ID to remove: ");
                     NurseService.removeNurse(id);
                 }
-                case 7 -> System.out.println("Exiting Nurse Management...");
-                default -> System.out.println("Please enter a valid option (1–7).");
+                case 8 -> System.out.println("Exiting Nurse Management...");
+                default -> System.out.println("Please enter a valid option (1–8).");
             }
         }
     }
@@ -528,7 +541,7 @@ public class HospitalManagementApp {
         while (option != 6) {
             reportsAndStatisticsMenu();
             switch (option) {
-                case 1 ->{
+                case 1 -> {
                     LocalDate date = InputHandler.getDateInput("Enter date for the report");
                     ReportService.generateDailyAppointmentsReport(date);
                 }

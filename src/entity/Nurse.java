@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Nurse extends Person implements Displayable{
+public class Nurse extends Person implements Displayable {
     private String nurseId;
     private String departmentId;
     private String shift; //- Morning/Evening/Night)
@@ -58,12 +58,11 @@ public class Nurse extends Person implements Displayable{
 
     public void setShift(String shift) {
         //(Morning/Evening/Night)
-        if(HelperUtils.isNotNull(shift)) {
+        if (HelperUtils.isNotNull(shift)) {
             String normalizedShift = shift.toLowerCase();
             if (normalizedShift.equals("morning") || normalizedShift.equals("evening") || normalizedShift.equals("night")) {
                 this.shift = normalizedShift;
-            }
-            else {
+            } else {
                 System.out.println("Warning: Invalid shift '" + shift + "'. Expected 'Morning', 'Evening', or 'Night'. Setting to 'Morning' by default.");
                 this.shift = "Morning";
             }
@@ -78,7 +77,7 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setQualification(String qualification) {
-        if(HelperUtils.isValidString(qualification)) {
+        if (HelperUtils.isValidString(qualification)) {
             this.qualification = qualification;
         } else {
             this.qualification = "";
@@ -91,7 +90,7 @@ public class Nurse extends Person implements Displayable{
     }
 
     public void setAssignedPatients(List<Patient> assignedPatients) {
-        if(HelperUtils.isNotNull(assignedPatients)) {
+        if (HelperUtils.isNotNull(assignedPatients)) {
             this.assignedPatients = assignedPatients;
         } else {
             this.assignedPatients = null;
@@ -99,29 +98,36 @@ public class Nurse extends Person implements Displayable{
         }
     }
 
+    // Assign a patient to the nurse
     public boolean assignPatient(Patient patient) {
         if (HelperUtils.isNull(patient)) {
-            System.out.println("Cannot assign null patient.");
             return false;
         }
-        if (assignedPatients == null) {
+        if (HelperUtils.isNull(assignedPatients)) {
             assignedPatients = new ArrayList<>();
         }
-        if (!assignedPatients.contains(patient)) {
-            assignedPatients.add(patient);
-            System.out.println("Assigned patient " + patient.getId() + " to nurse " + this.getId());
-            return true;
-        } else {
-            System.out.println("Patient already assigned.");
-            return false;
+        for (Patient p : assignedPatients) {
+            if (p.getPatientId().equals(patient.getPatientId())) {
+                System.out.println("Patient already assigned.");
+                return false;
+            }
         }
+        assignedPatients.add(patient);
+        System.out.println("Assigned patient " + patient.getPatientId() + " to nurse " + this.getNurseId());
+        return true;
     }
 
+    // Remove a patient from the nurse's assigned patients list
     public boolean removePatient(String patientId) {
-        if (HelperUtils.isNull(patientId)) return false;
-        if (assignedPatients == null) return false;
-        return assignedPatients.removeIf(p -> p.getId().equals(patientId));
+        if (HelperUtils.isNull(patientId)) {
+            return false;
+        }
+        if (HelperUtils.isNull(assignedPatients) || assignedPatients.isEmpty()) {
+            return false;
+        }
+        return assignedPatients.removeIf(p -> p.getPatientId().equals(patientId));
     }
+
 
     // Displayable methods
     @Override
@@ -129,6 +135,7 @@ public class Nurse extends Person implements Displayable{
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("Nurse Id: ").append(nurseId).append(System.lineSeparator());
         sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
         sb.append("Shift: ").append(shift).append(System.lineSeparator());
         sb.append("Qualification: ").append(qualification).append(System.lineSeparator());

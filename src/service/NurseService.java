@@ -5,6 +5,7 @@ import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.Nurse;
+import entity.Patient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class NurseService implements Manageable, Searchable {
         }
         while (HelperUtils.checkIfIdExists(nurseList, generatedId)); // ensure uniqueness
         nurse.setNurseId(generatedId);
-        System.out.println("Nurse ID: " + nurse.getId());
+        System.out.println("Nurse ID: " + nurse.getNurseId());
 
         nurse.setFirstName(InputHandler.getStringInput("Enter First Name: "));
         nurse.setLastName(InputHandler.getStringInput("Enter Last Name: "));
@@ -81,7 +82,7 @@ public class NurseService implements Manageable, Searchable {
 
     public static Nurse getNurseById(String nurseId) {
         for (Nurse nurse : nurseList) {
-            if (nurse.getId().equals(nurseId)) {
+            if (nurse.getNurseId().equals(nurseId)) {
                 return nurse;
             }
         }
@@ -118,7 +119,7 @@ public class NurseService implements Manageable, Searchable {
 
     public static List<Nurse> getNursesByShift(String shift) {
         List<Nurse> result = new ArrayList<>();
-        if (HelperUtils.isNull(shift)){
+        if (HelperUtils.isNull(shift)) {
             return result;
         }
         for (Nurse nurse : nurseList) {
@@ -131,6 +132,17 @@ public class NurseService implements Manageable, Searchable {
         }
         return result;
     }
+
+    public static boolean assignPatientToNurse(String nurseId, Patient patient) {
+        Nurse nurse = getNurseById(nurseId);
+        return nurse != null && nurse.assignPatient(patient);
+    }
+
+    public static boolean removePatientFromNurse(String nurseId, String patientId) {
+        Nurse nurse = getNurseById(nurseId);
+        return nurse != null && nurse.removePatient(patientId);
+    }
+
 
     @Override
     public String add(Object entity) {
