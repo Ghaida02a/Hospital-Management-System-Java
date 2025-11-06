@@ -15,8 +15,7 @@ public class MedicalRecord implements Displayable {
     private String testResults;
     private String notes;
 
-    public MedicalRecord(String recordId, String patientId, String doctorId, LocalDate visitDate,
-                         String diagnosis, String prescription, String testResults, String notes) {
+    public MedicalRecord(String recordId, String patientId, String doctorId, LocalDate visitDate, String diagnosis, String prescription, String testResults, String notes) {
         this.recordId = recordId;
         this.patientId = patientId;
         this.doctorId = doctorId;

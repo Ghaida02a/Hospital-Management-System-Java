@@ -119,30 +119,6 @@ public class MedicalRecordService implements Manageable, Searchable {
         return recordsByDoctor;
     }
 
-//    public static boolean updateRecord(String recordId, MedicalRecord updated) {
-//        if (HelperUtils.isNull(recordId) || updated == null) {
-//            return false;
-//        }
-//        for (int i = 0; i < medicalRecordList.size(); i++) {
-//            MedicalRecord r = medicalRecordList.get(i);
-//            if (recordId.equals(r.getRecordId())) {
-//                MedicalRecord newRec = new MedicalRecord(
-//                        r.getRecordId(),
-//                        updated.getPatientId(),
-//                        updated.getDoctorId(),
-//                        updated.getVisitDate(),
-//                        updated.getDiagnosis(),
-//                        updated.getPrescription(),
-//                        updated.getTestResults(),
-//                        updated.getNotes()
-//                );
-//                medicalRecordList.set(i, newRec);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     public static boolean updateRecord(String recordId, MedicalRecord updated) {
         if (HelperUtils.isNull(recordId) || HelperUtils.isNull(updated)) {
             System.out.println("Invalid input: record ID or updated record is null.");
@@ -221,7 +197,7 @@ public class MedicalRecordService implements Manageable, Searchable {
         // Get records by patient ID
         List<MedicalRecord> records = displayRecordsByPatient(patientId);
 
-        if (records == null || records.isEmpty()){
+        if (records == null || records.isEmpty()) {
             System.out.println("No medical records found for patient: " + patientId);
             return;
         }
