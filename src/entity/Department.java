@@ -4,6 +4,7 @@ import Interface.Displayable;
 import Utils.HelperUtils;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Department implements Displayable {
@@ -16,13 +17,13 @@ public class Department implements Displayable {
     private int availableBeds;
 
     public Department() {
-        this.departmentId = departmentId;
-        this.departmentName = departmentName;
-        this.headDoctorId = headDoctorId;
-        this.doctors = doctors;
-        this.nurses = nurses;
-        this.bedCapacity = bedCapacity;
-        this.availableBeds = availableBeds;
+        this.departmentId = HelperUtils.generateId("Dep");
+        this.departmentName = "";
+        this.headDoctorId = "";
+        this.doctors = new ArrayList<>();
+        this.nurses = new ArrayList<>();
+        this.bedCapacity = 0;
+        this.availableBeds = 0;
     }
 
     public String getDepartmentId() {
@@ -109,6 +110,28 @@ public class Department implements Displayable {
         }
     }
 
+    public void assignDoctor(Doctor doctor) {
+        if (HelperUtils.isNull(doctors)) {
+            doctors = new ArrayList<>();
+        }
+        doctors.add(doctor);
+    }
+
+    public void assignNurse(Nurse nurse) {
+        if (HelperUtils.isNull(nurses)) {
+            nurses = new ArrayList<>();
+        }
+        nurses.add(nurse);
+    }
+
+    public void updateBedAvailability(int beds) {
+        if (HelperUtils.isPositive(beds) && beds <= bedCapacity) {
+            availableBeds = beds;
+        } else {
+            System.out.println("Invalid bed availability update.");
+        }
+    }
+
     @Override
     public String displayInfo(String str) {
         String info = "Department ID: " + departmentId + System.lineSeparator()
@@ -127,4 +150,3 @@ public class Department implements Displayable {
         return "Department Id" + departmentId + " - " + "Department Name" + departmentName;
     }
 }
-// assignDoctor(), assignNurse(), updateBedAvailability()

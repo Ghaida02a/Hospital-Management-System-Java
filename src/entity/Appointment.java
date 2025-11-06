@@ -126,6 +126,20 @@ public class Appointment implements Displayable {
         }
     }
 
+    public void reschedule(LocalDate newDate, String newTime) {
+        this.appointmentDate = newDate;
+        this.appointmentTime = newTime;
+        this.status = "Rescheduled";
+    }
+
+    public void cancel() {
+        this.status = "Cancelled";
+    }
+
+    public void complete() {
+        this.status = "Completed";
+    }
+
     @Override
     public String displayInfo(String str) {
         System.out.println("Appointment Id: " + appointmentId);
