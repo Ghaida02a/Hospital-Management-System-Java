@@ -30,7 +30,9 @@ public class PatientService implements Manageable, Searchable {
         patient.setLastName(InputHandler.getStringInput("Enter Last Name: "));
 
         //Date
-        patient.setDateOfBirth(InputHandler.getDateInput("Enter Date of Birth"));
+        while (!HelperUtils.isValidAge(patient.getDateOfBirth())) {
+            patient.setDateOfBirth(InputHandler.getDateInput("Enter Date of Birth"));
+        }
 
         //Gender
         patient.setGender(InputHandler.getGenderInput("Enter Gender: "));
@@ -273,11 +275,10 @@ public class PatientService implements Manageable, Searchable {
 
     public static Patient getPatientById(String patientId) {
         for (Patient patient : patientList) {
-            if (patient.getId().equals(patientId)) {
+            if (patient.getPatientId().equals(patientId)) {
                 return patient;
             }
         }
-        System.out.println("Patient not found.\n");
         return null;
     }
 
@@ -475,6 +476,32 @@ public class PatientService implements Manageable, Searchable {
         return new ArrayList<>(patientList);
     }
 
+    public static void addMedicalRecordToPatient(String patientId, MedicalRecord record) {
+        Patient patient = getPatientById(patientId);
+        if (HelperUtils.isNotNull(patient)) {
+            patient.addMedicalRecord(record);
+        } else {
+            System.out.println("Patient not found: " + patientId);
+        }
+    }
+
+    public static void addAppointmentToPatient(String patientId, Appointment appointment) {
+        Patient patient = getPatientById(patientId);
+        if (patient != null) {
+            patient.addAppointment(appointment);
+        } else {
+            System.out.println("Patient not found: " + patientId);
+        }
+    }
+
+    public static void updatePatientInsurance(String patientId, String newInsuranceId) {
+        Patient patient = getPatientById(patientId);
+        if (patient != null) {
+            patient.updateInsurance(newInsuranceId);
+        } else {
+            System.out.println("Patient not found: " + patientId);
+        }
+    }
 
     @Override
     public String add(Object entity) {

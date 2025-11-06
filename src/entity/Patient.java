@@ -215,7 +215,7 @@ public class Patient extends Person implements Displayable {
         }
         if (HelperUtils.isNotNull(record)) {
             this.medicalRecord.add(record);
-            System.out.println("Medical record added for patient " + this.getId());
+            System.out.println("Medical record added for patient " + this.getPatientId());
         } else {
             System.out.println("Warning: null medical record not added.");
         }

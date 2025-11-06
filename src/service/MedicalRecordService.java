@@ -5,6 +5,7 @@ import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.MedicalRecord;
+import entity.Patient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -247,6 +248,23 @@ public class MedicalRecordService implements Manageable, Searchable {
             System.out.println("---------------------------");
         }
     }
+
+    public static MedicalRecord createRecordForPatient(Patient patient) {
+        MedicalRecord record = new MedicalRecord();
+        record.setRecordId(HelperUtils.generateId("MR"));
+        System.out.println("Medical Record ID: " + record.getRecordId());
+
+        record.setPatientId(patient.getPatientId()); // use existing patient
+        record.setDoctorId(InputHandler.getStringInput("Enter Doctor ID: "));
+        record.setVisitDate(InputHandler.getDateInput("Enter Visit Date"));
+        record.setDiagnosis(InputHandler.getStringInput("Enter Diagnosis: "));
+        record.setPrescription(InputHandler.getStringInput("Enter Prescription: "));
+        record.setTestResults(InputHandler.getStringInput("Enter Test Results: "));
+        record.setNotes(InputHandler.getStringInput("Enter Notes: "));
+
+        return record;
+    }
+
 
     @Override
     public String add(Object entity) {

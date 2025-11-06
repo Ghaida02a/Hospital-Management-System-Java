@@ -81,6 +81,11 @@ public class HospitalManagementApp {
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
+                    if (InputHandler.getConfirmation("Do you want to add a medical record now? ")) {
+                        MedicalRecord record = MedicalRecordService.createRecordForPatient(patient);
+                        patient.addMedicalRecord(record);
+                        MedicalRecordService.saveRecord(record);
+                    }
                 }
                 case 2 -> PatientService.save(InpatientRegistration());
                 case 3 -> PatientService.save(OutPatientRegistration());
@@ -101,9 +106,16 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 7 -> {
+//                    String id = InputHandler.getStringInput("Enter patient ID to update: ");
+//                    Patient updatedPatient = PatientService.addPatient(); // reuse input method
+//                    PatientService.editPatient(id, updatedPatient);
+
                     String id = InputHandler.getStringInput("Enter patient ID to update: ");
-                    Patient updatedPatient = PatientService.addPatient(); // reuse input method
-                    PatientService.editPatient(id, updatedPatient);
+                    Patient patient = PatientService.getPatientById(id);
+                    if (patient != null) {
+                        String newInsuranceId = InputHandler.getStringInput("Enter new Insurance ID: ");
+                        patient.updateInsurance(newInsuranceId);
+                    }
                 }
                 case 8 -> {
                     String id = InputHandler.getIntInput("Enter patient ID to remove: ").toString();
@@ -288,6 +300,11 @@ public class HospitalManagementApp {
                 case 1 -> {
                     Appointment appt = AppointmentService.addAppointment();
                     AppointmentService.save(appt);
+
+                    Patient patient = PatientService.getPatientById(appt.getPatientId());
+                    if (patient != null) {
+                        patient.addAppointment(appt);
+                    }
                 }
                 case 2 -> AppointmentService.displayAllAppointments();
                 case 3 -> {
