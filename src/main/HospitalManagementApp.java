@@ -502,28 +502,14 @@ public class HospitalManagementApp {
                     }
                 }
                 case 4 -> {
-                    System.out.println("===== Departments =====");
-                    DepartmentService.displayAllDepartments();
-
-                    String departmentId = InputHandler.getStringInput("Enter Department ID to assign the doctor: ");
-                    String doctorId = InputHandler.getStringInput("Enter Doctor ID to assign: ");
-
-                    boolean assignDoctorToDepartment = DepartmentService.assignDoctorToDepartment(departmentId, doctorId);
-                    if (assignDoctorToDepartment) {
-                        System.out.println("Doctor assigned successfully.");
-                    } else {
-                        System.out.println("Failed to assign doctor.");
-                    }
+                    String doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+                    String deptId = InputHandler.getStringInput("Enter Department ID: ");
+                    DepartmentService.assignDoctorToDepartment(doctorId, deptId);
                 }
                 case 5 -> {
-                    String departmentId = InputHandler.getStringInput("Enter Department ID: ");
-                    String nurseId = InputHandler.getStringInput("Enter Nurse ID to assign: ");
-                    boolean assignNurseToDepartment = DepartmentService.assignNurseToDepartment(departmentId, nurseId);
-                    if (assignNurseToDepartment) {
-                        System.out.println("Nurse assigned successfully.");
-                    } else {
-                        System.out.println("Failed to assign nurse.");
-                    }
+                    String nurseId = InputHandler.getStringInput("Enter Nurse ID: ");
+                    String deptId = InputHandler.getStringInput("Enter Department ID: ");
+                    DepartmentService.assignNurseToDepartment(nurseId, deptId);
                 }
                 case 6 -> {
                     String departmentId = InputHandler.getStringInput("Enter Department ID to update: ");

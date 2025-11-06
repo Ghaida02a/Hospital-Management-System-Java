@@ -111,24 +111,43 @@ public class Department implements Displayable {
     }
 
     public void assignDoctor(Doctor doctor) {
+        if (HelperUtils.isNull(doctor)) {
+            System.out.println("Cannot assign a null doctor.");
+            return;
+        }
         if (HelperUtils.isNull(doctors)) {
             doctors = new ArrayList<>();
         }
-        doctors.add(doctor);
+        if (!doctors.contains(doctor)) {
+            doctors.add(doctor);
+            System.out.println("Doctor " + doctor.getDoctorId() + " assigned to department " + departmentId);
+        } else {
+            System.out.println("Doctor " + doctor.getDoctorId() + " is already assigned.");
+        }
     }
 
     public void assignNurse(Nurse nurse) {
+        if (HelperUtils.isNull(nurse)) {
+            System.out.println("Cannot assign a null nurse.");
+            return;
+        }
         if (HelperUtils.isNull(nurses)) {
             nurses = new ArrayList<>();
         }
-        nurses.add(nurse);
+        if (!nurses.contains(nurse)) {
+            nurses.add(nurse);
+            System.out.println("Nurse " + nurse.getNurseId() + " assigned to department " + departmentId);
+        } else {
+            System.out.println("Nurse " + nurse.getNurseId() + " is already assigned.");
+        }
     }
 
     public void updateBedAvailability(int beds) {
         if (HelperUtils.isPositive(beds) && beds <= bedCapacity) {
             availableBeds = beds;
+            System.out.println("Available beds updated to " + beds + " out of " + bedCapacity);
         } else {
-            System.out.println("Invalid bed availability update.");
+            System.out.println("Invalid bed availability. Must be between 1 and " + bedCapacity);
         }
     }
 

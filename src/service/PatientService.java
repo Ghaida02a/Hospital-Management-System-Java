@@ -272,7 +272,6 @@ public class PatientService implements Manageable, Searchable {
         }
     }
 
-
     public static Patient getPatientById(String patientId) {
         for (Patient patient : patientList) {
             if (patient.getPatientId().equals(patientId)) {

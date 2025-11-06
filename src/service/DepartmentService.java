@@ -106,104 +106,42 @@ public class DepartmentService implements Manageable, Searchable {
     }
 
     // Assign a doctor (by doctorId) to a department (by departmentId)
-    public static boolean assignDoctorToDepartment(String departmentId, String doctorId) {
-        if (doctorId == null || doctorId.isEmpty()) {
-            System.out.println("Invalid doctor ID.");
-            return false;
-        }
-        if (departmentId == null || departmentId.isEmpty()) {
-            System.out.println("Invalid department ID.");
-            return false;
-        }
+    public static boolean assignDoctorToDepartment(String doctorId, String departmentId) {
+        Department department = getDepartmentById(departmentId);
+        Doctor doctor = DoctorService.getDoctorById(doctorId);
 
-        Department dept = getDepartmentById(departmentId);
-        if (dept == null) {
-            System.out.println("Department not found: " + departmentId);
+        if (department == null || doctor == null) {
+            System.out.println("Doctor or department not found.");
             return false;
         }
 
-        Doctor found = null;
-        for (Doctor doc : service.DoctorService.doctorsList) {
-            if (doc != null && doctorId.equals(doc.getId())) {
-                found = doc;
-                break;
-            }
-        }
-        if (found == null) {
-            System.out.println("Doctor not found: " + doctorId);
-            return false;
-        }
-
-        // Ensure department's doctor list exists
-        List<Doctor> docs = dept.getDoctors();
-        if (docs == null) {
-            docs = new ArrayList<>();
-            dept.setDoctors(docs);
-        }
-
-        // Check if doctor already assigned to this department
-        for (Doctor d : docs) {
-            if (d != null && doctorId.equals(d.getId())) {
-                System.out.println("Doctor " + doctorId + " is already assigned to department " + departmentId);
-                return false;
-            }
-        }
-
-        // Assign
-        docs.add(found);
-        found.setDepartmentId(departmentId);
-        System.out.println("Doctor " + doctorId + " assigned to department " + departmentId);
+        department.assignDoctor(doctor);
+        doctor.setDepartmentId(departmentId);
         return true;
     }
 
-    public static boolean assignNurseToDepartment(String departmentId, String nurseId) {
-        if (nurseId == null || nurseId.isEmpty()) {
-            System.out.println("Invalid nurse ID.");
-            return false;
-        }
-        if (departmentId == null || departmentId.isEmpty()) {
-            System.out.println("Invalid department ID.");
-            return false;
-        }
+    public static boolean assignNurseToDepartment(String nurseId, String departmentId) {
+        Department department = getDepartmentById(departmentId);
+        Nurse nurse = NurseService.getNurseById(nurseId);
 
-        Department dept = getDepartmentById(departmentId);
-        if (dept == null) {
-            System.out.println("Department not found: " + departmentId);
+        if (department == null || nurse == null) {
+            System.out.println("Nurse or department not found.");
             return false;
         }
 
-        // Find nurse from NurseService
-        Nurse found = null;
-        for (Nurse nurse : NurseService.nurseList) {
-            if (nurse != null && nurseId.equals(nurse.getId())) {
-                found = nurse;
-                break;
-            }
-        }
-        if (found == null) {
-            System.out.println("Nurse not found: " + nurseId);
+        department.assignNurse(nurse);
+        nurse.setDepartmentId(departmentId);
+        return true;
+    }
+
+    public static boolean updateBedAvailability(String departmentId, int beds) {
+        Department department = getDepartmentById(departmentId);
+        if (department == null) {
+            System.out.println("Department not found.");
             return false;
         }
 
-        // Ensure department's doctor list exists
-        List<Nurse> nurse = dept.getNurses();
-        if (nurse == null) {
-            nurse = new ArrayList<>();
-            dept.setNurses(nurse);
-        }
-
-        // Check if doctor already assigned to this department
-        for (Nurse n : nurse) {
-            if (n != null && nurseId.equals(n.getId())) {
-                System.out.println("Nurse " + nurseId + " is already assigned to department " + departmentId);
-                return false;
-            }
-        }
-
-        // Assign
-        nurse.add(found);
-        found.setDepartmentId(departmentId);
-        System.out.println("Nurse " + nurseId + " assigned to department " + departmentId);
+        department.updateBedAvailability(beds);
         return true;
     }
 
