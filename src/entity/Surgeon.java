@@ -1,6 +1,7 @@
 package entity;
 
 import Interface.Displayable;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class Surgeon extends Doctor implements Displayable {
     }
 
     public void setSurgeriesPerformed(int surgeriesPerformed) {
-        if(HelperUtils.isNegative(surgeriesPerformed)) {
+        if (HelperUtils.isNegative(surgeriesPerformed)) {
             System.out.println("Surgeries performed cannot be negative.");
         } else {
             this.surgeriesPerformed = surgeriesPerformed;
@@ -59,12 +60,13 @@ public class Surgeon extends Doctor implements Displayable {
     }
 
     public void setSurgeryTypes(List<String> surgeryTypes) {
-        if(HelperUtils.isNull(surgeryTypes)) {
+        if (HelperUtils.isNull(surgeryTypes)) {
             this.surgeryTypes = new ArrayList<>();
         } else {
             this.surgeryTypes = surgeryTypes;
         }
     }
+
     public static void setSurgeryTypeForSurgeon(Surgeon surgeon) {
         String type = InputHandler.getStringInput("Enter surgery type: ");
         if (HelperUtils.isNull(type) || type.isEmpty()) {
@@ -80,7 +82,7 @@ public class Surgeon extends Doctor implements Displayable {
     }
 
     public void setOperationTheatreAccess(boolean operationTheatreAccess) {
-        if(!operationTheatreAccess) {
+        if (!operationTheatreAccess) {
             System.out.println("Warning: Revoking operation theatre access for surgeon " + this.getDoctorId());
         }
         this.operationTheatreAccess = operationTheatreAccess;
@@ -108,7 +110,7 @@ public class Surgeon extends Doctor implements Displayable {
     @Override
     public Appointment scheduleConsultation(String patientId, LocalDate date, String time, String reason) {
         Appointment appt = super.scheduleConsultation(patientId, date, time, reason);
-        if (HelperUtils.isNull(appt)){
+        if (HelperUtils.isNull(appt)) {
             return null;
         }
         String noteAppend = operationTheatreAccess ? " [Surgeon consult - may require pre-op evaluation]" : " [Surgeon consult]";
@@ -132,7 +134,7 @@ public class Surgeon extends Doctor implements Displayable {
     @Override
     public MedicalRecord provideSecondOpinion(String patientId, String originalDoctorId, String opinionNotes) {
         MedicalRecord mr = super.provideSecondOpinion(patientId, originalDoctorId, opinionNotes);
-        if (mr == null){
+        if (mr == null) {
             return null;
         }
         String existing = mr.getNotes() == null ? "" : mr.getNotes();
@@ -142,42 +144,14 @@ public class Surgeon extends Doctor implements Displayable {
     }
 
     // Perform a surgery for a patient: create a medical record, add to the patient's records
-    public void performSurgery(Patient patient, String surgeryType, String notes) {
-        if (HelperUtils.isNull(patient)) {
-            System.out.println("Cannot perform surgery: patient is null.");
-            return;
+    public void performSurgery(String type) {
+        if (operationTheatreAccess) {
+            surgeriesPerformed++;
+            surgeryTypes.add(type);
+            System.out.println("Performed surgery: " + type);
+        } else {
+            System.out.println("Access to operation theatre denied.");
         }
-        if (!this.operationTheatreAccess) {
-            System.out.println("Cannot perform surgery: Surgeon does not have operation theatre access.");
-            return;
-        }
-
-        MedicalRecord record = new MedicalRecord();
-        // simple, mostly-unique id based on timestamp; projects can replace with proper id generator
-        record.setRecordId("MR-" + System.currentTimeMillis());
-        record.setPatientId(patient.getId());
-        record.setDoctorId(this.getDoctorId());
-        record.setVisitDate(LocalDate.now());
-        record.setDiagnosis("Surgery: " + (surgeryType == null ? "Unknown" : surgeryType));
-        record.setPrescription(null);
-        record.setTestResults(null);
-        record.setNotes(notes == null ? "" : notes);
-
-        // attach to patient
-        patient.addMedicalRecord(record);
-
-        // persist
-        MedicalRecordService.saveRecord(record);
-
-        // update counters
-        updateSurgeryCount(1);
-
-        // track surgery type for this surgeon
-        if (HelperUtils.isNotNull(surgeryType) && !surgeryType.isEmpty()) {
-            addSurgeryType(surgeryType.trim());
-        }
-
-        System.out.println("Surgery performed: '" + (surgeryType == null ? "Unknown" : surgeryType) + "' on patient " + patient.getId());
     }
 
     // Increment the surgeon's surgery count by a positive number

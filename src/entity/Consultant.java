@@ -1,4 +1,5 @@
 package entity;
+
 import Interface.Displayable;
 import Utils.HelperUtils;
 
@@ -9,9 +10,10 @@ public class Consultant extends Doctor implements Displayable {
     private boolean onlineConsultationAvailable;
     private int consultationDuration; // in minutes
 
-    public Consultant(){
+    public Consultant() {
         super();
     }
+
     public Consultant(List<String> consultationTypes, boolean onlineConsultationAvailable, int consultationDuration) {
         this.consultationTypes = consultationTypes;
         this.onlineConsultationAvailable = onlineConsultationAvailable;
@@ -23,7 +25,7 @@ public class Consultant extends Doctor implements Displayable {
     }
 
     public void setConsultationTypes(List<String> consultationTypes) {
-        if(HelperUtils.isNull(consultationTypes) || consultationTypes.isEmpty()) {
+        if (HelperUtils.isNull(consultationTypes) || consultationTypes.isEmpty()) {
             System.out.println("Consultation types cannot be null or empty.");
         } else {
             this.consultationTypes = consultationTypes;
@@ -47,37 +49,43 @@ public class Consultant extends Doctor implements Displayable {
     }
 
     public void setConsultationDuration(int consultationDuration) {
-        if(HelperUtils.isPositive(consultationDuration)) {
+        if (HelperUtils.isPositive(consultationDuration)) {
             this.consultationDuration = consultationDuration;
         } else {
             System.out.println("Consultation duration must be a positive integer.");
         }
     }
 
-//    @Override
-//    public String displayInfo() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(super.displayInfo()).append(System.lineSeparator());
-//        sb.append("Consultation Types: ").append(consultationTypes).append(System.lineSeparator());
-//        sb.append("Online Consultation Available: ").append(onlineConsultationAvailable).append(System.lineSeparator());
-//        sb.append("Consultation Duration: ").append(consultationDuration).append(" minutes");
-//        String out = sb.toString();
-//        System.out.println(out);
-//        return out;
-//    }
-@Override
-public String displayInfo() {
-    // Start with the base doctor information
-    StringBuilder info = new StringBuilder(super.displayInfo());
+    public void scheduleConsultation(String type) {
+        if (HelperUtils.isValidString(type)) {
+            consultationTypes.add(type);
+            System.out.println("Scheduled consultation: " + type +
+                    " (Duration: " + consultationDuration + " minutes)");
+        } else {
+            System.out.println("Invalid consultation type.");
+        }
+    }
 
-    // Add consultant-specific details
-    info.append("Consultation Types: ").append(getConsultationTypes()).append("\n");
-    info.append("Online Consultation Available: ").append(isOnlineConsultationAvailable()).append("\n");
-    info.append("Consultation Duration: ").append(getConsultationDuration()).append(" minutes\n");
+    public void provideSecondOpinion(String caseDetails) {
+        if (HelperUtils.isValidString(caseDetails)) {
+            System.out.println("Consultant " + getFirstName() + " " + getLastName() +
+                    " is providing a second opinion on: " + caseDetails);
+        } else {
+            System.out.println("Case details must be provided for a second opinion.");
+        }
+    }
+    @Override
+    public String displayInfo() {
+        // Start with the base doctor information
+        StringBuilder info = new StringBuilder(super.displayInfo());
 
-    return info.toString();
-}
+        // Add consultant-specific details
+        info.append("Consultation Types: ").append(getConsultationTypes()).append("\n");
+        info.append("Online Consultation Available: ").append(isOnlineConsultationAvailable()).append("\n");
+        info.append("Consultation Duration: ").append(getConsultationDuration()).append(" minutes\n");
 
+        return info.toString();
+    }
 
     @Override
     public String displaySummary(String str) {

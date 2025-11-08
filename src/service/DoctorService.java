@@ -225,7 +225,7 @@ public class DoctorService implements Manageable, Searchable {
 
     public static void save(Surgeon surgeon) { //save Surgeon
         if (HelperUtils.isNotNull(surgeon)) {
-            //surgeonList.add(surgeon);
+            surgeonList.add(surgeon);
             System.out.println("Surgeon Added successfully!\n");
         }
     }
@@ -265,23 +265,23 @@ public class DoctorService implements Manageable, Searchable {
 
 
     public static boolean assignPatientToDoctor(String doctorId, String patientId) {
-        if (doctorId == null || doctorId.trim().isEmpty()) {
+        if (doctorId == null || doctorId.isEmpty()) {
             System.out.println("Invalid doctor ID.");
             return false;
         }
-        if (patientId == null || patientId.trim().isEmpty()) {
+        if (patientId == null || patientId.isEmpty()) {
             System.out.println("Invalid patient ID.");
             return false;
         }
 
-        Doctor found = getDoctorById(doctorId); // use new method
-        if (found == null) {
+        Doctor found = getDoctorById(doctorId);
+        if (HelperUtils.isNull(found)) {
             System.out.println("Doctor with ID " + doctorId + " not found.");
             return false;
         }
 
         entity.Patient patient = PatientService.getPatientById(patientId);
-        if (patient == null) {
+        if (HelperUtils.isNull(patient)) {
             System.out.println("Patient with ID " + patientId + " not found.");
             return false;
         }
@@ -306,12 +306,27 @@ public class DoctorService implements Manageable, Searchable {
     }
 
     public static Doctor getDoctorById(String doctorId) {
-        for (Doctor doctor : doctorsList) {
-            if (doctor.getDoctorId().equals(doctorId)) {
+        for (Doctor doctor : doctorsList){
+            if (doctor.getDoctorId().equals(doctorId)){
                 return doctor;
             }
         }
-        return null; //not found
+        for (Surgeon surgeon : surgeonList) {
+            if (surgeon.getDoctorId().equals(doctorId)) {
+                return surgeon;
+            }
+        }
+        for (Consultant consultant : consultantList) {
+            if (consultant.getDoctorId().equals(doctorId)) {
+                return consultant;
+            }
+        }
+        for (GeneralPractitioner gp : generalPractitionerList) {
+            if (gp.getDoctorId().equals(doctorId)) {
+                return gp;
+            }
+        }
+        return null; // not found
     }
 
 
@@ -356,6 +371,24 @@ public class DoctorService implements Manageable, Searchable {
                 specializedDoctors.add(doctor);
             }
         }
+        for (Surgeon surgeon : surgeonList){
+            if (surgeon.getSpecialization().equalsIgnoreCase(specialization)){
+                specializedDoctors.add(surgeon);
+            }
+        }
+
+        for (Consultant consultant : consultantList) {
+            if (consultant.getSpecialization().equalsIgnoreCase(specialization)) {
+                specializedDoctors.add(consultant);
+            }
+        }
+
+        for (GeneralPractitioner gp : generalPractitionerList) {
+            if (gp.getSpecialization().equalsIgnoreCase(specialization)) {
+                specializedDoctors.add(gp);
+            }
+        }
+
         if (specializedDoctors.isEmpty()) {
             System.out.println("No doctors found with specialization: " + specialization);
         } else {
@@ -368,15 +401,23 @@ public class DoctorService implements Manageable, Searchable {
         return specializedDoctors;
     }
 
-    public static List<Doctor> getAvailableDoctors() { //Returns doctors marked as available
+    public static List<Doctor> getAvailableDoctors() {
+        List<Doctor> allDoctors = new ArrayList<>();
+        allDoctors.addAll(doctorsList);   // base doctors
+        allDoctors.addAll(surgeonList);  // if stored separately
+        allDoctors.addAll(consultantList); // if stored separately
+        allDoctors.addAll(generalPractitionerList); // if stored separately
+
         List<Doctor> availableDoctors = new ArrayList<>();
-        for (Doctor doctor : doctorsList) {
+        for (Doctor doctor : allDoctors) {
             if (doctor.isAvailable()) {
                 availableDoctors.add(doctor);
             }
         }
+
         return availableDoctors;
     }
+
 
     public static Surgeon addSurgeon() {
         Surgeon surgeon = new Surgeon();
@@ -401,8 +442,10 @@ public class DoctorService implements Manageable, Searchable {
         surgeon.setAvailable(baseDoctor.isAvailable());
 
         // Surgeon-specific info
-        surgeon.setSurgeriesPerformed(InputHandler.getIntInput("Enter Number of Surgeries Performed: "));
-        surgeon.setSurgeryTypeForSurgeon(surgeon);
+        int count = InputHandler.getIntInput("Enter Number of Surgeries Performed: ");
+        surgeon.updateSurgeryCount(count);
+        String type = InputHandler.getStringInput("Enter a sample surgery type performed: ");
+        surgeon.performSurgery(type);
         surgeon.setOperationTheatreAccess(InputHandler.getConfirmation("Does the surgeon have Operation Theatre Access? "));
 
         return surgeon;
@@ -415,6 +458,7 @@ public class DoctorService implements Manageable, Searchable {
         Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
 
         consultant.setId(baseDoctor.getId());
+        consultant.setDoctorId(baseDoctor.getDoctorId());
         consultant.setFirstName(baseDoctor.getFirstName());
         consultant.setLastName(baseDoctor.getLastName());
         consultant.setDateOfBirth(baseDoctor.getDateOfBirth());
@@ -430,12 +474,20 @@ public class DoctorService implements Manageable, Searchable {
         consultant.setAvailableSlots(baseDoctor.getAvailableSlots());
         consultant.setAvailable(baseDoctor.isAvailable());
 
+
         // Consultant-specific info
-        //   private boolean onlineConsultationAvailable;
-        //    private int consultationDuration; // in minutes
-        //consultant.setConsultationTypes(InputHandler.getStringInput(""));
-        consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes)"));
-        save(consultant);
+        String typesInput = InputHandler.getStringInput("Enter Consultation Types (comma-separated): ");
+        List<String> types = new ArrayList<>();
+        if (!typesInput.isEmpty()) {
+            for (String p : typesInput.split(",")) {
+                if (!p.isEmpty()) types.add(p.trim());
+            }
+        }
+        consultant.setConsultationTypes(types);
+
+        consultant.setOnlineConsultationAvailable(InputHandler.getConfirmation("Is Online Consultation Available? "));
+        consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes): "));
+
         return consultant;
     }
 

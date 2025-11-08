@@ -73,6 +73,7 @@ public class HospitalManagementApp {
     }
 
     private static void showPatientManagementMenu() {
+        option = 0;
         while (option != 10) {
             patientManagementMenu();
             switch (option) {
@@ -159,7 +160,7 @@ public class HospitalManagementApp {
                     DoctorService.save(DoctorService.addDoctor());
                 }
                 case 2 -> DoctorService.save(addSurgeon());
-                case 3 -> DoctorService.addConsultant();
+                case 3 -> DoctorService.save(addConsultant());
                 case 4 -> DoctorService.save(addGeneralPractitioner());
                 case 5 -> DoctorService.displayAllDoctors();
                 case 6 -> {
@@ -316,8 +317,24 @@ public class HospitalManagementApp {
                     AppointmentService.save(appt);
 
                     Patient patient = PatientService.getPatientById(appt.getPatientId());
-                    if (patient != null) {
+                    if (HelperUtils.isNotNull(patient)) {
                         patient.addAppointment(appt);
+                    }
+
+                    // Consultant-specific logic
+                    Doctor doctor = DoctorService.getDoctorById(appt.getDoctorId());
+                    if (doctor instanceof Consultant consultant) {
+                        String type = InputHandler.getStringInput("Enter consultation type for this appointment: ");
+                        consultant.scheduleConsultation(type);
+                    }
+
+                    // GP-specific logic
+                    if (doctor instanceof GeneralPractitioner) {
+                        GeneralPractitioner gp = (GeneralPractitioner) doctor;
+                        if (gp.isHomeVisitAvailable()) {
+                            String dateTime = InputHandler.getStringInput("Enter home visit date/time: ");
+                            gp.scheduleHomeVisit(patient.getId(), dateTime);
+                        }
                     }
                 }
                 case 2 -> AppointmentService.displayAllAppointments();
@@ -416,6 +433,23 @@ public class HospitalManagementApp {
                 case 1 -> {
                     MedicalRecord record = MedicalRecordService.createRecord();
                     MedicalRecordService.saveRecord(record);
+
+                    // Consultant-specific logic
+                    Doctor doctor = DoctorService.getDoctorById(record.getDoctorId());
+                    if (doctor instanceof Consultant) {
+                        Consultant consultant = (Consultant) doctor;
+                        String caseDetails = InputHandler.getStringInput("Enter case details for second opinion: ");
+                        consultant.provideSecondOpinion(caseDetails);
+                    }
+
+                    // GP-specific logic
+                    if (doctor instanceof GeneralPractitioner) {
+                        GeneralPractitioner gp = (GeneralPractitioner) doctor;
+                        if (gp.isVaccinationCertified()) {
+                            String vaccineName = InputHandler.getStringInput("Enter vaccine name: ");
+                            gp.administerVaccine(record.getPatientId(), vaccineName);
+                        }
+                    }
                 }
                 case 2 -> MedicalRecordService.displayAllRecords();
                 case 3 -> {
