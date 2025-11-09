@@ -6,7 +6,7 @@ import Utils.HelperUtils;
 import java.time.LocalDate;
 import java.util.List;
 
-public class OutPatient extends Patient implements Displayable{
+public class OutPatient extends Patient implements Displayable {
     private int visitCount;
     private LocalDate lastVisitDate;
     private String preferredDoctorId;
@@ -14,6 +14,7 @@ public class OutPatient extends Patient implements Displayable{
     public OutPatient() {
         super();
     }
+
     public OutPatient(int visitCount, LocalDate lastVisitDate, String preferredDoctorId) {
         this.visitCount = visitCount;
         this.lastVisitDate = lastVisitDate;
@@ -32,7 +33,7 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setVisitCount(int visitCount) {
-        if(HelperUtils.isNegative(visitCount)) {
+        if (HelperUtils.isNegative(visitCount)) {
             System.out.println("Visit count cannot be negative.");
         } else {
             this.visitCount = visitCount;
@@ -44,7 +45,7 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setLastVisitDate(LocalDate lastVisitDate) {
-        if(lastVisitDate.isAfter(LocalDate.now())) {
+        if (lastVisitDate.isAfter(LocalDate.now())) {
             System.out.println("Last visit date cannot be in the future.");
         } else {
             this.lastVisitDate = lastVisitDate;
@@ -56,11 +57,27 @@ public class OutPatient extends Patient implements Displayable{
     }
 
     public void setPreferredDoctorId(String preferredDoctorId) {
-        if(HelperUtils.isNotNull(preferredDoctorId)) {
+        if (HelperUtils.isNotNull(preferredDoctorId)) {
             this.preferredDoctorId = preferredDoctorId;
         } else {
             System.out.println("Preferred doctor ID cannot be null.");
         }
+    }
+
+    public void scheduleFollowUp(LocalDate nextVisitDate) {
+        if (HelperUtils.isNull(nextVisitDate) || nextVisitDate.isBefore(LocalDate.now())) {
+            System.out.println("Follow-up date must be in the future.");
+            return;
+        }
+        this.lastVisitDate = nextVisitDate;
+        System.out.println("Follow-up scheduled for: " + nextVisitDate);
+    }
+
+    //Increment the visit count whenever the patient comes in.
+    public void updateVisitCount() {
+        this.visitCount++;
+        this.lastVisitDate = LocalDate.now();
+        System.out.println("Visit count updated to: " + visitCount + " (Last visit: " + lastVisitDate + ")");
     }
 
     @Override

@@ -214,28 +214,28 @@ public class PatientService implements Manageable, Searchable {
         System.out.println("Successfully added allergy '" + allergyName + "' to patient " + patientId + ".\n");
     }
 
-    public static void save(Patient patient) { //save Patient
+    public static void savePatient(Patient patient) { //save Patient
         if (HelperUtils.isNotNull(patient)) {
             patientList.add(patient);
             System.out.println("Patient registered successfully!\n");
         }
     }
 
-    public static void save(InPatient inPatient) { //save InPatient
+    public static void saveInPatient(InPatient inPatient) { //save InPatient
         if (HelperUtils.isNotNull(inPatient)) {
             inPatientList.add(inPatient);
             System.out.println("InPatient registered successfully!\n");
         }
     }
 
-    public static void save(OutPatient outPatient) { //save OutPatient
+    public static void saveOutPatient(OutPatient outPatient) { //save OutPatient
         if (HelperUtils.isNotNull(outPatient)) {
             outPatientList.add(outPatient);
             System.out.println("OutPatient registered successfully!\n");
         }
     }
 
-    public static void save(EmergencyPatient emergencyPatient) { //save Emergency Patient
+    public static void saveEmergencyPatient(EmergencyPatient emergencyPatient) { //save Emergency Patient
         if (HelperUtils.isNotNull(emergencyPatient)) {
             emergencyPatientList.add(emergencyPatient);
             System.out.println("Emergency patient registered successfully!\n");
@@ -281,30 +281,14 @@ public class PatientService implements Manageable, Searchable {
         return null;
     }
 
-//    public static void displayAllPatients() {
-//        if (patientList.isEmpty()) {
-//            System.out.println("===== Patients List =====");
-//            System.out.println("------------------------");
-//            System.out.println("No patients found!");
-//            System.out.println("========================\n");
-//            return;
-//        }
-//
-//        System.out.println("===== Patients List =====");
-//        for (Patient p : patientList) {
-//            System.out.println(p); // make sure Patient.toString() is implemented
-//            System.out.println("------------------------");
-//        }
-//        System.out.println("========================\n");
-
     public static void displayAllPatients() {
         System.out.println("\n===== All Patients =====\n");
 
         // --- General Patients ---
         if (!patientList.isEmpty()) {
             System.out.println("===== Patients List =====");
-            for (Patient p : patientList) {
-                System.out.println(p);
+            for (Patient patient : patientList) {
+                patient.displayInfo("");
                 System.out.println("------------------------");
             }
             System.out.println("========================\n");
@@ -313,8 +297,8 @@ public class PatientService implements Manageable, Searchable {
         // --- InPatients ---
         if (!inPatientList.isEmpty()) {
             System.out.println("===== InPatients List =====");
-            for (InPatient p : inPatientList) {
-                System.out.println(p);
+            for (InPatient inPatient : inPatientList) {
+                inPatient.displayInfo("");
                 System.out.println("------------------------");
             }
             System.out.println("========================\n");
@@ -323,8 +307,8 @@ public class PatientService implements Manageable, Searchable {
         // --- OutPatients ---
         if (!outPatientList.isEmpty()) {
             System.out.println("===== OutPatients List =====");
-            for (OutPatient p : outPatientList) {
-                System.out.println(p);
+            for (OutPatient outPatient : outPatientList) {
+                outPatient.displayInfo("");
                 System.out.println("------------------------");
             }
             System.out.println("========================\n");
@@ -333,8 +317,8 @@ public class PatientService implements Manageable, Searchable {
         // --- Emergency Patients ---
         if (!emergencyPatientList.isEmpty()) {
             System.out.println("===== Emergency Patients List =====");
-            for (EmergencyPatient p : emergencyPatientList) {
-                System.out.println(p);
+            for (EmergencyPatient emergencyPatient : emergencyPatientList) {
+                emergencyPatient.displayInfo("");
                 System.out.println("------------------------");
             }
             System.out.println("========================\n");

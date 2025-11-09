@@ -4,7 +4,6 @@ import Interface.Displayable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 
-import javax.net.ssl.HandshakeCompletedEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -243,7 +242,7 @@ public class Patient extends Person implements Displayable {
     }
 
     @Override
-    public String displayInfo(String str) {
+    public String displayInfo() {
         StringBuilder newStr = new StringBuilder();
         newStr.append(super.displayInfo("")).append(System.lineSeparator());
         newStr.append("Blood Group: ").append(bloodGroup).append(System.lineSeparator());

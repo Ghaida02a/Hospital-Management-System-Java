@@ -130,21 +130,20 @@ public class InPatient extends Patient implements Displayable, Billable {
     }
 
     public long calculateStayDuration() {
-        if (admissionDate == null || dischargeDate == null) {
+        if (HelperUtils.isNull(admissionDate) || HelperUtils.isNull(dischargeDate)) {
             System.out.println("Cannot calculate stay duration — missing dates.");
             return 0;
         }
-        return java.time.temporal.ChronoUnit.DAYS.between(admissionDate, dischargeDate);
+        return dischargeDate.toEpochDay() - admissionDate.toEpochDay();
     }
 
     public double calculateTotalCharges() {
         long days = calculateStayDuration();
-        if (days <= 0){
+        if (HelperUtils.isNegative(days) || days == 0) {
             days = 1; // at least 1 day charge
         }
         return days * dailyCharges;
     }
-
 
     @Override
     public String displayInfo(String str) {

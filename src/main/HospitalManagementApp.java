@@ -79,7 +79,7 @@ public class HospitalManagementApp {
             switch (option) {
                 case 1 -> {
                     Patient patient = PatientService.addPatient();
-                    PatientService.save(patient);
+                    PatientService.savePatient(patient);
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
@@ -89,9 +89,33 @@ public class HospitalManagementApp {
                         MedicalRecordService.saveRecord(record);
                     }
                 }
-                case 2 -> PatientService.save(InpatientRegistration());
-                case 3 -> PatientService.save(OutPatientRegistration());
-                case 4 -> PatientService.save(EmergencyPatientRegistration());
+                case 2 -> {
+                    InPatient inPatient = InpatientRegistration();
+                    PatientService.saveInPatient(inPatient);     //adds to inPatientList
+
+                    long days = inPatient.calculateStayDuration(); //calculate stay duration
+                    double total = inPatient.calculateTotalCharges(); //calculate total charges
+
+                    System.out.println("Stay Duration: " + days + " days");
+                    System.out.println("Total Charges: OMR " + total);
+                }
+
+                case 3 -> {
+                    OutPatient outPatient = OutPatientRegistration();
+                    PatientService.saveOutPatient(outPatient);
+
+                    // First visit logged
+                    outPatient.updateVisitCount(); //update visit count
+                }
+                case 4 -> {
+                    EmergencyPatient ep = EmergencyPatientRegistration();
+                    PatientService.saveEmergencyPatient(ep);
+
+                    ep.prioritizeTreatment();
+                    if ("Ambulance".equalsIgnoreCase(ep.getArrivalMode())) {
+                        ep.admitThroughER(); //admit through ER
+                    }
+                }
                 case 5 -> PatientService.displayAllPatients();
                 case 6 -> {
                     String name = InputHandler.getStringInput("Enter patient name to search: ").toString();
@@ -334,6 +358,15 @@ public class HospitalManagementApp {
                         if (gp.isHomeVisitAvailable()) {
                             String dateTime = InputHandler.getStringInput("Enter home visit date/time: ");
                             gp.scheduleHomeVisit(patient.getId(), dateTime);
+                        }
+                    }
+
+                    //Each time an outpatient books or completes an appointment, should increment their visit count
+                    if (patient instanceof OutPatient outPatient) {
+                        outPatient.updateVisitCount();
+                        if (InputHandler.getConfirmation("Do you want to schedule a follow-up? ")) {
+                            LocalDate nextVisit = InputHandler.getDateInput("Enter follow-up date: ");
+                            outPatient.scheduleFollowUp(nextVisit);
                         }
                     }
                 }
@@ -599,6 +632,13 @@ public class HospitalManagementApp {
                 }
                 case 4 -> {
                     String patientId = InputHandler.getStringInput("Enter Patient ID for statistics report: ");
+                    Patient patient = PatientService.getPatientById(patientId);
+
+                    if (patient instanceof OutPatient outPatient) {
+                        System.out.println("OutPatient Visit Count: " + outPatient.getVisitCount());
+                        System.out.println("Last Visit Date: " + outPatient.getLastVisitDate());
+                    }
+
                     ReportService.generatePatientStatisticsReport(patientId);
                 }
                 case 5 -> {

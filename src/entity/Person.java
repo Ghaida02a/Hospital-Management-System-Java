@@ -6,7 +6,7 @@ import Utils.HelperUtils;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Person implements Displayable {
+public abstract class Person implements Displayable {
     String id;
     String firstName;
     String lastName;
@@ -164,6 +164,8 @@ public class Person implements Displayable {
                 + "Address: " + address;
         return info;
     }
+
+    public abstract String displayInfo();
 
     @Override
     public String displaySummary(String str) {

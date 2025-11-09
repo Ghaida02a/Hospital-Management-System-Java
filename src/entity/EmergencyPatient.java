@@ -12,7 +12,7 @@ public class EmergencyPatient extends InPatient implements Displayable {
     private int triageLevel; // 1 to 5
     private boolean admittedViaER;
 
-    public EmergencyPatient(){
+    public EmergencyPatient() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setEmergencyType(String emergencyType) {
-        if(HelperUtils.isValidString(emergencyType, 3, 50)) {
+        if (HelperUtils.isValidString(emergencyType, 3, 50)) {
             this.emergencyType = emergencyType;
         } else {
             System.out.println("Emergency type must be between 3 and 50 characters.");
@@ -56,7 +56,7 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setArrivalMode(String arrivalMode) {
-        if(HelperUtils.isValidString(arrivalMode, 3, 20)) {
+        if (HelperUtils.isValidString(arrivalMode, 3, 20)) {
             this.arrivalMode = arrivalMode;
         } else {
             System.out.println("Arrival mode must be between 3 and 20 characters.");
@@ -68,7 +68,7 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setTriageLevel(int triageLevel) {
-        if(triageLevel >= 1 && triageLevel <= 5) {
+        if (triageLevel >= 1 && triageLevel <= 5) {
             this.triageLevel = triageLevel;
         } else {
             System.out.println("Triage level must be between 1 and 5.");
@@ -80,15 +80,30 @@ public class EmergencyPatient extends InPatient implements Displayable {
     }
 
     public void setAdmittedViaER(boolean admittedViaER) {
-        if(HelperUtils.isNotNull(admittedViaER)) {
+        if (HelperUtils.isNotNull(admittedViaER)) {
             this.admittedViaER = admittedViaER;
         } else {
             System.out.println("Admitted via ER must be specified.");
         }
     }
 
+    public void prioritizeTreatment() {
+        switch (triageLevel) {
+            case 1 -> System.out.println("Critical case! Immediate treatment required.");
+            case 2, 3 -> System.out.println("High priority case. Treat urgently.");
+            case 4, 5 -> System.out.println("Stable case. Can wait for treatment.");
+            default -> System.out.println("Invalid triage level.");
+        }
+    }
+
+    //Mark patient as admitted via ER.
+    public void admitThroughER() {
+        this.admittedViaER = true;
+        System.out.println("Patient admitted via Emergency Room.");
+    }
+
     @Override
-    public String displayInfo(String str) {
+    public String displayInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
@@ -98,6 +113,16 @@ public class EmergencyPatient extends InPatient implements Displayable {
         sb.append("Admitted Via ER: ").append(admittedViaER);
         String out = sb.toString();
         System.out.println(out);
+
+        // Emergency-specific logic: highlight critical cases
+        if (triageLevel == 1) {
+            System.out.println("⚠ CRITICAL: Immediate intervention required!");
+        } else if (triageLevel <= 3) {
+            System.out.println("⚠ High priority case.");
+        } else {
+            System.out.println("Stable case, can wait.");
+        }
+
         return out;
     }
 
@@ -105,6 +130,4 @@ public class EmergencyPatient extends InPatient implements Displayable {
     public String displaySummary(String str) {
         return "EmergencyPatient{" + getId() + ": " + getFirstName() + " " + getLastName() + ", triage=" + triageLevel + "}";
     }
-
-    //• Override methods with emergency-specific logic
 }
