@@ -1,5 +1,6 @@
 package main;
 
+import Interface.Manageable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
@@ -73,13 +74,15 @@ public class HospitalManagementApp {
     }
 
     private static void showPatientManagementMenu() {
+        Manageable patientManager = new PatientService();
         option = 0;
         while (option != 10) {
             patientManagementMenu();
             switch (option) {
                 case 1 -> {
                     Patient patient = PatientService.addPatient();
-                    PatientService.savePatient(patient);
+//                    PatientService.savePatient(patient);
+                    System.out.println(patientManager.add(patient)); //
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
                         PatientService.addAllergyToPatient(patient.getId());
                     }
@@ -91,8 +94,8 @@ public class HospitalManagementApp {
                 }
                 case 2 -> {
                     InPatient inPatient = InpatientRegistration();
-                    PatientService.saveInPatient(inPatient);     //adds to inPatientList
-
+//                    PatientService.saveInPatient(inPatient);     //adds to inPatientList
+                    System.out.println(patientManager.add(inPatient)); // handles saving
                     long days = inPatient.calculateStayDuration(); //calculate stay duration
                     double total = inPatient.calculateTotalCharges(); //calculate total charges
 
@@ -102,32 +105,32 @@ public class HospitalManagementApp {
 
                 case 3 -> {
                     OutPatient outPatient = OutPatientRegistration();
-                    PatientService.saveOutPatient(outPatient);
-
+//                    PatientService.saveOutPatient(outPatient);
+                    System.out.println(patientManager.add(outPatient)); // handles saving
                     // First visit logged
                     outPatient.updateVisitCount(); //update visit count
                 }
                 case 4 -> {
                     EmergencyPatient ep = EmergencyPatientRegistration();
-                    PatientService.saveEmergencyPatient(ep);
-
+//                    PatientService.saveEmergencyPatient(ep);
+                    System.out.println(patientManager.add(ep)); // handles saving
                     ep.prioritizeTreatment();
                     if ("Ambulance".equalsIgnoreCase(ep.getArrivalMode())) {
                         ep.admitThroughER(); //admit through ER
                     }
                 }
-                case 5 -> PatientService.displayAllPatients();
+                case 5 -> System.out.println(patientManager.getAll());
                 case 6 -> {
                     String name = InputHandler.getStringInput("Enter patient name to search: ").toString();
-                    List<Patient> results = PatientService.searchPatientsByName(name);
+//                    List<Patient> results = PatientService.searchPatientsByName(name);
 
-                    if (results.isEmpty()) {
-                        System.out.println("No patients found matching \"" + name);
+                    String result = ((PatientService) patientManager).search(name);
+
+                    if (result.isEmpty()) {
+                        System.out.println("No patients found matching \"" + name + "\"");
                     } else {
-                        System.out.println("Found " + results.size() + " patient(s) matching \"" + name + "\":");
-                        for (Patient p : results) {
-                            System.out.println("- Name: " + p.getFirstName() + p.getLastName() + " (ID: " + p.getId() + ")");
-                        }
+                        System.out.println("Found patients matching \"" + name + "\":");
+                        System.out.println(result);
                     }
                     System.out.println();
                 }
@@ -144,8 +147,9 @@ public class HospitalManagementApp {
                     }
                 }
                 case 8 -> {
-                    String id = InputHandler.getIntInput("Enter patient ID to remove: ").toString();
-                    PatientService.removePatient(id);
+                    String id = InputHandler.getStringInput("Enter patient ID to remove: ");
+                    String result = patientManager.remove(id);
+                    System.out.println(result);
                 }
                 case 9 -> {
                     Integer patientId = InputHandler.getIntInput("Enter patient ID to view medical history: ");

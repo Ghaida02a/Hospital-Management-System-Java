@@ -245,6 +245,7 @@ public class Patient extends Person implements Displayable {
     public String displayInfo() {
         StringBuilder newStr = new StringBuilder();
         newStr.append(super.displayInfo("")).append(System.lineSeparator());
+        newStr.append("Patient ID: ").append(patientId).append(System.lineSeparator());
         newStr.append("Blood Group: ").append(bloodGroup).append(System.lineSeparator());
         newStr.append("Emergency Contact: ").append(emergencyContact).append(System.lineSeparator());
         newStr.append("Insurance ID: ").append(insuranceId).append(System.lineSeparator());
@@ -260,7 +261,7 @@ public class Patient extends Person implements Displayable {
         newStr.append("Appointment Count: ").append(appointment == null ? 0 : appointment.size());
 
         String out = newStr.toString();
-//        System.out.println(out);
+        System.out.println(out);
         return out;
     }
 

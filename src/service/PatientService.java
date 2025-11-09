@@ -271,7 +271,7 @@ public class PatientService implements Manageable, Searchable {
         if (!patientList.isEmpty()) {
             System.out.println("===== Patients List =====");
             for (Patient patient : patientList) {
-                patient.displayInfo("");
+                patient.displayInfo();
                 System.out.println("------------------------");
             }
             System.out.println("========================\n");
@@ -488,8 +488,27 @@ public class PatientService implements Manageable, Searchable {
 
     @Override
     public String add(Object entity) {
-        if (entity instanceof Patient patient) {
-            patientList.add(addPatient(patient)); // ensure ID & registration date
+        if (entity instanceof InPatient) {
+//            inPatientList.add(InpatientRegistration(inPatient)); // ensure ID & registration date
+            inPatientList.add((InPatient) entity);
+            return "InPatient added successfully!";
+        }
+
+        if (entity instanceof OutPatient) {
+//            outPatientList.add(OutPatientRegistration(outPatient)); // ensure ID & registration date
+            outPatientList.add((OutPatient) entity);
+            return "OutPatient added successfully!";
+        }
+
+        if (entity instanceof EmergencyPatient) {
+//            emergencyPatientList.add(EmergencyPatientRegistration(emergencyPatient)); // ensure ID & registration date
+            emergencyPatientList.add((EmergencyPatient) entity);
+            return "Emergency Patient added successfully!";
+        }
+
+        if (entity instanceof Patient) {
+//            patientList.add(addPatient(patient)); // ensure ID & registration date
+            patientList.add((Patient) entity);
             return "Patient added successfully!";
         }
         return "Invalid entity type.";
@@ -497,37 +516,134 @@ public class PatientService implements Manageable, Searchable {
 
     @Override
     public String remove(String id) {
-        boolean removed = patientList.removeIf(p -> p.getId().equals(id));
-        return removed ? "Patient removed successfully!" : "Patient not found!";
+//        boolean removed = patientList.removeIf(p -> p.getId().equals(id));
+//        return removed ? "Patient removed successfully!" : "Patient not found!";
+        boolean removedGeneral = patientList.removeIf(p -> p.getPatientId().equals(id));
+        boolean removedIn = inPatientList.removeIf(p -> p.getPatientId().equals(id));
+        boolean removedOut = outPatientList.removeIf(p -> p.getPatientId().equals(id));
+        boolean removedEmergency = emergencyPatientList.removeIf(p -> p.getPatientId().equals(id));
+
+        if (removedGeneral || removedIn || removedOut || removedEmergency) {
+            return "Patient removed successfully!";
+        } else {
+            return "Patient not found!";
+        }
     }
 
     @Override
     public String getAll() {
-        if (patientList.isEmpty()) return "No patients available.";
-        StringBuilder sb = new StringBuilder("===== Patient List =====\n");
-        for (Patient p : patientList) {
-            sb.append(p.getId()).append(" - ").append(p.getFirstName())
-                    .append(" ").append(p.getLastName()).append("\n");
+        if (patientList.isEmpty() && inPatientList.isEmpty()
+                && outPatientList.isEmpty() && emergencyPatientList.isEmpty()) {
+            return "No patients available.";
         }
-        return sb.toString();
+
+        String result = "===== Patient List =====\n";
+
+        if(!patientList.isEmpty()){
+            result += "\n-- General Patients --\n";
+            for (Patient p : patientList) {
+                if (!(p instanceof InPatient) && !(p instanceof OutPatient) && !(p instanceof EmergencyPatient)) {
+                    result += "Id: " + p.getId() + " - PatientId: " + p.getPatientId() + " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                }
+            }
+        }
+
+        if(!inPatientList.isEmpty()){
+            result += "\n-- InPatients --\n";
+            for (InPatient ip : inPatientList) {
+                result += "Id: " + ip.getId() + " - PatientId: " + ip.getPatientId() + " - " + ip.getFirstName() + " " + ip.getLastName() + "\n";
+            }
+        }
+
+        if(!outPatientList.isEmpty()){
+            result += "\n-- OutPatients --\n";
+            for (OutPatient op : outPatientList) {
+                result += "Id: " + op.getId() + " - PatientId: " + op.getPatientId() + " - " + op.getFirstName() + " " + op.getLastName() + "\n";
+            }
+        }
+
+        if(!emergencyPatientList.isEmpty()){
+            result += "\n-- Emergency Patients --\n";
+            for (EmergencyPatient ep : emergencyPatientList) {
+                result += "Id: " + ep.getId() + " - PatientId: " + ep.getPatientId() + " - " + ep.getFirstName() + " " + ep.getLastName() + "\n";
+            }
+        }
+        return result;
     }
 
     @Override
     public String search(String keyword) {
-        List<Patient> results = searchPatients(keyword);
-        if (results.isEmpty()) return "No patients found for keyword: " + keyword;
-        StringBuilder sb = new StringBuilder("Search Results:\n");
-        for (Patient p : results)
-            sb.append(p.getId()).append(" - ")
-                    .append(p.getFirstName()).append(" ")
-                    .append(p.getLastName()).append("\n");
-        return sb.toString();
+        String result = "Search Results:\n";
+        boolean found = false;
+
+        // General patients
+        for (Patient p : patientList) {
+            if (p.getFirstName().contains(keyword) || p.getLastName().contains(keyword)) {
+                result += p.getId() + " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                found = true;
+            }
+        }
+
+        // InPatients
+        for (InPatient ip : inPatientList) {
+            if (ip.getFirstName().contains(keyword) || ip.getLastName().contains(keyword)) {
+                result += ip.getId() + " - " + ip.getFirstName() + " " + ip.getLastName() + "\n";
+                found = true;
+            }
+        }
+
+        // OutPatients
+        for (OutPatient op : outPatientList) {
+            if (op.getFirstName().contains(keyword) || op.getLastName().contains(keyword)) {
+                result += op.getId() + " - " + op.getFirstName() + " " + op.getLastName() + "\n";
+                found = true;
+            }
+        }
+
+        // EmergencyPatients
+        for (EmergencyPatient ep : emergencyPatientList) {
+            if (ep.getFirstName().contains(keyword) || ep.getLastName().contains(keyword)) {
+                result += ep.getId() + " - " + ep.getFirstName() + " " + ep.getLastName() + "\n";
+                found = true;
+            }
+        }
+
+        if (!found) {
+            return "No patients found for keyword: " + keyword;
+        }
+        return result;
     }
 
     @Override
     public String searchById(String id) {
-        Patient patient = getPatientById(id);
-        return (patient != null) ? "Patient found: " + patient.getFirstName() + " " + patient.getLastName()
-                : "Patient not found for ID: " + id;
+        // Check general list
+        for (Patient p : patientList) {
+            if (p.getId().equals(id)) {
+                return "Patient found: " + p.getFirstName() + " " + p.getLastName();
+            }
+        }
+
+        // Check InPatients
+        for (InPatient ip : inPatientList) {
+            if (ip.getId().equals(id)) {
+                return "InPatient found: " + ip.getFirstName() + " " + ip.getLastName();
+            }
+        }
+
+        // Check OutPatients
+        for (OutPatient op : outPatientList) {
+            if (op.getId().equals(id)) {
+                return "OutPatient found: " + op.getFirstName() + " " + op.getLastName();
+            }
+        }
+
+        // Check EmergencyPatients
+        for (EmergencyPatient ep : emergencyPatientList) {
+            if (ep.getId().equals(id)) {
+                return "EmergencyPatient found: " + ep.getFirstName() + " " + ep.getLastName();
+            }
+        }
+
+        return "Patient not found for ID: " + id;
     }
 }
