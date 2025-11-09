@@ -87,6 +87,322 @@ public class DoctorService implements Manageable, Searchable {
         return doctor;
     }
 
+    public static Surgeon addSurgeon() {
+        Surgeon surgeon = new Surgeon();
+        System.out.println("\n--- Surgeon Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        surgeon.setId(baseDoctor.getId());
+        surgeon.setFirstName(baseDoctor.getFirstName());
+        surgeon.setLastName(baseDoctor.getLastName());
+        surgeon.setDateOfBirth(baseDoctor.getDateOfBirth());
+        surgeon.setGender(baseDoctor.getGender());
+        surgeon.setPhoneNumber(baseDoctor.getPhoneNumber());
+        surgeon.setEmail(baseDoctor.getEmail());
+        surgeon.setAddress(baseDoctor.getAddress());
+        surgeon.setSpecialization(baseDoctor.getSpecialization());
+        surgeon.setQualification(baseDoctor.getQualification());
+        surgeon.setExperienceYears(baseDoctor.getExperienceYears());
+        surgeon.setDepartmentId(baseDoctor.getDepartmentId());
+        surgeon.setConsultationFee(baseDoctor.getConsultationFee());
+        surgeon.setAvailableSlots(baseDoctor.getAvailableSlots());
+        surgeon.setAvailable(baseDoctor.isAvailable());
+
+        // Surgeon-specific info
+        int count = InputHandler.getIntInput("Enter Number of Surgeries Performed: ");
+        surgeon.updateSurgeryCount(count);
+        String type = InputHandler.getStringInput("Enter a sample surgery type performed: ");
+        surgeon.performSurgery(type);
+        surgeon.setOperationTheatreAccess(InputHandler.getConfirmation("Does the surgeon have Operation Theatre Access? "));
+
+        return surgeon;
+    }
+
+    public static Consultant addConsultant() {
+        Consultant consultant = new Consultant();
+        System.out.println("\n--- Consultant Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        consultant.setId(baseDoctor.getId());
+        consultant.setDoctorId(baseDoctor.getDoctorId());
+        consultant.setFirstName(baseDoctor.getFirstName());
+        consultant.setLastName(baseDoctor.getLastName());
+        consultant.setDateOfBirth(baseDoctor.getDateOfBirth());
+        consultant.setGender(baseDoctor.getGender());
+        consultant.setPhoneNumber(baseDoctor.getPhoneNumber());
+        consultant.setEmail(baseDoctor.getEmail());
+        consultant.setAddress(baseDoctor.getAddress());
+        consultant.setSpecialization(baseDoctor.getSpecialization());
+        consultant.setQualification(baseDoctor.getQualification());
+        consultant.setExperienceYears(baseDoctor.getExperienceYears());
+        consultant.setDepartmentId(baseDoctor.getDepartmentId());
+        consultant.setConsultationFee(baseDoctor.getConsultationFee());
+        consultant.setAvailableSlots(baseDoctor.getAvailableSlots());
+        consultant.setAvailable(baseDoctor.isAvailable());
+
+
+        // Consultant-specific info
+        String typesInput = InputHandler.getStringInput("Enter Consultation Types (comma-separated): ");
+        List<String> types = new ArrayList<>();
+        if (!typesInput.isEmpty()) {
+            for (String p : typesInput.split(",")) {
+                if (!p.isEmpty()) types.add(p.trim());
+            }
+        }
+        consultant.setConsultationTypes(types);
+
+        consultant.setOnlineConsultationAvailable(InputHandler.getConfirmation("Is Online Consultation Available? "));
+        consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes): "));
+
+        return consultant;
+    }
+
+    public static GeneralPractitioner addGeneralPractitioner() {
+        GeneralPractitioner generalPractitioner = new GeneralPractitioner();
+        System.out.println("\n--- General Practitioner Registration ---");
+
+        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
+
+        generalPractitioner.setId(baseDoctor.getId());
+        generalPractitioner.setFirstName(baseDoctor.getFirstName());
+        generalPractitioner.setLastName(baseDoctor.getLastName());
+        generalPractitioner.setDateOfBirth(baseDoctor.getDateOfBirth());
+        generalPractitioner.setGender(baseDoctor.getGender());
+        generalPractitioner.setPhoneNumber(baseDoctor.getPhoneNumber());
+        generalPractitioner.setEmail(baseDoctor.getEmail());
+        generalPractitioner.setAddress(baseDoctor.getAddress());
+        generalPractitioner.setSpecialization(baseDoctor.getSpecialization());
+        generalPractitioner.setQualification(baseDoctor.getQualification());
+        generalPractitioner.setExperienceYears(baseDoctor.getExperienceYears());
+        generalPractitioner.setDepartmentId(baseDoctor.getDepartmentId());
+        generalPractitioner.setConsultationFee(baseDoctor.getConsultationFee());
+        generalPractitioner.setAvailableSlots(baseDoctor.getAvailableSlots());
+        generalPractitioner.setAvailable(baseDoctor.isAvailable());
+
+        // generalPractitioner-specific info
+        generalPractitioner.setWalkinAvailable(InputHandler.getConfirmation("Is Walk-in Available? "));
+        generalPractitioner.setHomeVisitAvailable(InputHandler.getConfirmation("Is Home Visit Available? "));
+        generalPractitioner.setVaccinationCertified(InputHandler.getConfirmation("Is Vaccination Certified? "));
+
+        return generalPractitioner;
+    }
+
+    public static void save(Doctor doctor) {
+        if (HelperUtils.isNull(doctor)) {
+            System.out.println("Cannot save null doctor.");
+            return;
+        }
+        if (getDoctorById(doctor.getId()) != null) {
+            System.out.println("Doctor with ID " + doctor.getId() + " already exists.");
+            return;
+        }
+        if (HelperUtils.isNotNull(doctor)) {
+            doctorsList.add(doctor);
+            System.out.println("Doctor Added successfully!\n");
+        }
+    }
+
+    public static void save(Surgeon surgeon) { //save Surgeon
+        if (HelperUtils.isNotNull(surgeon)) {
+            surgeonList.add(surgeon);
+            System.out.println("Surgeon Added successfully!\n");
+        }
+    }
+
+    public static void save(Consultant consultant) { //save Consultant
+        if (HelperUtils.isNotNull(consultant)) {
+            consultantList.add(consultant);
+            System.out.println("Consultant Added successfully!\n");
+        }
+    }
+
+    public static void save(GeneralPractitioner generalPractitioner) { //save General Practitioner
+        if (HelperUtils.isNotNull(generalPractitioner)) {
+            generalPractitionerList.add(generalPractitioner);
+            System.out.println("General Practitioner Added successfully!\n");
+        }
+    }
+
+    public static void editDoctor(String doctorId, Doctor updatedDoctor) {
+        for (int i = 0; i < doctorsList.size(); i++) {
+            if (doctorsList.get(i).getDoctorId().equals(doctorId)) {
+                updatedDoctor.setDoctorId(doctorId);
+
+                // Ask to update availability
+                if (InputHandler.getConfirmation("Do you want to update availability slots? ")) {
+                    List<Integer> slots = InputHandler.getIntegerList("Enter available time slots (0–23): ");
+                    updatedDoctor.updateAvailability(slots);
+                }
+
+                doctorsList.set(i, updatedDoctor);
+                System.out.println("Doctor updated successfully.");
+                return;
+            }
+        }
+        System.out.println("Doctor with ID " + doctorId + " not found.");
+    }
+
+    public static boolean assignPatientToDoctor(String doctorId, String patientId) {
+        if (doctorId == null || doctorId.isEmpty()) {
+            System.out.println("Invalid doctor ID.");
+            return false;
+        }
+        if (patientId == null || patientId.isEmpty()) {
+            System.out.println("Invalid patient ID.");
+            return false;
+        }
+
+        Doctor found = getDoctorById(doctorId);
+        if (HelperUtils.isNull(found)) {
+            System.out.println("Doctor with ID " + doctorId + " not found.");
+            return false;
+        }
+
+        entity.Patient patient = PatientService.getPatientById(patientId);
+        if (HelperUtils.isNull(patient)) {
+            System.out.println("Patient with ID " + patientId + " not found.");
+            return false;
+        }
+
+        boolean assigned = found.assignPatient(patient);
+        if (assigned) {
+            System.out.println("Patient " + patientId + " assigned to Doctor " + doctorId + ".");
+        } else {
+            System.out.println("Failed to assign patient " + patientId + " to Doctor " + doctorId + ".");
+        }
+        return assigned;
+    }
+
+    public static void removeDoctor(String doctorId) {
+        Doctor found = getDoctorById(doctorId);
+        if (found != null) {
+            doctorsList.remove(found);
+            System.out.println("Doctor with ID " + doctorId + " has been removed.");
+        } else {
+            System.out.println("Doctor with ID " + doctorId + " not found.");
+        }
+    }
+
+    public static Doctor getDoctorById(String doctorId) {
+        for (Doctor doctor : doctorsList){
+            if (doctor.getDoctorId().equals(doctorId)){
+                return doctor;
+            }
+        }
+        for (Surgeon surgeon : surgeonList) {
+            if (surgeon.getDoctorId().equals(doctorId)) {
+                return surgeon;
+            }
+        }
+        for (Consultant consultant : consultantList) {
+            if (consultant.getDoctorId().equals(doctorId)) {
+                return consultant;
+            }
+        }
+        for (GeneralPractitioner gp : generalPractitionerList) {
+            if (gp.getDoctorId().equals(doctorId)) {
+                return gp;
+            }
+        }
+        return null; // not found
+    }
+
+    public static void displayAllDoctors() {
+        if (!doctorsList.isEmpty()) {
+            System.out.println("===== Doctors List =====");
+            for (Doctor doctor : doctorsList) {
+                doctor.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!surgeonList.isEmpty()) {
+            System.out.println("----- Surgeons -----");
+            for (Surgeon surgeon : surgeonList) {
+                surgeon.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!consultantList.isEmpty()) {
+            System.out.println("----- Consultants -----");
+            for (Consultant consultant : consultantList) {
+                consultant.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!generalPractitionerList.isEmpty()) {
+            System.out.println("----- General Practitioners -----");
+            for (GeneralPractitioner gp : generalPractitionerList) {
+                gp.displayInfo();
+                System.out.println("------------------------");
+            }
+        }
+    }
+
+    public static List<Doctor> getDoctorsBySpecialization(String specialization) { //Filters doctors by specialization
+        List<Doctor> specializedDoctors = new ArrayList<>();
+        for (Doctor doctor : doctorsList) {
+            if (doctor.getSpecialization().equalsIgnoreCase(specialization)) {
+                specializedDoctors.add(doctor);
+            }
+        }
+        for (Surgeon surgeon : surgeonList){
+            if (surgeon.getSpecialization().equalsIgnoreCase(specialization)){
+                specializedDoctors.add(surgeon);
+            }
+        }
+
+        for (Consultant consultant : consultantList) {
+            if (consultant.getSpecialization().equalsIgnoreCase(specialization)) {
+                specializedDoctors.add(consultant);
+            }
+        }
+
+        for (GeneralPractitioner gp : generalPractitionerList) {
+            if (gp.getSpecialization().equalsIgnoreCase(specialization)) {
+                specializedDoctors.add(gp);
+            }
+        }
+
+        if (specializedDoctors.isEmpty()) {
+            System.out.println("No doctors found with specialization: " + specialization);
+        } else {
+            System.out.println("Doctors with specialization " + specialization + ":");
+            for (Doctor doc : specializedDoctors) {
+                doc.displayInfo("");
+                System.out.println("------------------------");
+            }
+        }
+        return specializedDoctors;
+    }
+
+    public static List<Doctor> getAvailableDoctors() {
+        List<Doctor> allDoctors = new ArrayList<>();
+        allDoctors.addAll(doctorsList);   // base doctors
+        allDoctors.addAll(surgeonList);  // if stored separately
+        allDoctors.addAll(consultantList); // if stored separately
+        allDoctors.addAll(generalPractitionerList); // if stored separately
+
+        List<Doctor> availableDoctors = new ArrayList<>();
+        for (Doctor doctor : allDoctors) {
+            if (doctor.isAvailable()) {
+                availableDoctors.add(doctor);
+            }
+        }
+
+        return availableDoctors;
+    }
+
+
+    public static List<Doctor> getAllDoctors() {
+        return new ArrayList<>(doctorsList);
+    }
+
+    //overloaded methods
     public static Doctor addDoctor(String firstName, String lastName, String specialization, String phone) {
         Doctor doctor = new Doctor();
         doctor.setFirstName(firstName);
@@ -95,7 +411,6 @@ public class DoctorService implements Manageable, Searchable {
         doctor.setPhoneNumber(phone);
         return initializeDoctor(doctor);
     }
-
     public static Doctor addDoctor(String name, String specialization, String phone, double consultationFee) {
         Doctor doctor = new Doctor();
         String[] nameParts = name.trim().split(" ");
@@ -206,323 +521,6 @@ public class DoctorService implements Manageable, Searchable {
                 System.out.println("------------------------");
             }
         }
-    }
-
-    public static void save(Doctor doctor) {
-        if (HelperUtils.isNull(doctor)) {
-            System.out.println("Cannot save null doctor.");
-            return;
-        }
-        if (getDoctorById(doctor.getId()) != null) {
-            System.out.println("Doctor with ID " + doctor.getId() + " already exists.");
-            return;
-        }
-        if (HelperUtils.isNotNull(doctor)) {
-            doctorsList.add(doctor);
-            System.out.println("Doctor Added successfully!\n");
-        }
-    }
-
-    public static void save(Surgeon surgeon) { //save Surgeon
-        if (HelperUtils.isNotNull(surgeon)) {
-            surgeonList.add(surgeon);
-            System.out.println("Surgeon Added successfully!\n");
-        }
-    }
-
-    public static void save(Consultant consultant) { //save Consultant
-        if (HelperUtils.isNotNull(consultant)) {
-            consultantList.add(consultant);
-            System.out.println("Consultant Added successfully!\n");
-        }
-    }
-
-    public static void save(GeneralPractitioner generalPractitioner) { //save General Practitioner
-        if (HelperUtils.isNotNull(generalPractitioner)) {
-            generalPractitionerList.add(generalPractitioner);
-            System.out.println("General Practitioner Added successfully!\n");
-        }
-    }
-
-    public static void editDoctor(String doctorId, Doctor updatedDoctor) {
-        for (int i = 0; i < doctorsList.size(); i++) {
-            if (doctorsList.get(i).getDoctorId().equals(doctorId)) {
-                updatedDoctor.setDoctorId(doctorId);
-
-                // Ask to update availability
-                if (InputHandler.getConfirmation("Do you want to update availability slots? ")) {
-                    List<Integer> slots = InputHandler.getIntegerList("Enter available time slots (0–23): ");
-                    updatedDoctor.updateAvailability(slots);
-                }
-
-                doctorsList.set(i, updatedDoctor);
-                System.out.println("Doctor updated successfully.");
-                return;
-            }
-        }
-        System.out.println("Doctor with ID " + doctorId + " not found.");
-    }
-
-
-    public static boolean assignPatientToDoctor(String doctorId, String patientId) {
-        if (doctorId == null || doctorId.isEmpty()) {
-            System.out.println("Invalid doctor ID.");
-            return false;
-        }
-        if (patientId == null || patientId.isEmpty()) {
-            System.out.println("Invalid patient ID.");
-            return false;
-        }
-
-        Doctor found = getDoctorById(doctorId);
-        if (HelperUtils.isNull(found)) {
-            System.out.println("Doctor with ID " + doctorId + " not found.");
-            return false;
-        }
-
-        entity.Patient patient = PatientService.getPatientById(patientId);
-        if (HelperUtils.isNull(patient)) {
-            System.out.println("Patient with ID " + patientId + " not found.");
-            return false;
-        }
-
-        boolean assigned = found.assignPatient(patient);
-        if (assigned) {
-            System.out.println("Patient " + patientId + " assigned to Doctor " + doctorId + ".");
-        } else {
-            System.out.println("Failed to assign patient " + patientId + " to Doctor " + doctorId + ".");
-        }
-        return assigned;
-    }
-
-    public static void removeDoctor(String doctorId) {
-        Doctor found = getDoctorById(doctorId);
-        if (found != null) {
-            doctorsList.remove(found);
-            System.out.println("Doctor with ID " + doctorId + " has been removed.");
-        } else {
-            System.out.println("Doctor with ID " + doctorId + " not found.");
-        }
-    }
-
-    public static Doctor getDoctorById(String doctorId) {
-        for (Doctor doctor : doctorsList){
-            if (doctor.getDoctorId().equals(doctorId)){
-                return doctor;
-            }
-        }
-        for (Surgeon surgeon : surgeonList) {
-            if (surgeon.getDoctorId().equals(doctorId)) {
-                return surgeon;
-            }
-        }
-        for (Consultant consultant : consultantList) {
-            if (consultant.getDoctorId().equals(doctorId)) {
-                return consultant;
-            }
-        }
-        for (GeneralPractitioner gp : generalPractitionerList) {
-            if (gp.getDoctorId().equals(doctorId)) {
-                return gp;
-            }
-        }
-        return null; // not found
-    }
-
-
-    public static void displayAllDoctors() {
-        if (!doctorsList.isEmpty()) {
-            System.out.println("===== Doctors List =====");
-            for (Doctor doctor : doctorsList) {
-                doctor.displayInfo();
-                System.out.println("------------------------");
-            }
-        }
-
-        if (!surgeonList.isEmpty()) {
-            System.out.println("----- Surgeons -----");
-            for (Surgeon surgeon : surgeonList) {
-                surgeon.displayInfo();
-                System.out.println("------------------------");
-            }
-        }
-
-        if (!consultantList.isEmpty()) {
-            System.out.println("----- Consultants -----");
-            for (Consultant consultant : consultantList) {
-                consultant.displayInfo();
-                System.out.println("------------------------");
-            }
-        }
-
-        if (!generalPractitionerList.isEmpty()) {
-            System.out.println("----- General Practitioners -----");
-            for (GeneralPractitioner gp : generalPractitionerList) {
-                gp.displayInfo();
-                System.out.println("------------------------");
-            }
-        }
-    }
-
-    public static List<Doctor> getDoctorsBySpecialization(String specialization) { //Filters doctors by specialization
-        List<Doctor> specializedDoctors = new ArrayList<>();
-        for (Doctor doctor : doctorsList) {
-            if (doctor.getSpecialization().equalsIgnoreCase(specialization)) {
-                specializedDoctors.add(doctor);
-            }
-        }
-        for (Surgeon surgeon : surgeonList){
-            if (surgeon.getSpecialization().equalsIgnoreCase(specialization)){
-                specializedDoctors.add(surgeon);
-            }
-        }
-
-        for (Consultant consultant : consultantList) {
-            if (consultant.getSpecialization().equalsIgnoreCase(specialization)) {
-                specializedDoctors.add(consultant);
-            }
-        }
-
-        for (GeneralPractitioner gp : generalPractitionerList) {
-            if (gp.getSpecialization().equalsIgnoreCase(specialization)) {
-                specializedDoctors.add(gp);
-            }
-        }
-
-        if (specializedDoctors.isEmpty()) {
-            System.out.println("No doctors found with specialization: " + specialization);
-        } else {
-            System.out.println("Doctors with specialization " + specialization + ":");
-            for (Doctor doc : specializedDoctors) {
-                doc.displayInfo("");
-                System.out.println("------------------------");
-            }
-        }
-        return specializedDoctors;
-    }
-
-    public static List<Doctor> getAvailableDoctors() {
-        List<Doctor> allDoctors = new ArrayList<>();
-        allDoctors.addAll(doctorsList);   // base doctors
-        allDoctors.addAll(surgeonList);  // if stored separately
-        allDoctors.addAll(consultantList); // if stored separately
-        allDoctors.addAll(generalPractitionerList); // if stored separately
-
-        List<Doctor> availableDoctors = new ArrayList<>();
-        for (Doctor doctor : allDoctors) {
-            if (doctor.isAvailable()) {
-                availableDoctors.add(doctor);
-            }
-        }
-
-        return availableDoctors;
-    }
-
-
-    public static Surgeon addSurgeon() {
-        Surgeon surgeon = new Surgeon();
-        System.out.println("\n--- Surgeon Registration ---");
-
-        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
-
-        surgeon.setId(baseDoctor.getId());
-        surgeon.setFirstName(baseDoctor.getFirstName());
-        surgeon.setLastName(baseDoctor.getLastName());
-        surgeon.setDateOfBirth(baseDoctor.getDateOfBirth());
-        surgeon.setGender(baseDoctor.getGender());
-        surgeon.setPhoneNumber(baseDoctor.getPhoneNumber());
-        surgeon.setEmail(baseDoctor.getEmail());
-        surgeon.setAddress(baseDoctor.getAddress());
-        surgeon.setSpecialization(baseDoctor.getSpecialization());
-        surgeon.setQualification(baseDoctor.getQualification());
-        surgeon.setExperienceYears(baseDoctor.getExperienceYears());
-        surgeon.setDepartmentId(baseDoctor.getDepartmentId());
-        surgeon.setConsultationFee(baseDoctor.getConsultationFee());
-        surgeon.setAvailableSlots(baseDoctor.getAvailableSlots());
-        surgeon.setAvailable(baseDoctor.isAvailable());
-
-        // Surgeon-specific info
-        int count = InputHandler.getIntInput("Enter Number of Surgeries Performed: ");
-        surgeon.updateSurgeryCount(count);
-        String type = InputHandler.getStringInput("Enter a sample surgery type performed: ");
-        surgeon.performSurgery(type);
-        surgeon.setOperationTheatreAccess(InputHandler.getConfirmation("Does the surgeon have Operation Theatre Access? "));
-
-        return surgeon;
-    }
-
-    public static Consultant addConsultant() {
-        Consultant consultant = new Consultant();
-        System.out.println("\n--- Consultant Registration ---");
-
-        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
-
-        consultant.setId(baseDoctor.getId());
-        consultant.setDoctorId(baseDoctor.getDoctorId());
-        consultant.setFirstName(baseDoctor.getFirstName());
-        consultant.setLastName(baseDoctor.getLastName());
-        consultant.setDateOfBirth(baseDoctor.getDateOfBirth());
-        consultant.setGender(baseDoctor.getGender());
-        consultant.setPhoneNumber(baseDoctor.getPhoneNumber());
-        consultant.setEmail(baseDoctor.getEmail());
-        consultant.setAddress(baseDoctor.getAddress());
-        consultant.setSpecialization(baseDoctor.getSpecialization());
-        consultant.setQualification(baseDoctor.getQualification());
-        consultant.setExperienceYears(baseDoctor.getExperienceYears());
-        consultant.setDepartmentId(baseDoctor.getDepartmentId());
-        consultant.setConsultationFee(baseDoctor.getConsultationFee());
-        consultant.setAvailableSlots(baseDoctor.getAvailableSlots());
-        consultant.setAvailable(baseDoctor.isAvailable());
-
-
-        // Consultant-specific info
-        String typesInput = InputHandler.getStringInput("Enter Consultation Types (comma-separated): ");
-        List<String> types = new ArrayList<>();
-        if (!typesInput.isEmpty()) {
-            for (String p : typesInput.split(",")) {
-                if (!p.isEmpty()) types.add(p.trim());
-            }
-        }
-        consultant.setConsultationTypes(types);
-
-        consultant.setOnlineConsultationAvailable(InputHandler.getConfirmation("Is Online Consultation Available? "));
-        consultant.setConsultationDuration(InputHandler.getIntInput("Enter Consultation Duration (in minutes): "));
-
-        return consultant;
-    }
-
-    public static GeneralPractitioner addGeneralPractitioner() {
-        GeneralPractitioner generalPractitioner = new GeneralPractitioner();
-        System.out.println("\n--- General Practitioner Registration ---");
-
-        Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
-
-        generalPractitioner.setId(baseDoctor.getId());
-        generalPractitioner.setFirstName(baseDoctor.getFirstName());
-        generalPractitioner.setLastName(baseDoctor.getLastName());
-        generalPractitioner.setDateOfBirth(baseDoctor.getDateOfBirth());
-        generalPractitioner.setGender(baseDoctor.getGender());
-        generalPractitioner.setPhoneNumber(baseDoctor.getPhoneNumber());
-        generalPractitioner.setEmail(baseDoctor.getEmail());
-        generalPractitioner.setAddress(baseDoctor.getAddress());
-        generalPractitioner.setSpecialization(baseDoctor.getSpecialization());
-        generalPractitioner.setQualification(baseDoctor.getQualification());
-        generalPractitioner.setExperienceYears(baseDoctor.getExperienceYears());
-        generalPractitioner.setDepartmentId(baseDoctor.getDepartmentId());
-        generalPractitioner.setConsultationFee(baseDoctor.getConsultationFee());
-        generalPractitioner.setAvailableSlots(baseDoctor.getAvailableSlots());
-        generalPractitioner.setAvailable(baseDoctor.isAvailable());
-
-        // generalPractitioner-specific info
-        generalPractitioner.setWalkinAvailable(InputHandler.getConfirmation("Is Walk-in Available? "));
-        generalPractitioner.setHomeVisitAvailable(InputHandler.getConfirmation("Is Home Visit Available? "));
-        generalPractitioner.setVaccinationCertified(InputHandler.getConfirmation("Is Vaccination Certified? "));
-
-        return generalPractitioner;
-    }
-
-    public static List<Doctor> getAllDoctors() {
-        return new ArrayList<>(doctorsList);
     }
 
     @Override
