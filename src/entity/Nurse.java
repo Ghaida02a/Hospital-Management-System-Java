@@ -146,6 +146,11 @@ public class Nurse extends Person implements Displayable {
     }
 
     @Override
+    public String displayInfo() {
+        return "";
+    }
+
+    @Override
     public String displaySummary(String str) {
         return "Nurse{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
