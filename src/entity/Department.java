@@ -152,16 +152,15 @@ public class Department implements Displayable {
     }
 
     @Override
-    public String displayInfo(String str) {
-        String info = "Department ID: " + departmentId + System.lineSeparator()
+    public String displayInfo(String prefix) {
+        return prefix +
+                "Department ID: " + departmentId + System.lineSeparator()
                 + "Department Name: " + departmentName + System.lineSeparator()
                 + "Head Doctor ID: " + headDoctorId + System.lineSeparator()
                 + "Number of Doctors: " + (doctors != null ? doctors.size() : 0) + System.lineSeparator()
                 + "Number of Nurses: " + (nurses != null ? nurses.size() : 0) + System.lineSeparator()
                 + "Bed Capacity: " + bedCapacity + System.lineSeparator()
                 + "Available Beds: " + availableBeds;
-        System.out.println(info);
-        return info;
     }
 
     @Override

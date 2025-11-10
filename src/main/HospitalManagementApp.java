@@ -121,7 +121,7 @@ public class HospitalManagementApp {
                 }
                 case 5 -> System.out.println(patientManager.getAll());
                 case 6 -> {
-                    String name = InputHandler.getStringInput("Enter patient name to search: ").toString();
+                    String name = InputHandler.getStringInput("Enter patient name to search: ");
 //                    List<Patient> results = PatientService.searchPatientsByName(name);
 
                     String result = ((PatientService) patientManager).search(name);
@@ -181,29 +181,47 @@ public class HospitalManagementApp {
     }
 
     private static void showDoctorManagementMenu() {
+        Manageable doctorManager = new DoctorService();
         while (option != 11) {
             doctorManagementMenu();
             switch (option) {
                 case 1 -> {
-                    DoctorService.save(DoctorService.addDoctor());
+                    Doctor doctor = DoctorService.addDoctor();
+                    System.out.println(doctorManager.add(doctor));
                 }
-                case 2 -> DoctorService.save(addSurgeon());
-                case 3 -> DoctorService.save(addConsultant());
-                case 4 -> DoctorService.save(addGeneralPractitioner());
-                case 5 -> DoctorService.displayAllDoctors();
+                case 2 -> {
+                    Surgeon surgeon = DoctorService.addSurgeon();
+                    System.out.println(doctorManager.add(surgeon));
+                }
+                case 3 -> {
+                    Consultant consultant = DoctorService.addConsultant();
+                    System.out.println(doctorManager.add(consultant));
+                }
+                case 4 -> {
+                    GeneralPractitioner generalPractitioner = DoctorService.addGeneralPractitioner();
+                    System.out.println(doctorManager.add(generalPractitioner));
+                }
+                case 5 -> System.out.println(doctorManager.getAll());
                 case 6 -> {
                     String specialization = InputHandler.getStringInput("Enter specialization to search:");
-                    List<Doctor> results = DoctorService.getDoctorsBySpecialization(specialization);
-
-                    if (results.isEmpty()) {
+//                    List<Doctor> results = DoctorService.getDoctorsBySpecialization(specialization);
+//
+//                    if (results.isEmpty()) {
+//                        System.out.println("No doctors found with specialization \"" + specialization + "\".");
+//                    } else {
+//                        System.out.println("Found " + results.size() + " doctor(s) with specialization \"" + specialization + "\":");
+//                        for (Doctor d : results) {
+//                            System.out.println("- Dr. " + d.getFirstName() + " " + d.getLastName() + " (ID: " + d.getId() + ")");
+//                        }
+//                    }
+//                    System.out.println();
+                    String result = ((DoctorService) doctorManager).search(specialization);
+                    if (result.isEmpty()) {
                         System.out.println("No doctors found with specialization \"" + specialization + "\".");
                     } else {
-                        System.out.println("Found " + results.size() + " doctor(s) with specialization \"" + specialization + "\":");
-                        for (Doctor d : results) {
-                            System.out.println("- Dr. " + d.getFirstName() + " " + d.getLastName() + " (ID: " + d.getId() + ")");
-                        }
+                        System.out.println("Found doctors with specialization \"" + specialization + "\":");
+                        System.out.println(result);
                     }
-                    System.out.println();
                 }
                 case 7 -> {
                     List<Doctor> availableDoctors = DoctorService.getAvailableDoctors();
@@ -232,7 +250,8 @@ public class HospitalManagementApp {
                 }
                 case 10 -> {
                     String id = InputHandler.getStringInput("Enter doctor ID to remove: ");
-                    DoctorService.removeDoctor(id);
+                    String result = doctorManager.remove(id);
+                    System.out.println(result);
                 }
                 case 11 -> System.out.println("Exiting Doctor Management...");
                 default -> System.out.println("Please enter a valid option (1–11).");
@@ -257,39 +276,54 @@ public class HospitalManagementApp {
     }
 
     private static void showNurseManagementMenu() {
+        Manageable nurseManager = new NurseService();
         while (option != 8) {
             nurseManagementMenu();
             switch (option) {
                 case 1 -> {
                     Nurse nurse = NurseService.addNurse();
-                    NurseService.save(nurse);
+                    System.out.println(nurseManager.add(nurse));
                 }
-                case 2 -> NurseService.displayAllNurses();
+                case 2 -> System.out.println(nurseManager.getAll());
                 case 3 -> {
                     String dept = InputHandler.getStringInput("Enter department ID to search: ");
-                    List<Nurse> nursesByDepartment = NurseService.getNursesByDepartment(dept);
-                    if (nursesByDepartment.isEmpty()) {
+//                    List<Nurse> nursesByDepartment = NurseService.getNursesByDepartment(dept);
+//                    if (nursesByDepartment.isEmpty()) {
+//                        System.out.println("No nurses found in department \"" + dept + "\".");
+//                    } else {
+//                        System.out.println("Found " + nursesByDepartment.size() + " nurse(s):");
+//                        for (Nurse n : nursesByDepartment) {
+//                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
+//                        }
+//                    }
+//                    System.out.println();
+                    String result = ((NurseService) nurseManager).search(dept);
+
+                    if (result.isEmpty()) {
                         System.out.println("No nurses found in department \"" + dept + "\".");
                     } else {
-                        System.out.println("Found " + nursesByDepartment.size() + " nurse(s):");
-                        for (Nurse n : nursesByDepartment) {
-                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
-                        }
+                        System.out.println("Found nurses in department \"" + dept + "\":");
                     }
-                    System.out.println();
                 }
                 case 4 -> {
                     String shift = InputHandler.getStringInput("Enter shift (Morning/Evening/Night) to search: ");
-                    List<Nurse> res = NurseService.getNursesByShift(shift);
-                    if (res.isEmpty()) {
+//                    List<Nurse> res = NurseService.getNursesByShift(shift);
+//                    if (res.isEmpty()) {
+//                        System.out.println("No nurses found with shift \"" + shift + "\".");
+//                    } else {
+//                        System.out.println("Found " + res.size() + " nurse(s):");
+//                        for (Nurse n : res) {
+//                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
+//                        }
+//                    }
+//                    System.out.println();
+                    String result = ((NurseService) nurseManager).search(shift);
+                    if (result.isEmpty()) {
                         System.out.println("No nurses found with shift \"" + shift + "\".");
                     } else {
-                        System.out.println("Found " + res.size() + " nurse(s):");
-                        for (Nurse n : res) {
-                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
-                        }
+                        System.out.println("Found nurses with shift \"" + shift + "\":");
                     }
-                    System.out.println();
+
                 }
                 case 5 -> {
                     String nurseId = InputHandler.getStringInput("Enter Nurse ID: ");
@@ -301,7 +335,6 @@ public class HospitalManagementApp {
                     } else {
                         System.out.println("Assignment failed or patient already assigned.");
                     }
-
                 }
                 case 6 -> {
                     String id = InputHandler.getStringInput("Enter nurse ID to update: ");
@@ -310,7 +343,8 @@ public class HospitalManagementApp {
                 }
                 case 7 -> {
                     String id = InputHandler.getStringInput("Enter nurse ID to remove: ");
-                    NurseService.removeNurse(id);
+                    String result = nurseManager.remove(id);
+                    System.out.println(result);
                 }
                 case 8 -> System.out.println("Exiting Nurse Management...");
                 default -> System.out.println("Please enter a valid option (1–8).");
@@ -337,12 +371,13 @@ public class HospitalManagementApp {
     }
 
     private static void showAppointmentManagementMenu() {
+        Manageable appointmentManager = new AppointmentService();
         while (option != 10) {
             appointmentManagementMenu();
             switch (option) {
                 case 1 -> {
                     Appointment appt = AppointmentService.addAppointment();
-                    AppointmentService.save(appt);
+                    System.out.println(appointmentManager.add(appt));
 
                     Patient patient = PatientService.getPatientById(appt.getPatientId());
                     if (HelperUtils.isNotNull(patient)) {
@@ -374,39 +409,64 @@ public class HospitalManagementApp {
                         }
                     }
                 }
-                case 2 -> AppointmentService.displayAllAppointments();
+                case 2 -> System.out.println(appointmentManager.getAll());
                 case 3 -> {
                     String pid = InputHandler.getStringInput("Enter patient ID: ");
-                    List<entity.Appointment> res = AppointmentService.getAppointmentsByPatient(pid);
-                    if (res.isEmpty()) System.out.println("No appointments found for patient " + pid);
-                    else {
-                        for (entity.Appointment a : res) a.displayInfo("");
+//                    List<entity.Appointment> res = AppointmentService.getAppointmentsByPatient(pid);
+//                    if (res.isEmpty()) System.out.println("No appointments found for patient " + pid);
+//                    else {
+//                        for (entity.Appointment a : res) {
+//                            a.displayInfo("");
+//                            System.out.println("---------------------------");
+//                        }
+//                    }
+
+                    String result = ((AppointmentService) appointmentManager).search(pid);
+                    if (result.isEmpty()) {
+                        System.out.println("No appointments found for patient " + pid);
+                    } else {
+                        System.out.println("Found appointments for patient " + pid + ":");
+                        System.out.println(result);
                     }
                 }
                 case 4 -> {
                     String did = InputHandler.getStringInput("Enter doctor ID: ");
-                    List<entity.Appointment> res = AppointmentService.getAppointmentsByDoctor(did);
-                    if (res.isEmpty()) System.out.println("No appointments found for doctor " + did);
-                    else {
-                        for (entity.Appointment a : res) a.displayInfo("");
+//                    List<entity.Appointment> res = AppointmentService.getAppointmentsByDoctor(did);
+//                    if (res.isEmpty()) System.out.println("No appointments found for doctor " + did);
+//                    else {
+//                        for (entity.Appointment a : res) a.displayInfo("");
+//                    }
+                    String result = ((AppointmentService) appointmentManager).search(did);
+                    if (result.isEmpty()) {
+                        System.out.println("No appointments found for doctor " + did);
+                    } else {
+                        System.out.println("Found appointments for doctor " + did + ":");
+                        System.out.println(result);
                     }
                 }
                 case 5 -> {
-                    LocalDate date = InputHandler.getDateInput("Enter date (yyyy-MM-dd): ");
-                    if (HelperUtils.isNull(date)) {
-                        System.out.println("Invalid date format.");
-                        break;
-                    }
-                    List<Appointment> res = AppointmentService.getAppointmentsByDate(date);
-                    if (res.isEmpty()) {
-                        System.out.println("No appointments found on " + date);
+                    LocalDate date = InputHandler.getDateInput("Enter date to search for appointments: ");
+//                    if (HelperUtils.isNull(date)) {
+//                        System.out.println("Invalid date format.");
+//                        break;
+//                    }
+//                    List<Appointment> res = AppointmentService.getAppointmentsByDate(date);
+//                    if (res.isEmpty()) {
+//                        System.out.println("No appointments found on " + date);
+//                    } else {
+//                        for (Appointment a : res) {
+//                            a.displayInfo("");
+//                        }
+//                    }
+
+                    String result = ((AppointmentService) appointmentManager).search(date.toString());
+                    if (result.isEmpty()) {
+                        System.out.println("Appointment not found: " + date);
                     } else {
-                        for (Appointment a : res) {
-                            a.displayInfo("");
-                        }
+                        System.out.println("Found appointments on " + date + ":");
+                        System.out.println(result);
                     }
                 }
-
                 case 6 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to reschedule: ");
                     LocalDate newDate = InputHandler.getDateInput("Enter new date");
@@ -416,18 +476,30 @@ public class HospitalManagementApp {
                         System.out.println("Rescheduling failed.");
                     }
                 }
-
                 case 7 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to cancel: ");
-                    boolean success = AppointmentService.cancelAppointmentById(aid);
-                    if (!success) {
+//                    boolean success = AppointmentService.cancelAppointmentById(aid);
+//                    if (!success) {
+//                        System.out.println("Cancellation failed.");
+//                    }
+
+                    String result = String.valueOf(((AppointmentService) appointmentManager).cancelAppointment(aid));
+                    if (!result.isEmpty()) {
+                        System.out.println("Appointment cancelled.");
+                    } else {
                         System.out.println("Cancellation failed.");
                     }
                 }
                 case 8 -> {
                     String aid = InputHandler.getStringInput("Enter appointment ID to complete: ");
-                    boolean success = AppointmentService.completeAppointment(aid);
-                    if (!success) {
+//                    boolean success = AppointmentService.completeAppointment(aid);
+//                    if (!success) {
+//                        System.out.println("Completion failed.");
+//                    }
+                    String result = String.valueOf(((AppointmentService) appointmentManager).completeAppointment(aid));
+                    if (!result.isEmpty()) {
+                        System.out.println("Appointment completed.");
+                    } else {
                         System.out.println("Completion failed.");
                     }
                 }
@@ -464,12 +536,13 @@ public class HospitalManagementApp {
     }
 
     private static void showMedicalRecordsManagementMenu() {
+        Manageable medicalRecordManager = new MedicalRecordService();
         while (option != 8) {
             medicalRecordsManagementMenu();
             switch (option) {
                 case 1 -> {
                     MedicalRecord record = MedicalRecordService.createRecord();
-                    MedicalRecordService.saveRecord(record);
+                    System.out.println(medicalRecordManager.add(record));
 
                     // Consultant-specific logic
                     Doctor doctor = DoctorService.getDoctorById(record.getDoctorId());
@@ -488,29 +561,33 @@ public class HospitalManagementApp {
                         }
                     }
                 }
-                case 2 -> MedicalRecordService.displayAllRecords();
+                case 2 -> System.out.println(medicalRecordManager.getAll());
                 case 3 -> {
-                    System.out.print("Enter patient ID: ");
-                    String pid = scanner.nextLine();
-                    List<entity.MedicalRecord> recordsByPatient = MedicalRecordService.displayRecordsByPatient(pid);
-                    if (recordsByPatient.isEmpty()) System.out.println("No medical records found for patient " + pid);
-                    else {
-                        for (entity.MedicalRecord r : recordsByPatient) {
-                            r.displayInfo("");
-                            System.out.println("---------------------------");
-                        }
+                    String pid = InputHandler.getStringInput("Enter patient ID: ");
+//                    List<MedicalRecord> recordsByPatient = ((MedicalRecordService) medicalRecordManager).displayRecordsByPatient(pid);
+//                    if (recordsByPatient.isEmpty()) System.out.println("No medical records found for patient " + pid);
+//                    else {
+//                        for (entity.MedicalRecord r : recordsByPatient) {
+//                            r.displayInfo("");
+//                            System.out.println("---------------------------");
+//                        }
+//                    }
+                    String result = ((MedicalRecordService) medicalRecordManager).search(pid);
+                    if (result.isEmpty()) {
+                        System.out.println("No medical records found for patient " + pid);
+                    } else {
+                        System.out.println("Found medical records for patient " + pid + ":");
+                        System.out.println(result);
                     }
                 }
                 case 4 -> {
-                    System.out.print("Enter doctor ID: ");
-                    String did = scanner.nextLine();
-                    List<entity.MedicalRecord> recordsByDoctor = MedicalRecordService.displayRecordsByDoctor(did);
-                    if (recordsByDoctor.isEmpty()) System.out.println("No medical records found for doctor " + did);
-                    else {
-                        for (entity.MedicalRecord r : recordsByDoctor) {
-                            r.displayInfo("");
-                            System.out.println("---------------------------");
-                        }
+                    String did = InputHandler.getStringInput("Enter doctor ID: ");
+                    String result = ((MedicalRecordService) medicalRecordManager).search(did);
+                    if (result.isEmpty()) {
+                        System.out.println("No medical records found for doctor " + did);
+                    } else {
+                        System.out.println("Found medical records for doctor " + did + ":");
+                        System.out.println(result);
                     }
                 }
                 case 5 -> {
@@ -520,16 +597,15 @@ public class HospitalManagementApp {
                     MedicalRecordService.updateRecord(updatedRecordId, updatedRecord);
                 }
                 case 6 -> {
-                    System.out.print("Enter record ID to delete: ");
-                    String recordId = scanner.nextLine();
-                    MedicalRecordService.deleteRecord(recordId);
+                    String recordId = InputHandler.getStringInput("Enter record ID to delete: ");
+                    String result = medicalRecordManager.remove(recordId);
+                    System.out.println(result);
                 }
                 case 7 -> {
-                    System.out.print("Enter patient ID for history report: ");
-                    String pid = scanner.nextLine();
+                    String pid = InputHandler.getStringInput("Enter patient ID for history report: ");
                     MedicalRecordService.generatePatientHistoryReport(pid);
                 }
-                case 8 -> System.out.println("Exiting Appointment Management...");
+                case 8 -> System.out.println("Exiting Medical Record Management...");
                 default -> System.out.println("Please enter a valid option (1-8).");
             }
         }
@@ -552,24 +628,31 @@ public class HospitalManagementApp {
     }
 
     private static void showDepartmentManagementMenu() {
+        Manageable departmentManager = new DepartmentService();
         while (option != 8) {
             departmentManagementMenu();
             switch (option) {
                 case 1 -> {
                     Department dept = DepartmentService.addDepartment();
-                    DepartmentService.saveDepartment(dept);
+                    System.out.println(departmentManager.add(dept));
                 }
-                case 2 -> DepartmentService.displayAllDepartments();
+                case 2 -> System.out.println(departmentManager.getAll());
                 case 3 -> {
                     String departmentId = InputHandler.getStringInput("Enter Department ID: ");
-                    Department d = DepartmentService.getDepartmentById(departmentId);
-                    if (d == null) {
+//                    Department d = DepartmentService.getDepartmentById(departmentId);
+//                    if (d == null) {
+//                        System.out.println("Department not found: " + departmentId);
+//                    } else {
+//                        System.out.println("Name: " + d.getDepartmentName());
+//                        System.out.println("Head Doctor ID: " + d.getHeadDoctorId());
+//                        System.out.println("Bed Capacity: " + d.getBedCapacity());
+//                        System.out.println("Available Beds: " + d.getAvailableBeds());
+//                    }
+                    String result = ((DepartmentService) departmentManager).searchById(departmentId);
+                    if (result.isEmpty()) {
                         System.out.println("Department not found: " + departmentId);
                     } else {
-                        System.out.println("Name: " + d.getDepartmentName());
-                        System.out.println("Head Doctor ID: " + d.getHeadDoctorId());
-                        System.out.println("Bed Capacity: " + d.getBedCapacity());
-                        System.out.println("Available Beds: " + d.getAvailableBeds());
+                        System.out.println("Found department: " + " - " + result);
                     }
                 }
                 case 4 -> {

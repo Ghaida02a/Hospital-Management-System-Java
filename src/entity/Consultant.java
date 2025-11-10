@@ -80,8 +80,10 @@ public class Consultant extends Doctor implements Displayable {
         StringBuilder info = new StringBuilder(super.displayInfo());
 
         // Add consultant-specific details
-        info.append("Consultation Types: ").append(getConsultationTypes()).append("\n");
-        info.append("Online Consultation Available: ").append(isOnlineConsultationAvailable()).append("\n");
+        info.append(System.lineSeparator());
+        info.append("DR Consultant ID: ").append(this.getDoctorId()).append(System.lineSeparator());
+        info.append("Consultation Types: ").append(getConsultationTypes()).append(System.lineSeparator());
+        info.append("Online Consultation Available: ").append(isOnlineConsultationAvailable()).append(System.lineSeparator());
         info.append("Consultation Duration: ").append(getConsultationDuration()).append(" minutes\n");
 
         return info.toString();

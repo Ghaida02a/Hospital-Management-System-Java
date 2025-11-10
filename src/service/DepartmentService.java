@@ -53,7 +53,7 @@ public class DepartmentService implements Manageable, Searchable {
     }
 
     public static Department getDepartmentById(String departmentId) {
-        if (departmentId == null) {
+        if (HelperUtils.isNull(departmentId)) {
             return null;
         }
         for (Department department : departmentList) {
@@ -152,19 +152,20 @@ public class DepartmentService implements Manageable, Searchable {
     @Override
     public String add(Object entity) {
         if (entity instanceof Department) {
-            Department dept = (Department) entity;
-            if (saveDepartment(dept)) {
-                return "Department added successfully: " + dept.getDepartmentId();
-            } else {
-                return "Failed to add department.";
-            }
+            departmentList.add((Department) entity);
+            return "Department added successfully!";
         }
         return "Invalid entity type.";
     }
 
     @Override
     public String remove(String id) {
-        return deleteDepartment(id) ? "Department deleted: " + id : "Department not found.";
+        Department department = getDepartmentById(id);
+        if (HelperUtils.isNotNull(department)) {
+            departmentList.remove(department);
+            return "Department with ID " + id + " removed successfully!";
+        }
+        return "Department not found.";
     }
 
     @Override
@@ -172,9 +173,11 @@ public class DepartmentService implements Manageable, Searchable {
         if (departmentList.isEmpty()) {
             return "No departments available.";
         }
-        StringBuilder sb = new StringBuilder();
-        for (Department d : departmentList) {
-            sb.append(d.toString()).append("\n");
+        StringBuilder sb = new StringBuilder("===== Department List =====\n");
+        for (Department department : departmentList) {
+            sb.append(department.displayInfo(""));
+            sb.append(System.lineSeparator());
+            sb.append("---------------------------\n");
         }
         return sb.toString();
     }
@@ -184,7 +187,8 @@ public class DepartmentService implements Manageable, Searchable {
         StringBuilder sb = new StringBuilder();
         for (Department d : departmentList) {
             if (d.getDepartmentName().toLowerCase().contains(keyword.toLowerCase())) {
-                sb.append(d.toString()).append("\n");
+                sb.append(d.displayInfo(""));
+                sb.append(System.lineSeparator());
             }
         }
         return sb.length() > 0 ? sb.toString() : "No departments found for: " + keyword;
@@ -193,7 +197,10 @@ public class DepartmentService implements Manageable, Searchable {
     @Override
     public String searchById(String id) {
         Department dept = getDepartmentById(id);
-        return dept != null ? dept.toString() : "Department not found: " + id;
+        if (HelperUtils.isNotNull(dept)) {
+            return dept.displayInfo("");
+        }
+        return "Department not found: " + id;
     }
 
 }

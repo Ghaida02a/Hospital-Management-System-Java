@@ -489,7 +489,6 @@ public class PatientService implements Manageable, Searchable {
     @Override
     public String add(Object entity) {
         if (entity instanceof InPatient) {
-//            inPatientList.add(InpatientRegistration(inPatient)); // ensure ID & registration date
             inPatientList.add((InPatient) entity);
             return "InPatient added successfully!";
         }
@@ -539,33 +538,37 @@ public class PatientService implements Manageable, Searchable {
 
         String result = "===== Patient List =====\n";
 
-        if(!patientList.isEmpty()){
+        if (!patientList.isEmpty()) {
             result += "\n-- General Patients --\n";
             for (Patient p : patientList) {
                 if (!(p instanceof InPatient) && !(p instanceof OutPatient) && !(p instanceof EmergencyPatient)) {
-                    result += "Id: " + p.getId() + " - PatientId: " + p.getPatientId() + " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                    result += p.displayInfo();
+                    System.out.println("------------------------");
                 }
             }
         }
 
-        if(!inPatientList.isEmpty()){
+        if (!inPatientList.isEmpty()) {
             result += "\n-- InPatients --\n";
             for (InPatient ip : inPatientList) {
-                result += "Id: " + ip.getId() + " - PatientId: " + ip.getPatientId() + " - " + ip.getFirstName() + " " + ip.getLastName() + "\n";
+                result += ip.displayInfo("");
+                System.out.println("------------------------");
             }
         }
 
-        if(!outPatientList.isEmpty()){
+        if (!outPatientList.isEmpty()) {
             result += "\n-- OutPatients --\n";
             for (OutPatient op : outPatientList) {
-                result += "Id: " + op.getId() + " - PatientId: " + op.getPatientId() + " - " + op.getFirstName() + " " + op.getLastName() + "\n";
+                result += op.displayInfo("");
+                System.out.println("------------------------");
             }
         }
 
-        if(!emergencyPatientList.isEmpty()){
+        if (!emergencyPatientList.isEmpty()) {
             result += "\n-- Emergency Patients --\n";
             for (EmergencyPatient ep : emergencyPatientList) {
-                result += "Id: " + ep.getId() + " - PatientId: " + ep.getPatientId() + " - " + ep.getFirstName() + " " + ep.getLastName() + "\n";
+                result += ep.displayInfo("");
+                System.out.println("------------------------");
             }
         }
         return result;

@@ -94,6 +94,7 @@ public class DoctorService implements Manageable, Searchable {
         Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
 
         surgeon.setId(baseDoctor.getId());
+        surgeon.setDoctorId(baseDoctor.getDoctorId());
         surgeon.setFirstName(baseDoctor.getFirstName());
         surgeon.setLastName(baseDoctor.getLastName());
         surgeon.setDateOfBirth(baseDoctor.getDateOfBirth());
@@ -166,6 +167,7 @@ public class DoctorService implements Manageable, Searchable {
         Doctor baseDoctor = DoctorService.addDoctor();// fill basic patient info
 
         generalPractitioner.setId(baseDoctor.getId());
+        generalPractitioner.setDoctorId(baseDoctor.getDoctorId());
         generalPractitioner.setFirstName(baseDoctor.getFirstName());
         generalPractitioner.setLastName(baseDoctor.getLastName());
         generalPractitioner.setDateOfBirth(baseDoctor.getDateOfBirth());
@@ -286,8 +288,8 @@ public class DoctorService implements Manageable, Searchable {
     }
 
     public static Doctor getDoctorById(String doctorId) {
-        for (Doctor doctor : doctorsList){
-            if (doctor.getDoctorId().equals(doctorId)){
+        for (Doctor doctor : doctorsList) {
+            if (doctor.getDoctorId().equals(doctorId)) {
                 return doctor;
             }
         }
@@ -350,8 +352,8 @@ public class DoctorService implements Manageable, Searchable {
                 specializedDoctors.add(doctor);
             }
         }
-        for (Surgeon surgeon : surgeonList){
-            if (surgeon.getSpecialization().equalsIgnoreCase(specialization)){
+        for (Surgeon surgeon : surgeonList) {
+            if (surgeon.getSpecialization().equalsIgnoreCase(specialization)) {
                 specializedDoctors.add(surgeon);
             }
         }
@@ -411,6 +413,7 @@ public class DoctorService implements Manageable, Searchable {
         doctor.setPhoneNumber(phone);
         return initializeDoctor(doctor);
     }
+
     public static Doctor addDoctor(String name, String specialization, String phone, double consultationFee) {
         Doctor doctor = new Doctor();
         String[] nameParts = name.trim().split(" ");
@@ -525,18 +528,33 @@ public class DoctorService implements Manageable, Searchable {
 
     @Override
     public String add(Object entity) {
-        if (entity instanceof Doctor doctor) {
-            save(doctor);
-            return "Doctor added successfully: " + doctor.getId();
+        if (entity instanceof Consultant) {
+            consultantList.add((Consultant) entity);
+            return "Consultant added successfully: ";
+        }
+        if (entity instanceof Surgeon) {
+            surgeonList.add((Surgeon) entity);
+            return "Surgeon added successfully: ";
+        }
+        if (entity instanceof GeneralPractitioner) {
+            generalPractitionerList.add((GeneralPractitioner) entity);
+            return "General Practitioner added successfully: ";
+        }
+        if (entity instanceof Doctor) {
+            doctorsList.add((Doctor) entity);
+            return "Doctor added successfully: ";
         }
         return "Invalid entity type.";
     }
 
     @Override
     public String remove(String id) {
-        Doctor doctor = getDoctorById(id);
-        if (doctor != null) {
-            doctorsList.remove(doctor);
+        boolean removedGeneral = doctorsList.removeIf(d -> d.getDoctorId().equals(id));
+        boolean removedConsultant = consultantList.removeIf(d -> d.getDoctorId().equals(id));
+        boolean removedSurgeon = surgeonList.removeIf(d -> d.getDoctorId().equals(id));
+        boolean removedGP = generalPractitionerList.removeIf(d -> d.getDoctorId().equals(id));
+
+        if (removedGeneral || removedConsultant || removedSurgeon || removedGP) {
             return "Doctor " + id + " removed successfully.";
         }
         return "Doctor not found.";
@@ -544,31 +562,110 @@ public class DoctorService implements Manageable, Searchable {
 
     @Override
     public String getAll() {
-        if (doctorsList.isEmpty()) return "No doctors found.";
-        StringBuilder sb = new StringBuilder("===== All Doctors =====\n");
-        for (Doctor d : doctorsList) {
-            sb.append(d.toString()).append("\n");
+        if (doctorsList.isEmpty() && surgeonList.isEmpty() &&
+                consultantList.isEmpty() && generalPractitionerList.isEmpty()) {
+            return "No doctors found.";
         }
-        return sb.toString();
+
+        String result = "===== All Doctors =====\n";
+
+        if (!doctorsList.isEmpty()) {
+            result += "\n-- General Doctors --\n";
+            for (Doctor d : doctorsList) {
+                if (!(d instanceof Consultant) && !(d instanceof Surgeon) && !(d instanceof GeneralPractitioner)) {
+//                    result += d.toString() + "\n";
+                    result += d.displayInfo() + "\n";
+                    System.out.println("------------------------");
+                }
+            }
+        }
+
+        if (!consultantList.isEmpty()) {
+            result += "\n-- Consultant Doctors --\n";
+            for (Consultant consultant : consultantList) {
+                result += consultant.displayInfo() + "\n";
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!surgeonList.isEmpty()) {
+            result += "\n-- Surgeons --\n";
+            for (Surgeon surgeon : surgeonList) {
+                result += surgeon.displayInfo() + "\n";
+                System.out.println("------------------------");
+            }
+        }
+
+        if (!generalPractitionerList.isEmpty()) {
+            result += "\n-- General Practitioners --\n";
+            for (GeneralPractitioner generalPractitioner : generalPractitionerList) {
+                result += generalPractitioner.displayInfo() + "\n";
+                System.out.println("------------------------");
+            }
+        }
+        return result;
     }
 
     @Override
     public String search(String keyword) {
-        StringBuilder sb = new StringBuilder();
+        String result = "Search Results:\n";
+        boolean found = false;
+
+        // Search across all lists
         for (Doctor d : doctorsList) {
             if (d.getFirstName().toLowerCase().contains(keyword.toLowerCase()) ||
                     d.getLastName().toLowerCase().contains(keyword.toLowerCase()) ||
                     d.getSpecialization().toLowerCase().contains(keyword.toLowerCase())) {
-                sb.append(d.toString()).append("\n");
+                result += d.toString() + "\n";
+                found = true;
             }
         }
-        return sb.length() > 0 ? sb.toString() : "No matches found for keyword: " + keyword;
+        for (Consultant consultant : consultantList) {
+            if (consultant.getFirstName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    consultant.getLastName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    consultant.getSpecialization().toLowerCase().contains(keyword.toLowerCase())) {
+                result += consultant.toString() + "\n";
+                found = true;
+            }
+        }
+        for (Surgeon surgeon : surgeonList) {
+            if (surgeon.getFirstName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    surgeon.getLastName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    surgeon.getSpecialization().toLowerCase().contains(keyword.toLowerCase())) {
+                result += surgeon.toString() + "\n";
+                found = true;
+            }
+        }
+        for (GeneralPractitioner generalPractitioner : generalPractitionerList) {
+            if (generalPractitioner.getFirstName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    generalPractitioner.getLastName().toLowerCase().contains(keyword.toLowerCase()) ||
+                    generalPractitioner.getSpecialization().toLowerCase().contains(keyword.toLowerCase())) {
+                result += generalPractitioner.toString() + "\n";
+                found = true;
+            }
+        }
+
+        return found ? result : "No matches found for keyword: " + keyword;
     }
 
     @Override
     public String searchById(String id) {
-        Doctor doctor = getDoctorById(id);
-        return (doctor != null) ? doctor.toString() : "Doctor not found with ID: " + id;
-    }
+        for (Doctor d : doctorsList) {
+            if (d.getId().equals(id)) return d.toString();
+        }
+        // Consultant Doctors
+        for (Consultant consultant : consultantList) {
+            if (consultant.getDoctorId().equals(id)) return consultant.toString();
+        }
+        // Surgeons
+        for (Surgeon surgeon : surgeonList) {
+            if (surgeon.getDoctorId().equals(id)) return surgeon.toString();
+        }
+        // General Practitioners
+        for (GeneralPractitioner generalPractitioner : generalPractitionerList) {
+            if (generalPractitioner.getDoctorId().equals(id)) return generalPractitioner.toString();
+        }
 
+        return "Doctor not found with ID: " + id;
+    }
 }

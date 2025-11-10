@@ -4,8 +4,7 @@ import Interface.Manageable;
 import Interface.Searchable;
 import Utils.HelperUtils;
 import Utils.InputHandler;
-import entity.Nurse;
-import entity.Patient;
+import entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,16 +145,13 @@ public class NurseService implements Manageable, Searchable {
 
     @Override
     public String add(Object entity) {
-        if (entity instanceof Nurse nurse) {
-            if (HelperUtils.isNotNull(nurse.getId())) {
-                nurseList.add(nurse);
-                return "Nurse added successfully!";
-            } else {
-                return "Invalid nurse data. Cannot add.";
-            }
+        if (entity instanceof Nurse) {
+            nurseList.add((Nurse) entity);
+            return "Nurse added successfully!";
         }
         return "Invalid entity type.";
     }
+
 
     @Override
     public String remove(String id) {
@@ -174,9 +170,8 @@ public class NurseService implements Manageable, Searchable {
         }
         StringBuilder sb = new StringBuilder("===== Nurse List =====\n");
         for (Nurse nurse : nurseList) {
-            sb.append(nurse.getId()).append(" - ")
-                    .append(nurse.getFirstName()).append(" ")
-                    .append(nurse.getLastName()).append("\n");
+            sb.append(nurse.displayInfo(""));
+            sb.append(System.lineSeparator());
         }
         return sb.toString();
     }
@@ -191,13 +186,15 @@ public class NurseService implements Manageable, Searchable {
         for (Nurse nurse : nurseList) {
             if ((nurse.getFirstName() != null && nurse.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
                     (nurse.getLastName() != null && nurse.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
-                    (nurse.getEmail() != null && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase()))) {
-                sb.append(nurse.getId()).append(" - ")
-                        .append(nurse.getFirstName()).append(" ")
-                        .append(nurse.getLastName()).append("\n");
+                    (nurse.getEmail() != null && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase()))
+                    || (nurse.getShift() != null && nurse.getShift().toLowerCase().contains(keyword.toLowerCase()))
+                    || (nurse.getDepartmentId() != null && nurse.getDepartmentId().toLowerCase().contains(keyword.toLowerCase()))) {
+                sb.append(nurse.displayInfo(""));
+                sb.append(System.lineSeparator());
+                sb.append("------------------------\n");
             }
         }
-        return sb.length() > 16 ? sb.toString() : "No matching nurses found.";
+        return sb.length() > 10 ? sb.toString() : "No matching nurses found.";
     }
 
     @Override

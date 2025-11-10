@@ -142,18 +142,15 @@ public class MedicalRecord implements Displayable {
 
     @Override
     public String displayInfo(String str) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Record Id: ").append(recordId).append(System.lineSeparator());
-        sb.append("Patient Id: ").append(patientId).append(System.lineSeparator());
-        sb.append("Doctor Id: ").append(doctorId).append(System.lineSeparator());
-        sb.append("Visit Date: ").append(visitDate).append(System.lineSeparator());
-        sb.append("Diagnosis: ").append(diagnosis).append(System.lineSeparator());
-        sb.append("Prescription: ").append(prescription).append(System.lineSeparator());
-        sb.append("Test Results: ").append(testResults).append(System.lineSeparator());
-        sb.append("Notes: ").append(notes);
-        String out = sb.toString();
-        System.out.println(out);
-        return out;
+        return str +
+                "Record Id: " + recordId + System.lineSeparator() +
+                "Patient Id: " + patientId + System.lineSeparator() +
+                "Doctor Id: " + doctorId + System.lineSeparator() +
+                "Visit Date: " + visitDate + System.lineSeparator() +
+                "Diagnosis: " + diagnosis + System.lineSeparator() +
+                "Prescription: " + prescription + System.lineSeparator() +
+                "Test Results: " + testResults + System.lineSeparator() +
+                "Notes: " + notes;
     }
 
     @Override

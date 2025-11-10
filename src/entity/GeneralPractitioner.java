@@ -77,6 +77,7 @@ public class GeneralPractitioner extends Doctor implements Displayable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo());
         sb.append(System.lineSeparator());
+        sb.append("DR GP ID: ").append(this.getDoctorId()).append(System.lineSeparator());
         sb.append("Walk-in Available: ").append(walkinAvailable).append(System.lineSeparator());
         sb.append("Home Visit Available: ").append(homeVisitAvailable).append(System.lineSeparator());
         sb.append("Vaccination Certified: ").append(vaccinationCertified);

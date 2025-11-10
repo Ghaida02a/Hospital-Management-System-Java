@@ -93,6 +93,7 @@ public class Surgeon extends Doctor implements Displayable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("DR Surgeon ID: ").append(this.getDoctorId()).append(System.lineSeparator());
         sb.append("Surgeries Performed: ").append(surgeriesPerformed).append(System.lineSeparator());
         sb.append("Surgery Types: ").append(surgeryTypes == null ? "[]" : surgeryTypes.toString()).append(System.lineSeparator());
         sb.append("Operation Theatre Access: ").append(operationTheatreAccess);

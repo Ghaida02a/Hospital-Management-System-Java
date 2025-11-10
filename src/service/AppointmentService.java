@@ -262,9 +262,8 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     @Override
     public String add(Object entity) {
         if (entity instanceof Appointment) {
-            Appointment appointment = (Appointment) entity;
-            save(appointment);
-            return "Appointment added successfully: " + appointment.getAppointmentId();
+            appointmentList.add((Appointment) entity);
+            return "Appointment added successfully!";
         }
         return "Invalid entity type. Expected Appointment.";
     }
@@ -286,7 +285,8 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         }
         StringBuilder sb = new StringBuilder();
         for (Appointment a : appointmentList) {
-            sb.append(a.toString()).append("\n");
+            sb.append(a.displayInfo(""));
+            sb.append(System.lineSeparator());
         }
         return sb.toString();
     }
@@ -295,8 +295,12 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     public String search(String keyword) {
         StringBuilder sb = new StringBuilder();
         for (Appointment a : appointmentList) {
-            if (a.getReason() != null && a.getReason().toLowerCase().contains(keyword.toLowerCase())) {
-                sb.append(a.toString()).append("\n");
+            if (a.getPatientId() != null && a.getPatientId().toLowerCase().contains(keyword.toLowerCase())
+                    || a.getDoctorId() != null && a.getDoctorId().toLowerCase().contains(keyword.toLowerCase())
+                    || a.getAppointmentDate() != null && a.getAppointmentDate().toString().toLowerCase().contains(keyword.toLowerCase())
+                    || a.getAppointmentId() != null && a.getAppointmentId().toLowerCase().contains(keyword.toLowerCase())) {
+                sb.append(a.displayInfo(""));
+                sb.append(System.lineSeparator());
             }
         }
         return sb.length() > 0 ? sb.toString() : "No appointments found for keyword: " + keyword;
@@ -305,7 +309,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     @Override
     public String searchById(String id) {
         Appointment a = getAppointmentById(id);
-        return a != null ? a.toString() : "Appointment not found: " + id;
+        return a != null ? a.displayInfo("") : "Appointment not found: " + id;
     }
 
     @Override
@@ -334,8 +338,11 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     }
 
     @Override
-    public void cancelAppointment(String appointmentId) {
-        AppointmentService.cancelAppointmentById(appointmentId);
+    public boolean cancelAppointment(String appointmentId) {
+        if (HelperUtils.isNotNull(appointmentId)) {
+            return AppointmentService.cancelAppointmentById(appointmentId);
+        }
+        return false;
     }
 
     @Override
