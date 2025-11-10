@@ -22,7 +22,7 @@ public class MedicalRecordService implements Manageable, Searchable {
         String generatedId;
         do {
             generatedId = HelperUtils.generateId("MR");
-        } while (getRecordById(generatedId) != null); // ensure uniqueness
+        } while (HelperUtils.isNotNull(getRecordById(generatedId))); // ensure uniqueness
         medicalRecord.setRecordId(generatedId);
         System.out.println("Medical Record ID: " + medicalRecord.getRecordId());
 
@@ -64,11 +64,11 @@ public class MedicalRecordService implements Manageable, Searchable {
     }
 
     public static boolean saveRecord(MedicalRecord record) {
-        if (record == null || HelperUtils.isNull(record.getRecordId())) {
+        if (HelperUtils.isNull(record) || HelperUtils.isNull(record.getRecordId())) {
             System.out.println("MedicalRecord or recordId must not be null/empty");
             return false;
         }
-        if (getRecordById(record.getRecordId()) != null) {
+        if (HelperUtils.isNotNull(getRecordById(record.getRecordId()))) {
             System.out.println("Record ID already exists!");
             return false;
         }
@@ -198,7 +198,7 @@ public class MedicalRecordService implements Manageable, Searchable {
         // Get records by patient ID
         List<MedicalRecord> records = displayRecordsByPatient(patientId);
 
-        if (records == null || records.isEmpty()) {
+        if (HelperUtils.isNull(records) || records.isEmpty()) {
             System.out.println("No medical records found for patient: " + patientId);
             return;
         }
@@ -289,7 +289,9 @@ public class MedicalRecordService implements Manageable, Searchable {
     @Override
     public String searchById(String id) {
         MedicalRecord record = getRecordById(id);
-        if (record == null) return "Medical record not found for ID: " + id;
+        if (HelperUtils.isNull(record)) {
+            return "Medical record not found for ID: " + id;
+        }
         record.displayInfo("");
         return "Search complete.";
     }

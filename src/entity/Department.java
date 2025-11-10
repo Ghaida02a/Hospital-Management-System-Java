@@ -157,14 +157,14 @@ public class Department implements Displayable {
                 "Department ID: " + departmentId + System.lineSeparator()
                 + "Department Name: " + departmentName + System.lineSeparator()
                 + "Head Doctor ID: " + headDoctorId + System.lineSeparator()
-                + "Number of Doctors: " + (doctors != null ? doctors.size() : 0) + System.lineSeparator()
-                + "Number of Nurses: " + (nurses != null ? nurses.size() : 0) + System.lineSeparator()
+                + "Number of Doctors: " + (HelperUtils.isNotNull(doctors) ? doctors.size() : 0) + System.lineSeparator()
+                + "Number of Nurses: " + (HelperUtils.isNotNull(nurses) ? nurses.size() : 0) + System.lineSeparator()
                 + "Bed Capacity: " + bedCapacity + System.lineSeparator()
                 + "Available Beds: " + availableBeds;
     }
 
     @Override
     public String displaySummary(String str) {
-        return "Department Id" + departmentId + " - " + "Department Name" + departmentName;
+        return "Department Id: " + departmentId + " - Department Name: " + departmentName;
     }
 }

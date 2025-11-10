@@ -139,7 +139,7 @@ public class Nurse extends Person implements Displayable {
         sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
         sb.append("Shift: ").append(shift).append(System.lineSeparator());
         sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
-        sb.append("Assigned Patients Count: ").append(assignedPatients == null ? 0 : assignedPatients.size());
+        sb.append("Assigned Patients Count: ").append(HelperUtils.isNull(assignedPatients) ? 0 : assignedPatients.size());
         String out = sb.toString();
         System.out.println(out);
         return out;

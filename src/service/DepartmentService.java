@@ -39,7 +39,7 @@ public class DepartmentService implements Manageable, Searchable {
     }
 
     public static boolean saveDepartment(Department dept) {
-        if (dept == null || dept.getDepartmentId() == null || dept.getDepartmentId().trim().isEmpty()) {
+        if (HelperUtils.isNull(dept) || HelperUtils.isNull(dept.getDepartmentId()) || dept.getDepartmentId().trim().isEmpty()) {
             System.out.println("Department or departmentId must not be null/empty");
             return false;
         }
@@ -80,7 +80,7 @@ public class DepartmentService implements Manageable, Searchable {
     }
 
     public static boolean updateDepartment(String departmentId, Department updated) {
-        if (departmentId == null || updated == null) return false;
+        if (HelperUtils.isNull(departmentId) || HelperUtils.isNull(updated)) return false;
         for (int i = 0; i < departmentList.size(); i++) {
             Department d = departmentList.get(i);
             if (departmentId.equals(d.getDepartmentId())) {
@@ -110,7 +110,7 @@ public class DepartmentService implements Manageable, Searchable {
         Department department = getDepartmentById(departmentId);
         Doctor doctor = DoctorService.getDoctorById(doctorId);
 
-        if (department == null || doctor == null) {
+        if (HelperUtils.isNull(department) || HelperUtils.isNull(doctor)) {
             System.out.println("Doctor or department not found.");
             return false;
         }
@@ -124,7 +124,7 @@ public class DepartmentService implements Manageable, Searchable {
         Department department = getDepartmentById(departmentId);
         Nurse nurse = NurseService.getNurseById(nurseId);
 
-        if (department == null || nurse == null) {
+        if (HelperUtils.isNull(department) || HelperUtils.isNull(nurse)) {
             System.out.println("Nurse or department not found.");
             return false;
         }
@@ -136,7 +136,7 @@ public class DepartmentService implements Manageable, Searchable {
 
     public static boolean updateBedAvailability(String departmentId, int beds) {
         Department department = getDepartmentById(departmentId);
-        if (department == null) {
+        if (HelperUtils.isNull(department)) {
             System.out.println("Department not found.");
             return false;
         }

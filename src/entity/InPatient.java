@@ -42,7 +42,7 @@ public class InPatient extends Patient implements Displayable, Billable {
     }
 
     public void setAdmissionDate(LocalDate admissionDate) {
-        if (admissionDate == null) {
+        if (HelperUtils.isNull(admissionDate)) {
             System.out.println("Admission date cannot be null.");
             this.admissionDate = null;
             return;
@@ -61,13 +61,13 @@ public class InPatient extends Patient implements Displayable, Billable {
     }
 
     public void setDischargeDate(LocalDate dischargeDate) {
-        if (dischargeDate == null) {
+        if (HelperUtils.isNull(dischargeDate)) {
             System.out.println("Discharge date cannot be null.");
             this.dischargeDate = null;
             return;
         }
 
-        if (this.admissionDate == null) {
+        if (HelperUtils.isNull(this.admissionDate)) {
             System.out.println("Cannot set discharge date before admission date is set.");
             this.dischargeDate = null;
             return;

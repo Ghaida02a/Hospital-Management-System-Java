@@ -62,7 +62,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
             // Assign patient to doctor
             Doctor doctor = DoctorService.getDoctorById(appointment.getDoctorId());
             Patient patient = PatientService.getPatientById(appointment.getPatientId());
-            if (doctor != null && patient != null) {
+            if (HelperUtils.isNotNull(doctor) && HelperUtils.isNotNull(patient)) {
                 doctor.assignPatient(patient);
             }
         }
@@ -80,7 +80,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> getAppointmentsByPatient(String patientId) {
         List<Appointment> result = new ArrayList<>();
         for (Appointment a : appointmentList) {
-            if (a.getPatientId() != null && a.getPatientId().equals(patientId)) result.add(a);
+            if (HelperUtils.isNotNull(a.getPatientId()) && a.getPatientId().equals(patientId)) result.add(a);
         }
         if (result.isEmpty()) {
             System.out.println("No appointments found for patient ID: " + patientId);
@@ -91,7 +91,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> getAppointmentsByDoctor(String doctorId) {
         List<Appointment> result = new ArrayList<>();
         for (Appointment appointment : appointmentList) {
-            if (appointment.getDoctorId() != null && appointment.getDoctorId().equals(doctorId))
+            if (HelperUtils.isNotNull(appointment.getDoctorId()) && appointment.getDoctorId().equals(doctorId))
                 result.add(appointment);
         }
         if (result.isEmpty()) System.out.println("No appointments found for doctor ID: " + doctorId);
@@ -101,7 +101,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     public static List<Appointment> getAppointmentsByDate(LocalDate date) {
         List<Appointment> result = new ArrayList<>();
         for (Appointment appointment : appointmentList) {
-            if (appointment.getAppointmentDate() != null && appointment.getAppointmentDate().equals(date))
+            if (HelperUtils.isNotNull(appointment.getAppointmentDate()) && appointment.getAppointmentDate().equals(date))
                 result.add(appointment);
         }
         if (result.isEmpty()) System.out.println("No appointments found for date: " + date);
@@ -177,7 +177,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         return appointment;
     }
     public static Appointment createAppointment(Appointment appointment) {
-        if (appointment.getAppointmentId() == null || appointment.getAppointmentId().isEmpty()) {
+        if (HelperUtils.isNull(appointment.getAppointmentId()) || appointment.getAppointmentId().isEmpty()) {
             appointment.setAppointmentId(HelperUtils.generateId("Appt"));
         }
         save(appointment);
@@ -271,7 +271,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     @Override
     public String remove(String id) {
         Appointment a = getAppointmentById(id);
-        if (a != null) {
+        if (HelperUtils.isNotNull(a)) {
             appointmentList.remove(a);
             return "Appointment deleted: " + id;
         }
@@ -295,10 +295,10 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     public String search(String keyword) {
         StringBuilder sb = new StringBuilder();
         for (Appointment a : appointmentList) {
-            if (a.getPatientId() != null && a.getPatientId().toLowerCase().contains(keyword.toLowerCase())
-                    || a.getDoctorId() != null && a.getDoctorId().toLowerCase().contains(keyword.toLowerCase())
-                    || a.getAppointmentDate() != null && a.getAppointmentDate().toString().toLowerCase().contains(keyword.toLowerCase())
-                    || a.getAppointmentId() != null && a.getAppointmentId().toLowerCase().contains(keyword.toLowerCase())) {
+            if (HelperUtils.isNotNull(a.getPatientId()) && a.getPatientId().toLowerCase().contains(keyword.toLowerCase())
+                    || HelperUtils.isNotNull(a.getDoctorId()) && a.getDoctorId().toLowerCase().contains(keyword.toLowerCase())
+                    || HelperUtils.isNotNull(a.getAppointmentDate()) && a.getAppointmentDate().toString().toLowerCase().contains(keyword.toLowerCase())
+                    || HelperUtils.isNotNull(a.getAppointmentId()) && a.getAppointmentId().toLowerCase().contains(keyword.toLowerCase())) {
                 sb.append(a.displayInfo(""));
                 sb.append(System.lineSeparator());
             }
@@ -309,7 +309,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     @Override
     public String searchById(String id) {
         Appointment a = getAppointmentById(id);
-        return a != null ? a.displayInfo("") : "Appointment not found: " + id;
+        return HelperUtils.isNotNull(a) ? a.displayInfo("") : "Appointment not found: " + id;
     }
 
     @Override

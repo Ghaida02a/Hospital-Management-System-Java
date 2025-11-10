@@ -143,7 +143,7 @@ public class HospitalManagementApp {
 
                     String id = InputHandler.getStringInput("Enter patient ID to update: ");
                     Patient patient = PatientService.getPatientById(id);
-                    if (patient != null) {
+                    if (HelperUtils.isNotNull(patient)) {
                         String newInsuranceId = InputHandler.getStringInput("Enter new Insurance ID: ");
                         patient.updateInsurance(newInsuranceId);
                     }
@@ -675,7 +675,7 @@ public class HospitalManagementApp {
                 case 7 -> {
                     String departmentId = InputHandler.getStringInput("Enter Department ID: ");
                     Department d = DepartmentService.getDepartmentById(departmentId);
-                    if (d == null) {
+                    if (HelperUtils.isNull(d)) {
                         System.out.println("Department not found: " + departmentId);
                     } else {
                         System.out.println("Department Statistics for " + d.getDepartmentName() + ":");

@@ -136,7 +136,7 @@ public class Doctor extends Person implements Displayable {
         // validate 0-23, remove duplicates and preserve order
         Set<Integer> seen = new LinkedHashSet<>();
         for (Integer s : availableSlots) {
-            if (s == null) {
+            if (HelperUtils.isNull(s)) {
                 System.out.println("Warning: null slot ignored.");
                 continue;
             }
@@ -182,14 +182,14 @@ public class Doctor extends Person implements Displayable {
 
     public boolean isAvailable() {
         // doctor is considered available if explicitly marked available or has non-empty slots
-        return available || (availableSlots != null && !availableSlots.isEmpty());
+        return available || (HelperUtils.isNotNull(availableSlots) && !availableSlots.isEmpty());
     }
 
     public void setAvailable(boolean availability) {
         this.available = availability;
         // If setting unavailable, clear slots to reflect the state
         if (!availability) {
-            if (availableSlots != null) {
+            if (HelperUtils.isNotNull(availableSlots)) {
                 availableSlots.clear();
             } else {
                 availableSlots = new ArrayList<>();
@@ -207,7 +207,7 @@ public class Doctor extends Person implements Displayable {
             System.out.println("Cannot assign patient with null/empty ID.");
             return false;
         }
-        if (assignedPatients == null) {
+        if (HelperUtils.isNull(assignedPatients)) {
             assignedPatients = new ArrayList<>();
         }
         for (Patient p : assignedPatients) {
@@ -245,7 +245,7 @@ public class Doctor extends Person implements Displayable {
 
     public void updateAvailability(List<Integer> newSlots) {
         if (HelperUtils.isNull(newSlots)) {
-            if (this.availableSlots != null) {
+            if (HelperUtils.isNotNull(this.availableSlots)) {
                 this.availableSlots.clear();
             } else {
                 this.availableSlots = new ArrayList<>();
@@ -326,7 +326,7 @@ public class Doctor extends Person implements Displayable {
         if (HelperUtils.isNull(appt)) {
             return null;
         }
-        if (appt.getDoctorId() == null || appt.getDoctorId().isBlank()) {
+        if (HelperUtils.isNull(appt.getDoctorId()) || appt.getDoctorId().isBlank()) {
             appt.setDoctorId(this.getId());
         }
         AppointmentService.save(appt);
@@ -345,10 +345,10 @@ public class Doctor extends Person implements Displayable {
         mr.setPatientId(patientId);
         mr.setDoctorId(this.getId());
         mr.setVisitDate(LocalDate.now());
-        mr.setDiagnosis("Second Opinion" + (originalDoctorId != null ? " on " + originalDoctorId : ""));
+        mr.setDiagnosis("Second Opinion" + (HelperUtils.isNotNull(originalDoctorId) ? " on " + originalDoctorId : ""));
         mr.setPrescription(null);
         mr.setTestResults(null);
-        mr.setNotes(opinionNotes == null ? "" : opinionNotes);
+        mr.setNotes(HelperUtils.isNotNull(opinionNotes) ? opinionNotes : "");
 
         MedicalRecordService.saveRecord(mr);
         System.out.println("Second opinion recorded for patient " + patientId);
@@ -366,8 +366,8 @@ public class Doctor extends Person implements Displayable {
         sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
         sb.append("Consultation Fee: ").append(consultationFee).append(System.lineSeparator());
         sb.append("Available: ").append(available).append(System.lineSeparator());
-        sb.append("Available Slots: ").append(availableSlots == null ? "[]" : availableSlots.toString()).append(System.lineSeparator());
-        sb.append("Assigned Patients Count: ").append(assignedPatients == null ? 0 : assignedPatients.size());
+        sb.append("Available Slots: ").append(HelperUtils.isNotNull(availableSlots) ? availableSlots.toString() : "[]").append(System.lineSeparator());
+        sb.append("Assigned Patients Count: ").append(HelperUtils.isNotNull(assignedPatients) ? assignedPatients.size() : 0);
         String out = sb.toString();
         System.out.println(out);
         return out;

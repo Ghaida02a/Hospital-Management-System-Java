@@ -60,7 +60,7 @@ public class NurseService implements Manageable, Searchable {
 
     public static void editNurse(String nurseId, Nurse updatedNurse) {
         Nurse existingNurse = getNurseById(nurseId);
-        if (existingNurse != null) {
+        if (HelperUtils.isNotNull(existingNurse)) {
             updatedNurse.setId(existingNurse.getId());
 
             int index = nurseList.indexOf(existingNurse);
@@ -106,7 +106,7 @@ public class NurseService implements Manageable, Searchable {
     public static List<Nurse> getNursesByDepartment(String departmentId) {
         List<Nurse> result = new ArrayList<>();
         for (Nurse nurse : nurseList) {
-            if (nurse.getDepartmentId() != null && nurse.getDepartmentId().equalsIgnoreCase(departmentId)) {
+            if (HelperUtils.isNotNull(nurse.getDepartmentId()) && nurse.getDepartmentId().equalsIgnoreCase(departmentId)) {
                 result.add(nurse);
             }
         }
@@ -122,7 +122,7 @@ public class NurseService implements Manageable, Searchable {
             return result;
         }
         for (Nurse nurse : nurseList) {
-            if (nurse.getShift() != null && nurse.getShift().equalsIgnoreCase(shift)) {
+            if (HelperUtils.isNotNull(nurse.getShift()) && nurse.getShift().equalsIgnoreCase(shift)) {
                 result.add(nurse);
             }
         }
@@ -184,11 +184,11 @@ public class NurseService implements Manageable, Searchable {
 
         StringBuilder sb = new StringBuilder("Search Results:\n");
         for (Nurse nurse : nurseList) {
-            if ((nurse.getFirstName() != null && nurse.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
-                    (nurse.getLastName() != null && nurse.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
-                    (nurse.getEmail() != null && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase()))
-                    || (nurse.getShift() != null && nurse.getShift().toLowerCase().contains(keyword.toLowerCase()))
-                    || (nurse.getDepartmentId() != null && nurse.getDepartmentId().toLowerCase().contains(keyword.toLowerCase()))) {
+            if ((HelperUtils.isNotNull(nurse.getFirstName()) && nurse.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (HelperUtils.isNotNull(nurse.getLastName()) && nurse.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (HelperUtils.isNotNull(nurse.getEmail()) && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (HelperUtils.isNotNull(nurse.getShift()) && nurse.getShift().toLowerCase().contains(keyword.toLowerCase())) ||
+                    (HelperUtils.isNotNull(nurse.getDepartmentId()) && nurse.getDepartmentId().toLowerCase().contains(keyword.toLowerCase()))) {
                 sb.append(nurse.displayInfo(""));
                 sb.append(System.lineSeparator());
                 sb.append("------------------------\n");

@@ -85,7 +85,7 @@ public class PatientService implements Manageable, Searchable {
 
     public static void addAllergyToPatient(String patientId) {
         Patient patient = getPatientById(patientId);
-        if (patient == null) {
+        if (HelperUtils.isNull(patient)) {
             System.out.println("Error: Patient with ID " + patientId + " not found.\n");
             return;
         }
@@ -99,7 +99,7 @@ public class PatientService implements Manageable, Searchable {
 
         Allergies newAllergy = new Allergies(allergyId, allergyName);
 
-        if (patient.getAllergies() == null) {
+        if (HelperUtils.isNull(patient.getAllergies())) {
             patient.setAllergies(new ArrayList<>());
         }
         patient.getAllergies().add(newAllergy);
@@ -127,8 +127,10 @@ public class PatientService implements Manageable, Searchable {
 
         do {
             inPatient.setAdmissionDate(InputHandler.getDateInput("Enter Admission Date: "));
-        } while (inPatient.getAdmissionDate() == null);
-        inPatient.setDischargeDate(InputHandler.getDateInput("Enter Discharge Date: "));
+        } while (HelperUtils.isNull(inPatient.getAdmissionDate()));
+        do {
+            inPatient.setDischargeDate(InputHandler.getDateInput("Enter Discharge Date: "));
+        } while (HelperUtils.isNull(inPatient.getDischargeDate()));
         inPatient.setRoomNumber(InputHandler.getStringInput("Enter Room Number: "));
         inPatient.setBedNumber(InputHandler.getStringInput("Enter Bed Number: "));
         inPatient.setAdmittingDoctorId(InputHandler.getStringInput("Enter Admitting Doctor ID: "));
@@ -330,7 +332,7 @@ public class PatientService implements Manageable, Searchable {
 
         Patient patient = PatientService.getPatientById(String.valueOf(patientId));
 
-        if (patient != null) {
+        if (HelperUtils.isNotNull(patient)) {
             System.out.println("\n===== Patient Medical History =====");
             patient.displayInfo("");
 
@@ -362,7 +364,7 @@ public class PatientService implements Manageable, Searchable {
 
     public static void addAppointmentToPatient(String patientId, Appointment appointment) {
         Patient patient = getPatientById(patientId);
-        if (patient != null) {
+        if (HelperUtils.isNotNull(patient)) {
             patient.addAppointment(appointment);
         } else {
             System.out.println("Patient not found: " + patientId);
@@ -371,7 +373,7 @@ public class PatientService implements Manageable, Searchable {
 
     public static void updatePatientInsurance(String patientId, String newInsuranceId) {
         Patient patient = getPatientById(patientId);
-        if (patient != null) {
+        if (HelperUtils.isNotNull(patient)) {
             patient.updateInsurance(newInsuranceId);
         } else {
             System.out.println("Patient not found: " + patientId);
@@ -414,7 +416,7 @@ public class PatientService implements Manageable, Searchable {
                     || patient.getFirstName().toLowerCase().contains(key)
                     || patient.getLastName().toLowerCase().contains(key)
                     || patient.getPhoneNumber().toLowerCase().contains(key)
-                    || (patient.getEmail() != null && patient.getEmail().toLowerCase().contains(key))) {
+                    || (HelperUtils.isNotNull(patient.getEmail()) && patient.getEmail().toLowerCase().contains(key))) {
                 results.add(patient);
             }
         }
@@ -455,7 +457,7 @@ public class PatientService implements Manageable, Searchable {
         System.out.println("===== Patients List (Filtered by: " + filter + ") =====");
         boolean found = false;
         for (Patient p : patientList) {
-            if (p.getBloodGroup() != null && p.getBloodGroup().equalsIgnoreCase(filter)) {
+            if (HelperUtils.isNotNull(p.getBloodGroup()) && p.getBloodGroup().equalsIgnoreCase(filter)) {
                 System.out.println(p);
                 System.out.println("------------------------");
                 found = true;

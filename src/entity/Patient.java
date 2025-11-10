@@ -130,7 +130,7 @@ public class Patient extends Person implements Displayable {
         emergencyContact = emergencyContact.trim();
 
         // Validate: cannot be the same as patient’s phone number
-        if (this.getPhoneNumber() != null && this.getPhoneNumber().equals(emergencyContact)) {
+        if (HelperUtils.isNotNull(this.getPhoneNumber()) && this.getPhoneNumber().equals(emergencyContact)) {
             System.out.println("Warning: Emergency contact cannot be the same as patient's phone number.");
             this.emergencyContact = "";
             return;
@@ -209,7 +209,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void addMedicalRecord(MedicalRecord record) {
-        if (this.medicalRecord == null) {
+        if (HelperUtils.isNull(this.medicalRecord)) {
             this.medicalRecord = new ArrayList<>();
         }
         if (HelperUtils.isNotNull(record)) {
@@ -221,7 +221,7 @@ public class Patient extends Person implements Displayable {
     }
 
     public void addAppointment(Appointment appointment) {
-        if (this.appointment == null) {
+        if (HelperUtils.isNull(this.appointment)) {
             this.appointment = new ArrayList<>();
         }
         if (HelperUtils.isNotNull(appointment)) {
@@ -251,7 +251,7 @@ public class Patient extends Person implements Displayable {
         newStr.append("Insurance ID: ").append(insuranceId).append(System.lineSeparator());
         newStr.append("Registration Date: ").append(registrationDate).append(System.lineSeparator());
 
-        if (allergies != null && !allergies.isEmpty()) {
+        if (HelperUtils.isNotNull(allergies) && !allergies.isEmpty()) {
             newStr.append("Allergies:").append(System.lineSeparator());
             for (Allergies allergy : allergies) {
                 newStr.append("  - ").append(allergy.toString()).append(System.lineSeparator());

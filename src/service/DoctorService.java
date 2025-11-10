@@ -247,11 +247,11 @@ public class DoctorService implements Manageable, Searchable {
     }
 
     public static boolean assignPatientToDoctor(String doctorId, String patientId) {
-        if (doctorId == null || doctorId.isEmpty()) {
+        if (HelperUtils.isNull(doctorId) || doctorId.isEmpty()) {
             System.out.println("Invalid doctor ID.");
             return false;
         }
-        if (patientId == null || patientId.isEmpty()) {
+        if (HelperUtils.isNull(patientId) || patientId.isEmpty()) {
             System.out.println("Invalid patient ID.");
             return false;
         }
@@ -279,7 +279,7 @@ public class DoctorService implements Manageable, Searchable {
 
     public static void removeDoctor(String doctorId) {
         Doctor found = getDoctorById(doctorId);
-        if (found != null) {
+        if (HelperUtils.isNotNull(found)) {
             doctorsList.remove(found);
             System.out.println("Doctor with ID " + doctorId + " has been removed.");
         } else {
@@ -439,13 +439,13 @@ public class DoctorService implements Manageable, Searchable {
 
     public static Doctor assignPatient(String doctorId, String patientId) {
         Doctor found = getDoctorById(doctorId);
-        if (found == null) {
+        if (HelperUtils.isNull(found)) {
             System.out.println("Doctor with ID " + doctorId + " not found.");
             return null;
         }
 
         entity.Patient patient = PatientService.getPatientById(patientId);
-        if (patient == null) {
+        if (HelperUtils.isNull(patient)) {
             System.out.println("Patient with ID " + patientId + " not found.");
             return null;
         }
@@ -471,14 +471,14 @@ public class DoctorService implements Manageable, Searchable {
 
     public static Doctor assignPatient(String doctorId, List<String> patientIds) {
         Doctor found = getDoctorById(doctorId);
-        if (found == null) {
+        if (HelperUtils.isNull(found)) {
             System.out.println("Doctor with ID " + doctorId + " not found.");
             return null;
         }
 
         for (String patientId : patientIds) {
             entity.Patient patient = PatientService.getPatientById(patientId);
-            if (patient == null) {
+            if (HelperUtils.isNull(patient)) {
                 System.out.println("Patient with ID " + patientId + " not found. Skipping.");
                 continue;
             }

@@ -50,6 +50,6 @@ public class Allergies implements Displayable {
 
     @Override
     public String displaySummary(String str) {
-        return allergyName == null ? "" : allergyName;
+        return HelperUtils.isNotNull(allergyName) ? allergyName : "";
     }
 }

@@ -37,8 +37,8 @@ public class Surgeon extends Doctor implements Displayable {
     }
 
     public void addSurgeryType(String type) {
-        if (type == null || type.trim().isEmpty()) return;
-        if (this.surgeryTypes == null) this.surgeryTypes = new ArrayList<>();
+        if (HelperUtils.isNull(type) || type.trim().isEmpty()) return;
+        if (HelperUtils.isNull(this.surgeryTypes)) this.surgeryTypes = new ArrayList<>();
         String t = type.trim();
         if (!this.surgeryTypes.contains(t)) this.surgeryTypes.add(t);
     }
@@ -95,7 +95,7 @@ public class Surgeon extends Doctor implements Displayable {
         sb.append(System.lineSeparator());
         sb.append("DR Surgeon ID: ").append(this.getDoctorId()).append(System.lineSeparator());
         sb.append("Surgeries Performed: ").append(surgeriesPerformed).append(System.lineSeparator());
-        sb.append("Surgery Types: ").append(surgeryTypes == null ? "[]" : surgeryTypes.toString()).append(System.lineSeparator());
+        sb.append("Surgery Types: ").append(HelperUtils.isNull(surgeryTypes) ? "[]" : surgeryTypes.toString()).append(System.lineSeparator());
         sb.append("Operation Theatre Access: ").append(operationTheatreAccess);
         String out = sb.toString();
         System.out.println(out);
@@ -115,7 +115,7 @@ public class Surgeon extends Doctor implements Displayable {
             return null;
         }
         String noteAppend = operationTheatreAccess ? " [Surgeon consult - may require pre-op evaluation]" : " [Surgeon consult]";
-        String existing = appt.getNotes() == null ? "" : appt.getNotes();
+        String existing = HelperUtils.isNull(appt.getNotes()) ? "" : appt.getNotes();
         appt.setNotes(existing + noteAppend);
         System.out.println("Surgeon: scheduleConsultation applied extra surgeon-specific notes.");
         return appt;
@@ -124,9 +124,9 @@ public class Surgeon extends Doctor implements Displayable {
     @Override
     public Appointment scheduleConsultation(Appointment appt) {
         Appointment created = super.scheduleConsultation(appt);
-        if (created == null) return null;
+        if (HelperUtils.isNull(created)) return null;
         String noteAppend = operationTheatreAccess ? " [Surgeon consult - may require pre-op evaluation]" : " [Surgeon consult]";
-        String existing = created.getNotes() == null ? "" : created.getNotes();
+        String existing = HelperUtils.isNull(created.getNotes()) ? "" : created.getNotes();
         created.setNotes(existing + noteAppend);
         System.out.println("Surgeon: scheduled Appointment object with surgeon-specific notes.");
         return created;
@@ -135,10 +135,10 @@ public class Surgeon extends Doctor implements Displayable {
     @Override
     public MedicalRecord provideSecondOpinion(String patientId, String originalDoctorId, String opinionNotes) {
         MedicalRecord mr = super.provideSecondOpinion(patientId, originalDoctorId, opinionNotes);
-        if (mr == null) {
+        if (HelperUtils.isNull(mr)) {
             return null;
         }
-        String existing = mr.getNotes() == null ? "" : mr.getNotes();
+        String existing = HelperUtils.isNull(mr.getNotes()) ? "" : mr.getNotes();
         mr.setNotes(existing + " [Second opinion by Surgeon: " + this.getDoctorId() + "]");
         System.out.println("Surgeon: provided second opinion and appended surgeon-specific note.");
         return mr;
