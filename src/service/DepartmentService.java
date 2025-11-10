@@ -203,4 +203,29 @@ public class DepartmentService implements Manageable, Searchable {
         return "Department not found: " + id;
     }
 
+    public static void addSampleDepartments() {
+        String[] departmentNames = {"Cardiology", "Orthopedics",
+                "Neurology", "Gastroenterology",
+                "Endocrinology", "Pulmonology",
+                "Nephrology", "Oncology",
+                "Dermatology", "Psychiatry",
+                "Pediatrics", "Geriatrics",
+                "General Surgery", "Emergency",
+                "Trauma Center", "Pharmacy",
+                "Physiotherapy",
+        };
+
+        for (int i = 0; i < 4; i++) {
+            Department department = new Department();
+            department.setDepartmentId("DEP-123" + i);
+            department.setDepartmentName(departmentNames[i]);
+            department.setHeadDoctorId("DR-123" + i);
+            department.setDoctors(new ArrayList<>());
+            department.setNurses(new ArrayList<>());
+            department.setBedCapacity(50);
+            department.setAvailableBeds(30);
+
+            saveDepartment(department);
+        }
+    }
 }

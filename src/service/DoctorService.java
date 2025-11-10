@@ -6,6 +6,7 @@ import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -567,43 +568,39 @@ public class DoctorService implements Manageable, Searchable {
             return "No doctors found.";
         }
 
-        String result = "===== All Doctors =====\n";
+        StringBuilder result = new StringBuilder("===== All Doctors =====\n");
 
         if (!doctorsList.isEmpty()) {
-            result += "\n-- General Doctors --\n";
+            result.append("\n-- General Doctors --\n");
             for (Doctor d : doctorsList) {
                 if (!(d instanceof Consultant) && !(d instanceof Surgeon) && !(d instanceof GeneralPractitioner)) {
-//                    result += d.toString() + "\n";
-                    result += d.displayInfo() + "\n";
-                    System.out.println("------------------------");
+                    result.append(d.displayInfo()).append("\n------------------------\n");
                 }
             }
         }
 
         if (!consultantList.isEmpty()) {
-            result += "\n-- Consultant Doctors --\n";
+            result.append("\n-- Consultant Doctors --\n");
             for (Consultant consultant : consultantList) {
-                result += consultant.displayInfo() + "\n";
-                System.out.println("------------------------");
+                result.append(consultant.displayInfo()).append("\n------------------------\n");
             }
         }
 
         if (!surgeonList.isEmpty()) {
-            result += "\n-- Surgeons --\n";
+            result.append("\n-- Surgeons --\n");
             for (Surgeon surgeon : surgeonList) {
-                result += surgeon.displayInfo() + "\n";
-                System.out.println("------------------------");
+                result.append(surgeon.displayInfo()).append("\n------------------------\n");
             }
         }
 
         if (!generalPractitionerList.isEmpty()) {
-            result += "\n-- General Practitioners --\n";
-            for (GeneralPractitioner generalPractitioner : generalPractitionerList) {
-                result += generalPractitioner.displayInfo() + "\n";
-                System.out.println("------------------------");
+            result.append("\n-- General Practitioners --\n");
+            for (GeneralPractitioner gp : generalPractitionerList) {
+                result.append(gp.displayInfo()).append("\n------------------------\n");
             }
         }
-        return result;
+
+        return result.toString();
     }
 
     @Override
@@ -667,5 +664,98 @@ public class DoctorService implements Manageable, Searchable {
         }
 
         return "Doctor not found with ID: " + id;
+    }
+
+    public static void addSampleDoctors() {
+        String[] names = {"Sara", "Fatima", "Nour", "Fajr", "Layla", "Waad"};
+        String[] lastNames = {"Al Hamdi", "Al Rashid", "Al Balushi"};
+        String[] qualifications = {"MBBS", "MD", "PhD"};
+        String[] specializations = {"Cardiology", "Orthopedics", "Neurology"};
+
+        // Sample data for surgeons
+        for (int i = 0; i < 3; i++) {
+            Surgeon surgeon = new Surgeon();
+            surgeon.setId("987654432" + i);
+            surgeon.setDoctorId("DR-123" + i);
+            surgeon.setFirstName(names[i]);
+            surgeon.setLastName(lastNames[i]);
+            surgeon.setDateOfBirth(LocalDate.of(2022, 03, 1));
+            surgeon.setGender("Male");
+            surgeon.setPhoneNumber("92923232" + i);
+            surgeon.setEmail(surgeon.getFirstName().toLowerCase() + "." + surgeon.getLastName().toLowerCase() + i + "@example.com");
+            surgeon.setAddress("123 Main St");
+
+            surgeon.setSpecialization(specializations[i]);
+            surgeon.setQualification(qualifications[i]);
+            surgeon.setExperienceYears(5);
+            surgeon.setDepartmentId("DEP-123" + i);
+            surgeon.setConsultationFee(50.0);
+            surgeon.setAvailableSlots(new ArrayList<>());
+            surgeon.setAvailable(true);
+            surgeon.setAssignedPatients(new ArrayList<>());
+
+            surgeon.setSurgeriesPerformed(3);
+            surgeon.setSurgeryTypes(new ArrayList<>());
+            surgeon.setOperationTheatreAccess(true);
+            save(surgeon);
+        }
+
+        //Consultant
+        for (int i = 0; i < 3; i++) {
+            Consultant consultant = new Consultant();
+            consultant.setId("987654432" + i);
+            consultant.setDoctorId("DR-234" + i);
+            consultant.setFirstName(names[i]);
+            consultant.setLastName(lastNames[i]);
+            consultant.setDateOfBirth(LocalDate.of(2022, 03, 1));
+            consultant.setGender("Female");
+            consultant.setPhoneNumber("92923232" + i);
+            consultant.setEmail(consultant.getFirstName().toLowerCase() + "." + consultant.getLastName().toLowerCase() + i + "@example.com");
+            consultant.setAddress("123 Main St");
+
+            consultant.setSpecialization(specializations[i]);
+            consultant.setQualification(qualifications[i]);
+            consultant.setExperienceYears(5);
+            consultant.setDepartmentId("DEP-234" + i);
+            consultant.setConsultationFee(50.0);
+            consultant.setAvailableSlots(new ArrayList<>());
+            consultant.setAvailable(true);
+            consultant.setAssignedPatients(new ArrayList<>());
+
+            consultant.setConsultationTypes(List.of("Cardiology", "General"));
+            consultant.setOnlineConsultationAvailable(true);
+            consultant.setConsultationDuration(30);
+
+            save(consultant);
+        }
+
+        //GP
+        for (int i = 0; i < 3; i++) {
+            GeneralPractitioner gp = new GeneralPractitioner();
+            gp.setId("987654432" + i);
+            gp.setDoctorId("GP-345" + i);
+            gp.setFirstName(names[i]);
+            gp.setLastName(lastNames[i]);
+            gp.setDateOfBirth(LocalDate.of(2022, 03, 1));
+            gp.setGender("Female");
+            gp.setPhoneNumber("92923232" + i);
+            gp.setEmail(gp.getFirstName().toLowerCase() + "." + gp.getLastName().toLowerCase() + i + "@example.com");
+            gp.setAddress("123 Main St");
+
+            gp.setSpecialization(specializations[i]);
+            gp.setQualification(qualifications[i]);
+            gp.setExperienceYears(5);
+            gp.setDepartmentId("DEP-345" + i);
+            gp.setConsultationFee(50.0);
+            gp.setAvailableSlots(new ArrayList<>());
+            gp.setAvailable(true);
+            gp.setAssignedPatients(new ArrayList<>());
+
+            gp.setWalkinAvailable(true);
+            gp.setHomeVisitAvailable(true);
+            gp.setVaccinationCertified(true);
+
+            save(gp);
+        }
     }
 }

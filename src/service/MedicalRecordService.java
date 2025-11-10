@@ -261,13 +261,15 @@ public class MedicalRecordService implements Manageable, Searchable {
         if (medicalRecordList.isEmpty()) {
             return "No medical records available.";
         }
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb = new StringBuilder("===== Medical Records =====\n");
         for (MedicalRecord r : medicalRecordList) {
-            sb.append(r.displayInfo(""));
-            sb.append(System.lineSeparator());
+            sb.append(r.displayInfo("")).append(System.lineSeparator());
+            sb.append("------------------------").append(System.lineSeparator());
         }
         return sb.toString();
     }
+
 
     @Override
     public String search(String keyword) {
@@ -296,4 +298,19 @@ public class MedicalRecordService implements Manageable, Searchable {
         return "Search complete.";
     }
 
+    public static void addSampleMedicalRecords() {
+        String[] mrDates = {"2023-04-01", "2023-04-02", "2023-04-03", "2023-04-04", "2023-04-05", "2023-04-06", "2023-04-07", "2023-04-08", "2023-04-09", "2023-04-10"};
+        for (int i = 0; i < 12; i++) {
+            MedicalRecord record = new MedicalRecord();
+            record.setRecordId("MR-123" + i);
+            record.setPatientId("PAT-123" + i);
+            record.setDoctorId("DR-123" + i);
+            record.setVisitDate(LocalDate.parse(mrDates[i % mrDates.length]));
+            record.setDiagnosis("Diagnosis " + i);
+            record.setPrescription("Prescription " + i);
+            record.setTestResults("Test Results " + i);
+            record.setNotes("Notes " + i);
+            saveRecord(record);
+        }
+    }
 }

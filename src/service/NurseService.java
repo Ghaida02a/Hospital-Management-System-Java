@@ -6,6 +6,7 @@ import Utils.HelperUtils;
 import Utils.InputHandler;
 import entity.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,10 +169,11 @@ public class NurseService implements Manageable, Searchable {
         if (nurseList.isEmpty()) {
             return "No nurses available.";
         }
+
         StringBuilder sb = new StringBuilder("===== Nurse List =====\n");
         for (Nurse nurse : nurseList) {
-            sb.append(nurse.displayInfo(""));
-            sb.append(System.lineSeparator());
+            sb.append(nurse.displayInfo("")).append(System.lineSeparator());
+            sb.append("------------------------").append(System.lineSeparator());
         }
         return sb.toString();
     }
@@ -204,5 +206,31 @@ public class NurseService implements Manageable, Searchable {
             return "Nurse found: " + nurse.getFirstName() + " " + nurse.getLastName();
         }
         return "Nurse not found with ID: " + id;
+    }
+
+    public static void addSampleNurses() {
+        String[] names = {"Sara", "Fatima", "Nour", "Nadia", "Layla", "Aisha"};
+        String[] lastNames = {"Al Hamdi", "Al Rashid", "Al Balushi"};
+        String[] shifts = {"Morning", "Evening", "Night"};
+        String[] qualifications = {"RN", "LPN", "CNA"};
+
+        for (int i = 0; i < 6; i++) {
+            Nurse nurse = new Nurse();
+            nurse.setId("987654432" + i);
+            nurse.setNurseId("NUR-123" + i);
+            nurse.setFirstName(names[i]);
+            nurse.setLastName(lastNames[i % lastNames.length]);
+            nurse.setDateOfBirth(LocalDate.of(2002, 03, 11));
+            nurse.setGender("Female");
+            nurse.setPhoneNumber("92923232" + i);
+            nurse.setEmail(nurse.getFirstName().toLowerCase() + "." + nurse.getLastName().toLowerCase() + i + "@example.com");
+            nurse.setAddress("123 Main St");
+
+            nurse.setDepartmentId("DEP-123" + i);
+            nurse.setShift(shifts[i % 3]);
+            nurse.setQualification(qualifications[i % 3]);
+            nurse.setAssignedPatients(new ArrayList<>());
+            save(nurse);
+        }
     }
 }

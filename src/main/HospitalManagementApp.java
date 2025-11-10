@@ -19,6 +19,7 @@ public class HospitalManagementApp {
     public static Integer option = 0;
 
     public static void main(String[] args) {
+        sampledata();
         System.out.println("Welcome to the Hospital Management System");
         while (mainMenuOption != 8) {
             showMainMenu();
@@ -738,5 +739,14 @@ public class HospitalManagementApp {
                 default -> System.out.println("Please enter a valid option (1-6).");
             }
         }
+    }
+
+    public static void sampledata() {
+        PatientService.addSamplePatients();
+        DoctorService.addSampleDoctors();
+        NurseService.addSampleNurses();
+        DepartmentService.addSampleDepartments();
+        AppointmentService.addSampleAppointments();
+        MedicalRecordService.addSampleMedicalRecords();
     }
 }

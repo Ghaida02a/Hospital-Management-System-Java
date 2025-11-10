@@ -176,6 +176,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         save(appointment);
         return appointment;
     }
+
     public static Appointment createAppointment(Appointment appointment) {
         if (HelperUtils.isNull(appointment.getAppointmentId()) || appointment.getAppointmentId().isEmpty()) {
             appointment.setAppointmentId(HelperUtils.generateId("Appt"));
@@ -348,5 +349,23 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
     @Override
     public void rescheduleAppointment(String appointmentId, LocalDate newDate) {
         AppointmentService.rescheduleAppointmentById(appointmentId, newDate);
+    }
+
+    public static void addSampleAppointments() {
+       String[] appointmentDates = {"2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10"};
+        String[] appointmentTimes = {"09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"};
+        String[] reasons = {"General Consultation", "Follow-up", "Surgery", "Lab Test", "Medication Review", "Dental Checkup", "Eye Exam", "Physical Therapy", "Psychological Counseling", "Nutrition Consultation"};
+        for (int i = 0; i < 15; i++) {
+            Appointment appointment = new Appointment();
+            appointment.setAppointmentId("APP-123" + i);
+            appointment.setPatientId("PAT-123" + i);
+            appointment.setDoctorId("DR-123" + i);
+            appointment.setAppointmentDate(LocalDate.parse(appointmentDates[i % appointmentDates.length]));
+            appointment.setAppointmentTime(appointmentTimes[i % appointmentTimes.length]);
+            appointment.setReason(reasons[i % reasons.length]);
+            appointment.setStatus("Scheduled");
+
+            save(appointment);
+        }
     }
 }
