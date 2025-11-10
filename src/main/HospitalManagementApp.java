@@ -96,13 +96,15 @@ public class HospitalManagementApp {
                     InPatient inPatient = InpatientRegistration();
 //                    PatientService.saveInPatient(inPatient);     //adds to inPatientList
                     System.out.println(patientManager.add(inPatient)); // handles saving
+
                     long days = inPatient.calculateStayDuration(); //calculate stay duration
-                    double total = inPatient.calculateTotalCharges(); //calculate total charges
-
                     System.out.println("Stay Duration: " + days + " days");
-                    System.out.println("Total Charges: OMR " + total);
-                }
 
+                    // Use Billable methods
+                    inPatient.generateBill(); // prints formatted bill with charges
+                    double payment = InputHandler.getDoubleInput("Enter payment amount: ");
+                    inPatient.processPayment(payment); // handles payment logic
+                }
                 case 3 -> {
                     OutPatient outPatient = OutPatientRegistration();
 //                    PatientService.saveOutPatient(outPatient);
