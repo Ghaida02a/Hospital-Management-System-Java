@@ -1,5 +1,6 @@
 package service;
 
+import Interface.Editable;
 import Interface.Manageable;
 import Interface.Searchable;
 import Utils.HelperUtils;
