@@ -107,6 +107,7 @@ public class EmergencyPatient extends InPatient implements Displayable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("Patient ID: ").append(getPatientId()).append(System.lineSeparator());
         sb.append("Emergency Type: ").append(emergencyType).append(System.lineSeparator());
         sb.append("Arrival Mode: ").append(arrivalMode).append(System.lineSeparator());
         sb.append("Triage Level: ").append(triageLevel).append(System.lineSeparator());

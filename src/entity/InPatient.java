@@ -150,6 +150,7 @@ public class InPatient extends Patient implements Displayable, Billable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("Patient ID: ").append(getPatientId()).append(System.lineSeparator());
         sb.append("Admission Date: ").append(admissionDate).append(System.lineSeparator());
         sb.append("Discharge Date: ").append(dischargeDate).append(System.lineSeparator());
         sb.append("Room Number: ").append(roomNumber).append(System.lineSeparator());

@@ -85,7 +85,7 @@ public class HospitalManagementApp {
 //                    PatientService.savePatient(patient);
                     System.out.println(patientManager.add(patient)); //
                     while (InputHandler.getConfirmation("Do you want to add allergies for this patient? ")) {
-                        PatientService.addAllergyToPatient(patient.getId());
+                        PatientService.addAllergyToPatient(patient.getPatientId());
                     }
                     if (InputHandler.getConfirmation("Do you want to add a medical record now? ")) {
                         MedicalRecord record = MedicalRecordService.createRecordForPatient(patient);
@@ -138,15 +138,51 @@ public class HospitalManagementApp {
                     System.out.println();
                 }
                 case 7 -> {
-//                    String id = InputHandler.getStringInput("Enter patient ID to update: ");
-//                    Patient updatedPatient = PatientService.addPatient(); // reuse input method
-//                    PatientService.editPatient(id, updatedPatient);
-
                     String id = InputHandler.getStringInput("Enter patient ID to update: ");
                     Patient patient = PatientService.getPatientById(id);
                     if (HelperUtils.isNotNull(patient)) {
-                        String newInsuranceId = InputHandler.getStringInput("Enter new Insurance ID: ");
-                        patient.updateInsurance(newInsuranceId);
+                        patient.displayInfo("");
+                        System.out.println("------------------------");
+                        boolean updating = true;
+                        while (updating) {
+                            System.out.println("What would you like to update?");
+                            System.out.println("1 - Phone Number");
+                            System.out.println("2 - Phone + Email");
+                            System.out.println("3 - Phone + Email + Address");
+                            System.out.println("4 - Insurance ID");
+                            System.out.println("5 - Exit Update Menu");
+
+                            int choice = InputHandler.getIntInput("Enter your choice: ");
+
+                            switch (choice) {
+                                case 1:
+                                    String phone = InputHandler.getStringInput("Enter new phone number: ");
+                                    patient.updateContact(phone);
+                                    break;
+                                case 2:
+                                    phone = InputHandler.getStringInput("Enter new phone number: ");
+                                    String email = InputHandler.getStringInput("Enter new email: ");
+                                    patient.updateContact(phone, email);
+                                    break;
+                                case 3:
+                                    phone = InputHandler.getStringInput("Enter new phone number: ");
+                                    email = InputHandler.getStringInput("Enter new email: ");
+                                    String address = InputHandler.getStringInput("Enter new address: ");
+                                    patient.updateContact(phone, email, address);
+                                    break;
+                                case 4:
+                                    String insuranceId = InputHandler.getStringInput("Enter new Insurance ID: ");
+                                    patient.updateInsurance(insuranceId);
+                                    break;
+                                case 5:
+                                    updating = false; // ends the loop
+                                    System.out.println("Finished updating patient.");
+                                default:
+                                    System.out.println("Invalid choice. Try again.");
+                            }
+                        }
+                    } else {
+                        System.out.println("Patient with ID " + id + " not found.");
                     }
                 }
                 case 8 -> {
@@ -155,7 +191,7 @@ public class HospitalManagementApp {
                     System.out.println(result);
                 }
                 case 9 -> {
-                    Integer patientId = InputHandler.getIntInput("Enter patient ID to view medical history: ");
+                    String patientId = InputHandler.getStringInput("Enter patient ID to view medical history: ");
                     PatientService.viewPatientMedicalHistory(patientId);
                 }
                 case 10 -> System.out.println("Returning to Main Menu...");

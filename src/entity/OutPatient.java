@@ -85,6 +85,7 @@ public class OutPatient extends Patient implements Displayable {
         StringBuilder sb = new StringBuilder();
         sb.append(super.displayInfo(""));
         sb.append(System.lineSeparator());
+        sb.append("Patient ID: ").append(getPatientId()).append(System.lineSeparator());
         sb.append("Visit Count: ").append(visitCount).append(System.lineSeparator());
         sb.append("Last Visit Date: ").append(lastVisitDate).append(System.lineSeparator());
         sb.append("Preferred Doctor ID: ").append(preferredDoctorId);

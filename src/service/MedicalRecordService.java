@@ -232,7 +232,21 @@ public class MedicalRecordService implements Manageable, Searchable {
         System.out.println("Medical Record ID: " + record.getRecordId());
 
         record.setPatientId(patient.getPatientId()); // use existing patient
-        record.setDoctorId(InputHandler.getStringInput("Enter Doctor ID: "));
+
+        DoctorService.displayDoctorNamesAndIds();
+        String doctorId = " ";
+        boolean valid = false;
+
+        while (!valid) {
+            doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+            if (DoctorService.getDoctorById(doctorId) != null) {
+                valid = true;
+            } else {
+                System.out.println("Invalid Doctor ID. Please try again.");
+            }
+        }
+        record.setDoctorId(doctorId);
+//        record.setDoctorId(InputHandler.getStringInput("Enter Doctor ID: "));
         record.setVisitDate(InputHandler.getDateInput("Enter Visit Date"));
         record.setDiagnosis(InputHandler.getStringInput("Enter Diagnosis: "));
         record.setPrescription(InputHandler.getStringInput("Enter Prescription: "));

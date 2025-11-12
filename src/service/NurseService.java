@@ -210,20 +210,21 @@ public class NurseService implements Manageable, Searchable {
 
     public static void addSampleNurses() {
         String[] names = {"Sara", "Fatima", "Nour", "Nadia", "Layla", "Aisha"};
-        String[] lastNames = {"Al Hamdi", "Al Rashid", "Al Balushi"};
+        String[] lastNames = {"AlHamdi", "AlRashid", "AlBalushi"};
         String[] shifts = {"Morning", "Evening", "Night"};
         String[] qualifications = {"RN", "LPN", "CNA"};
+        String[] emailAddress = {"gmail.com", "yahoo.com", "hotmail.com"};
 
         for (int i = 0; i < 6; i++) {
             Nurse nurse = new Nurse();
-            nurse.setId("987654432" + i);
-            nurse.setNurseId("NUR-123" + i);
+            nurse.setId(HelperUtils.getRandomNumber(10));
+            nurse.setNurseId(HelperUtils.generateId("NUR"));
             nurse.setFirstName(names[i]);
             nurse.setLastName(lastNames[i % lastNames.length]);
             nurse.setDateOfBirth(LocalDate.of(2002, 03, 11));
             nurse.setGender("Female");
             nurse.setPhoneNumber("92923232" + i);
-            nurse.setEmail(nurse.getFirstName().toLowerCase() + "." + nurse.getLastName().toLowerCase() + i + "@example.com");
+            nurse.setEmail(nurse.getFirstName().toLowerCase() + "." + nurse.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             nurse.setAddress("123 Main St");
 
             nurse.setDepartmentId("DEP-123" + i);

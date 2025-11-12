@@ -9,6 +9,7 @@ import entity.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PatientService implements Manageable, Searchable {
@@ -133,7 +134,21 @@ public class PatientService implements Manageable, Searchable {
         } while (HelperUtils.isNull(inPatient.getDischargeDate()));
         inPatient.setRoomNumber(InputHandler.getStringInput("Enter Room Number: "));
         inPatient.setBedNumber(InputHandler.getStringInput("Enter Bed Number: "));
-        inPatient.setAdmittingDoctorId(InputHandler.getStringInput("Enter Admitting Doctor ID: "));
+
+        DoctorService.displayDoctorNamesAndIds();
+        String doctorId = " ";
+        boolean valid = false;
+
+        while (!valid) {
+            doctorId = InputHandler.getStringInput("Enter Admitting Doctor ID: ");
+            if (DoctorService.getDoctorById(doctorId) != null) {
+                valid = true;
+            } else {
+                System.out.println("Invalid Doctor ID. Please try again.");
+            }
+        }
+        inPatient.setAdmittingDoctorId(doctorId);
+//        inPatient.setAdmittingDoctorId(InputHandler.getStringInput("Enter Admitting Doctor ID: "));
         inPatient.setDailyCharges(InputHandler.getDoubleInput("Enter Daily Charges: "));
 
         return inPatient;
@@ -159,7 +174,21 @@ public class PatientService implements Manageable, Searchable {
 
         outPatient.setVisitCount(InputHandler.getIntInput("Enter Visit Count: "));
         outPatient.setLastVisitDate(InputHandler.getDateInput("Enter Last Visit Date: "));
-        outPatient.setPreferredDoctorId(InputHandler.getStringInput("Enter Preferred Doctor ID: "));
+
+        // display Doctors ID
+        DoctorService.displayDoctorNamesAndIds();
+        String doctorId = " ";
+        boolean valid = false;
+
+        while (!valid) {
+            doctorId = InputHandler.getStringInput("Enter Preferred Doctor ID: ");
+            if (DoctorService.getDoctorById(doctorId) != null) {
+                valid = true;
+            } else {
+                System.out.println("Invalid Doctor ID. Please try again.");
+            }
+        }
+        outPatient.setPreferredDoctorId(doctorId);
         return outPatient;
     }
 
@@ -192,9 +221,34 @@ public class PatientService implements Manageable, Searchable {
         emergencyPatient.setDailyCharges(inPatient.getDailyCharges());
 
         // Emergency-specific fields
-        emergencyPatient.setEmergencyType(InputHandler.getStringInput("Enter Emergency Type: "));
-        emergencyPatient.setArrivalMode(InputHandler.getStringInput("Enter Arrival Mode (Ambulance/Walk-in): "));
-        emergencyPatient.setTriageLevel(InputHandler.getIntInput("Enter Triage Level (1-5): "));
+        String[] emergencyTypes = {"Medical", "Trauma", "Burns", "Surgical", "Environmental"};
+        boolean valid = false;
+        String emergencyType = "";
+
+        while (!valid) {
+            System.out.println("Available emergency types: " + Arrays.toString(emergencyTypes));
+            emergencyType = InputHandler.getStringInput("Enter Emergency Type: ");
+            if (emergencyType.isEmpty() || !Arrays.asList(emergencyTypes).contains(emergencyType)) {
+                System.out.println("Invalid emergency type. Please try again.");
+            } else {
+                valid = true;
+            }
+        }
+
+        emergencyPatient.setEmergencyType(emergencyType);
+
+        String arrivalMode = InputHandler.getStringInput("Enter Arrival Mode (Ambulance/Walk-in): ");
+        while (!arrivalMode.matches("^(Ambulance|Walk-in)$")) {
+            arrivalMode = InputHandler.getStringInput("Invalid arrival mode. Enter 'Ambulance' or 'Walk-in': ");
+        }
+        emergencyPatient.setArrivalMode(arrivalMode);
+
+        Integer triageLevel = InputHandler.getIntInput("Enter Triage Level (1-5): ");
+        while (triageLevel < 1 || triageLevel > 5) {
+            triageLevel = InputHandler.getIntInput("Invalid triage level. Enter a number between 1 and 5: ");
+        }
+        emergencyPatient.setTriageLevel(triageLevel);
+
         emergencyPatient.setAdmittedViaER(InputHandler.getBooleanInput("Admitted via ER (true/false): "));
 
         return emergencyPatient;
@@ -228,20 +282,21 @@ public class PatientService implements Manageable, Searchable {
         }
     }
 
-    public static void editPatient(String patientId, Patient updatedPatient) {
+    public static String editPatient(String patientId, Patient updatedPatient) {
         if (patientList.isEmpty()) {
             System.out.println("No Patients available to edit.");
-            return;
+            return "No Patients available to edit.";
         }
         for (int i = 0; i < patientList.size(); i++) {
-            if (patientList.get(i).getId().equals(patientId)) {
-                updatedPatient.setId(patientId);
+            if (patientList.get(i).getPatientId().equals(patientId)) {
+                updatedPatient.setPatientId(patientId);
                 patientList.set(i, updatedPatient);
                 System.out.println("Patient updated successfully!\n");
-                return;
+                return "Patient updated successfully!";
             }
         }
-        System.out.println("Patient with ID " + patientId + " not found.\n");
+        //System.out.println("Patient with ID " + patientId + " not found.\n");
+        return "Patient with ID " + patientId + " not found.";
     }
 
     public static void removePatient(String patientId) {
@@ -328,24 +383,18 @@ public class PatientService implements Manageable, Searchable {
         return searchResults;
     }
 
-    public static void viewPatientMedicalHistory(Integer patientId) {
-
-        Patient patient = PatientService.getPatientById(String.valueOf(patientId));
-
+    public static void viewPatientMedicalHistory(String patientId) {
+        Patient patient = getPatientById(patientId);
         if (HelperUtils.isNotNull(patient)) {
-            System.out.println("\n===== Patient Medical History =====");
-            patient.displayInfo("");
-
-            if (patient.getAllergies() != null && !patient.getAllergies().isEmpty()) {
-                System.out.println("\nAllergies:");
-                for (Allergies allergy : patient.getAllergies()) {
-                    System.out.println("- " + allergy.getAllergyName());
-                }
-            } else {
-                System.out.println("\nNo allergies recorded.");
+            System.out.println("===== Medical History for Patient: " + patient.getPatientId() + " =====");
+            patient.displayInfo(); // basic info
+            System.out.println("---- Medical Records ----");
+            for (MedicalRecord record : patient.getMedicalRecord()) {
+                System.out.println(record);
             }
-
-            System.out.println("===================================\n");
+            System.out.println("=========================");
+        } else {
+            System.out.println("Patient with ID " + patientId + " not found.");
         }
     }
 
@@ -489,6 +538,26 @@ public class PatientService implements Manageable, Searchable {
         return null;
     }
 
+
+    public static void displayPatientNamesAndIds() {
+        List<Patient> allPatients = new ArrayList<>();
+        allPatients.addAll(patientList);
+        allPatients.addAll(inPatientList);
+        allPatients.addAll(outPatientList);
+        allPatients.addAll(emergencyPatientList);
+
+        if (allPatients.isEmpty()) {
+            System.out.println("No patients available.");
+            return;
+        }
+
+        System.out.println("===== Patients (ID + Name) =====");
+        for (Patient patient : allPatients) {
+            System.out.println("ID: " + patient.getPatientId() +
+                    " -> Name: " + patient.getFirstName() + " " + patient.getLastName());
+        }
+    }
+
     @Override
     public String add(Object entity) {
         if (entity instanceof InPatient) {
@@ -582,7 +651,7 @@ public class PatientService implements Manageable, Searchable {
         // General patients
         for (Patient p : patientList) {
             if (p.getFirstName().contains(keyword) || p.getLastName().contains(keyword)) {
-                result += p.getId() + " - " + p.getFirstName() + " " + p.getLastName() + "\n";
+                result += "ID" + p.getId() + " - Patient ID: " + p.getPatientId() + " - " + p.getFirstName() + " " + p.getLastName() + "\n";
                 found = true;
             }
         }
@@ -590,7 +659,7 @@ public class PatientService implements Manageable, Searchable {
         // InPatients
         for (InPatient ip : inPatientList) {
             if (ip.getFirstName().contains(keyword) || ip.getLastName().contains(keyword)) {
-                result += ip.getId() + " - " + ip.getFirstName() + " " + ip.getLastName() + "\n";
+                result += "ID" + ip.getId() + " - Patient ID: " + ip.getPatientId() + " - " + ip.getFirstName() + " " + ip.getLastName() + "\n";
                 found = true;
             }
         }
@@ -598,7 +667,7 @@ public class PatientService implements Manageable, Searchable {
         // OutPatients
         for (OutPatient op : outPatientList) {
             if (op.getFirstName().contains(keyword) || op.getLastName().contains(keyword)) {
-                result += op.getId() + " - " + op.getFirstName() + " " + op.getLastName() + "\n";
+                result += "ID" + op.getId() + " - Patient ID: " + op.getPatientId() + " - " + op.getFirstName() + " " + op.getLastName() + "\n";
                 found = true;
             }
         }
@@ -606,7 +675,7 @@ public class PatientService implements Manageable, Searchable {
         // EmergencyPatients
         for (EmergencyPatient ep : emergencyPatientList) {
             if (ep.getFirstName().contains(keyword) || ep.getLastName().contains(keyword)) {
-                result += ep.getId() + " - " + ep.getFirstName() + " " + ep.getLastName() + "\n";
+                result += "ID" + ep.getId() + " - Patient ID: " + ep.getPatientId() + " - " + ep.getFirstName() + " " + ep.getLastName() + "\n";
                 found = true;
             }
         }
@@ -652,52 +721,56 @@ public class PatientService implements Manageable, Searchable {
 
     public static void addSamplePatients() {
         String[] names = {"Sara", "Fatima", "Nour", "Ruba", "Layla", "Aisha"};
-        String[] lastNames = {"Al Hamdi", "Al Rashid", "Al Balushi"};
+        String[] lastNames = {"AlHamdi", "AlRashid", "AlBalushi"};
         String[] allergies = {"Peanuts", "Shellfish", "Dairy", "Eggs", "Soy", "Wheat"};
         String[] bloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
+        String[] emailAddress = {"gmail.com", "yahoo.com", "hotmail.com"};
+        String[] emergencyTypes = {"Medical", "Trauma", "Burns", "Surgical", "Environmental"};
+        String[] arrivalModes = {"Ambulance", "Walk-in"};
+
         //2 patient
         for (int i = 0; i < 2; i++) {
             Patient patient = new Patient();
-            patient.setId("987654432" + i);
-            patient.setPatientId("PAT-123" + i);
+            patient.setId(HelperUtils.getRandomNumber(10));
+            patient.setPatientId(HelperUtils.generateId("PAT"));
             patient.setFirstName(names[i]);
             patient.setLastName(lastNames[i]);
             patient.setDateOfBirth(LocalDate.of(2022, 03, 1));
             patient.setGender("Female");
             patient.setPhoneNumber("92923232" + i);
-            patient.setEmail(patient.getFirstName().toLowerCase() + "." + patient.getLastName().toLowerCase() + i + "@example.com");
+            patient.setEmail(patient.getFirstName().toLowerCase() + "." + patient.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             patient.setAddress("123 Main St");
 
             patient.setBloodGroup(bloodGroups[i]);
             patient.setAllergies(new ArrayList<>());
-            patient.getAllergies().add(new Allergies("PAT-123" + i, allergies[i]));
+            patient.getAllergies().add(new Allergies(patient.getPatientId(), allergies[i]));
             patient.setEmergencyContact("9876543210");
             patient.setRegistrationDate(LocalDate.now());
-            patient.setInsuranceId("INS123" + i);
+            patient.setInsuranceId(HelperUtils.generateId("INS"));
             patient.setMedicalRecord(new ArrayList<>());
             patient.setAppointment(new ArrayList<>());
             savePatient(patient);
         }
 
-        //2 inpatient
+        //3 inpatient
         for (int i = 0; i < 3; i++) {
             InPatient inPatient = new InPatient();
-            inPatient.setId("123456789" + i);
-            inPatient.setPatientId("PAT-234" + i);
+            inPatient.setId(HelperUtils.getRandomNumber(10));
+            inPatient.setPatientId(HelperUtils.generateId("PAT"));
             inPatient.setFirstName(names[i]);
             inPatient.setLastName(lastNames[i]);
             inPatient.setDateOfBirth(LocalDate.of(2022, 03, 1));
             inPatient.setGender("Female");
             inPatient.setPhoneNumber("92923232" + i);
-            inPatient.setEmail(inPatient.getFirstName().toLowerCase() + "." + inPatient.getLastName().toLowerCase() + i + "@example.com");
+            inPatient.setEmail(inPatient.getFirstName().toLowerCase() + "." + inPatient.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             inPatient.setAddress("123 Main St");
 
             inPatient.setBloodGroup(bloodGroups[i]);
             inPatient.setAllergies(new ArrayList<>());
-            inPatient.getAllergies().add(new Allergies("PAT-234" + i, allergies[i]));
+            inPatient.getAllergies().add(new Allergies(inPatient.getPatientId(), allergies[i]));
             inPatient.setEmergencyContact("9876543210");
             inPatient.setRegistrationDate(LocalDate.now());
-            inPatient.setInsuranceId("INS234" + i);
+            inPatient.setInsuranceId(HelperUtils.generateId("INS"));
             inPatient.setMedicalRecord(new ArrayList<>());
             inPatient.setAppointment(new ArrayList<>());
 
@@ -711,53 +784,53 @@ public class PatientService implements Manageable, Searchable {
             saveInPatient(inPatient);
         }
 
-        //2 outpatient
+        //3 outpatient
         for (int i = 0; i < 3; i++) {
             OutPatient outPatient = new OutPatient();
-            outPatient.setId("123456789" + i);
-            outPatient.setPatientId("PAT-345" + i);
+            outPatient.setId(HelperUtils.getRandomNumber(10));
+            outPatient.setPatientId(HelperUtils.generateId("PAT"));
             outPatient.setFirstName(names[i]);
             outPatient.setLastName(lastNames[i]);
             outPatient.setDateOfBirth(LocalDate.of(2022, 03, 1));
             outPatient.setGender("Female");
             outPatient.setPhoneNumber("92923232" + i);
-            outPatient.setEmail(outPatient.getFirstName().toLowerCase() + "." + outPatient.getLastName().toLowerCase() + i + "@example.com");
+            outPatient.setEmail(outPatient.getFirstName().toLowerCase() + "." + outPatient.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             outPatient.setAddress("123 Main St");
 
             outPatient.setBloodGroup(bloodGroups[i]);
             outPatient.setAllergies(new ArrayList<>());
-            outPatient.getAllergies().add(new Allergies("PAT-345" + i, allergies[i]));
+            outPatient.getAllergies().add(new Allergies(outPatient.getPatientId(), allergies[i]));
             outPatient.setEmergencyContact("9876543210");
             outPatient.setRegistrationDate(LocalDate.now());
-            outPatient.setInsuranceId("INS345" + i);
+            outPatient.setInsuranceId(HelperUtils.generateId("INS"));
             outPatient.setMedicalRecord(new ArrayList<>());
             outPatient.setAppointment(new ArrayList<>());
 
             outPatient.setVisitCount(1);
             outPatient.setLastVisitDate(LocalDate.now());
-            outPatient.setPreferredDoctorId("DOC-345" + i);
+            outPatient.setPreferredDoctorId("DR-345" + i);
             saveOutPatient(outPatient);
         }
 
         //2 Emergency Patients
         for (int i = 0; i < 2; i++) {
             EmergencyPatient emergencyPatient = new EmergencyPatient();
-            emergencyPatient.setId("123456789" + i);
-            emergencyPatient.setPatientId("PAT-456" + i);
+            emergencyPatient.setId(HelperUtils.getRandomNumber(10));
+            emergencyPatient.setPatientId(HelperUtils.generateId("PAT"));
             emergencyPatient.setFirstName(names[i]);
             emergencyPatient.setLastName(lastNames[i]);
             emergencyPatient.setDateOfBirth(LocalDate.of(2022, 03, 1));
             emergencyPatient.setGender("Female");
             emergencyPatient.setPhoneNumber("92923232" + i);
-            emergencyPatient.setEmail(emergencyPatient.getFirstName().toLowerCase() + "." + emergencyPatient.getLastName().toLowerCase() + i + "@example.com");
+            emergencyPatient.setEmail(emergencyPatient.getFirstName().toLowerCase() + "." + emergencyPatient.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             emergencyPatient.setAddress("123 Main St");
 
             emergencyPatient.setBloodGroup(bloodGroups[i]);
             emergencyPatient.setAllergies(new ArrayList<>());
-            emergencyPatient.getAllergies().add(new Allergies("PAT-456" + i, allergies[i]));
+            emergencyPatient.getAllergies().add(new Allergies(emergencyPatient.getPatientId() + i, allergies[i]));
             emergencyPatient.setEmergencyContact("9876543210");
             emergencyPatient.setRegistrationDate(LocalDate.now());
-            emergencyPatient.setInsuranceId("INS456" + i);
+            emergencyPatient.setInsuranceId(HelperUtils.generateId("INS"));
             emergencyPatient.setMedicalRecord(new ArrayList<>());
             emergencyPatient.setAppointment(new ArrayList<>());
 
@@ -765,11 +838,11 @@ public class PatientService implements Manageable, Searchable {
             emergencyPatient.setDischargeDate(LocalDate.of(2026, 03, 05));
             emergencyPatient.setRoomNumber("R01");
             emergencyPatient.setBedNumber("B01");
-            emergencyPatient.setAdmittingDoctorId("DOC-456" + i);
+            emergencyPatient.setAdmittingDoctorId("DR-456" + i);
             emergencyPatient.setDailyCharges(100.0);
 
-            emergencyPatient.setEmergencyType("Cardiac");
-            emergencyPatient.setArrivalMode("Ambulance");
+            emergencyPatient.setEmergencyType(emergencyTypes[i]);
+            emergencyPatient.setArrivalMode(arrivalModes[i]);
             emergencyPatient.setTriageLevel(3);
             emergencyPatient.setAdmittedViaER(true);
 

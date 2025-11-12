@@ -386,9 +386,9 @@ public class DoctorService implements Manageable, Searchable {
     public static List<Doctor> getAvailableDoctors() {
         List<Doctor> allDoctors = new ArrayList<>();
         allDoctors.addAll(doctorsList);   // base doctors
-        allDoctors.addAll(surgeonList);  // if stored separately
-        allDoctors.addAll(consultantList); // if stored separately
-        allDoctors.addAll(generalPractitionerList); // if stored separately
+        allDoctors.addAll(surgeonList);
+        allDoctors.addAll(consultantList);
+        allDoctors.addAll(generalPractitionerList);
 
         List<Doctor> availableDoctors = new ArrayList<>();
         for (Doctor doctor : allDoctors) {
@@ -524,6 +524,25 @@ public class DoctorService implements Manageable, Searchable {
                 doc.displayInfo("");
                 System.out.println("------------------------");
             }
+        }
+    }
+
+    public static void displayDoctorNamesAndIds() {
+        List<Doctor> allDoctors = new ArrayList<>();
+        allDoctors.addAll(doctorsList);
+        allDoctors.addAll(surgeonList);
+        allDoctors.addAll(consultantList);
+        allDoctors.addAll(generalPractitionerList);
+
+        if (allDoctors.isEmpty()) {
+            System.out.println("No doctors available.");
+            return;
+        }
+
+        System.out.println("===== Doctors (ID + Name) =====");
+        for (Doctor doctor : allDoctors) {
+            System.out.println("ID: " + doctor.getDoctorId() +
+                    " -> Name: " + doctor.getFirstName() + " " + doctor.getLastName());
         }
     }
 
@@ -668,21 +687,23 @@ public class DoctorService implements Manageable, Searchable {
 
     public static void addSampleDoctors() {
         String[] names = {"Sara", "Fatima", "Nour", "Fajr", "Layla", "Waad"};
-        String[] lastNames = {"Al Hamdi", "Al Rashid", "Al Balushi"};
+        String[] lastNames = {"AlHamdi", "AlRashid", "AlBalushi"};
         String[] qualifications = {"MBBS", "MD", "PhD"};
         String[] specializations = {"Cardiology", "Orthopedics", "Neurology"};
+        String[] emailAddress = {"gmail.com", "yahoo.com", "hotmail.com"};
+        String[] consultationTypes = {"Emergency", "General", "Specialist", "Follow-up"};
 
         // Sample data for surgeons
         for (int i = 0; i < 3; i++) {
             Surgeon surgeon = new Surgeon();
-            surgeon.setId("987654432" + i);
-            surgeon.setDoctorId("DR-123" + i);
+            surgeon.setId(HelperUtils.getRandomNumber(10));
+            surgeon.setDoctorId(HelperUtils.generateId("DR"));
             surgeon.setFirstName(names[i]);
             surgeon.setLastName(lastNames[i]);
             surgeon.setDateOfBirth(LocalDate.of(2022, 03, 1));
             surgeon.setGender("Male");
             surgeon.setPhoneNumber("92923232" + i);
-            surgeon.setEmail(surgeon.getFirstName().toLowerCase() + "." + surgeon.getLastName().toLowerCase() + i + "@example.com");
+            surgeon.setEmail(surgeon.getFirstName().toLowerCase() + "." + surgeon.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             surgeon.setAddress("123 Main St");
 
             surgeon.setSpecialization(specializations[i]);
@@ -703,14 +724,14 @@ public class DoctorService implements Manageable, Searchable {
         //Consultant
         for (int i = 0; i < 3; i++) {
             Consultant consultant = new Consultant();
-            consultant.setId("987654432" + i);
-            consultant.setDoctorId("DR-234" + i);
+            consultant.setId(HelperUtils.getRandomNumber(10));
+            consultant.setDoctorId(HelperUtils.generateId("DR"));
             consultant.setFirstName(names[i]);
             consultant.setLastName(lastNames[i]);
             consultant.setDateOfBirth(LocalDate.of(2022, 03, 1));
             consultant.setGender("Female");
             consultant.setPhoneNumber("92923232" + i);
-            consultant.setEmail(consultant.getFirstName().toLowerCase() + "." + consultant.getLastName().toLowerCase() + i + "@example.com");
+            consultant.setEmail(consultant.getFirstName().toLowerCase() + "." + consultant.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             consultant.setAddress("123 Main St");
 
             consultant.setSpecialization(specializations[i]);
@@ -722,7 +743,7 @@ public class DoctorService implements Manageable, Searchable {
             consultant.setAvailable(true);
             consultant.setAssignedPatients(new ArrayList<>());
 
-            consultant.setConsultationTypes(List.of("Cardiology", "General"));
+            consultant.setConsultationTypes(List.of(consultationTypes[i]));
             consultant.setOnlineConsultationAvailable(true);
             consultant.setConsultationDuration(30);
 
@@ -732,14 +753,14 @@ public class DoctorService implements Manageable, Searchable {
         //GP
         for (int i = 0; i < 3; i++) {
             GeneralPractitioner gp = new GeneralPractitioner();
-            gp.setId("987654432" + i);
-            gp.setDoctorId("GP-345" + i);
+            gp.setId(HelperUtils.getRandomNumber(10));
+            gp.setDoctorId(HelperUtils.generateId("DR"));
             gp.setFirstName(names[i]);
             gp.setLastName(lastNames[i]);
             gp.setDateOfBirth(LocalDate.of(2022, 03, 1));
             gp.setGender("Female");
             gp.setPhoneNumber("92923232" + i);
-            gp.setEmail(gp.getFirstName().toLowerCase() + "." + gp.getLastName().toLowerCase() + i + "@example.com");
+            gp.setEmail(gp.getFirstName().toLowerCase() + "." + gp.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             gp.setAddress("123 Main St");
 
             gp.setSpecialization(specializations[i]);

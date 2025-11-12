@@ -157,4 +157,12 @@ public class MedicalRecord implements Displayable {
     public String displaySummary(String str) {
         return "MedicalRecord{" + recordId + ", Patient:" + patientId + ", Date:" + visitDate + "}";
     }
+
+    @Override
+    public String toString() {
+        return "Date: " + visitDate +
+                ", Diagnosis: " + diagnosis +
+                ", Prescription: " + prescription +
+                ", Doctor: " + doctorId;
+    }
 }
