@@ -40,7 +40,20 @@ public class NurseService implements Manageable, Searchable {
 
         nurse.setAddress(InputHandler.getStringInput("Enter Address: "));
 
-        nurse.setDepartmentId(InputHandler.getIntInput("Enter Department ID: ").toString());
+        //nurse.setDepartmentId(InputHandler.getIntInput("Enter Department ID: ").toString());
+        // Department selection
+        System.out.println("Department List:");
+        System.out.println(DepartmentService.getAllDepartments());
+        String departmentId = InputHandler.getStringInput("Enter Department ID: ");
+        Department department = DepartmentService.getDepartmentById(departmentId);
+        while (department == null) {
+            System.out.println("Department not found. Please try again.");
+            departmentId = InputHandler.getStringInput("Enter Department ID: ");
+            department = DepartmentService.getDepartmentById(departmentId);
+        }
+        nurse.setDepartmentId(departmentId);
+        System.out.println("Department ID: " + nurse.getDepartmentId());
+
 
         nurse.setShift(InputHandler.getStringInput("Enter Shift (Morning/Evening/Night): "));
 
@@ -133,9 +146,35 @@ public class NurseService implements Manageable, Searchable {
         return result;
     }
 
-    public static boolean assignPatientToNurse(String nurseId, Patient patient) {
-        Nurse nurse = getNurseById(nurseId);
-        return nurse != null && nurse.assignPatient(patient);
+    public static boolean assignPatientToNurse(String nurseId, String patientId) {
+        if (HelperUtils.isNull(nurseId) || nurseId.isEmpty()) {
+            System.out.println("Invalid nurse ID.");
+            return false;
+        }
+        if (HelperUtils.isNull(patientId) || patientId.isEmpty()) {
+            System.out.println("Invalid patient ID.");
+            return false;
+        }
+
+        Nurse found = getNurseById(nurseId);
+        if (HelperUtils.isNull(found)) {
+            System.out.println("Nurse with ID " + nurseId + " not found.");
+            return false;
+        }
+
+        entity.Patient patient = PatientService.getPatientById(patientId);
+        if (HelperUtils.isNull(patient)) {
+            System.out.println("Patient with ID " + patientId + " not found.");
+            return false;
+        }
+
+        boolean assigned = found.assignPatient(patient);
+        if (assigned) {
+            System.out.println("Patient " + patientId + " assigned to Nurse " + nurseId + ".");
+        } else {
+            System.out.println("Failed to assign patient " + patientId + " to Nurse " + nurseId + ".");
+        }
+        return assigned;
     }
 
     public static boolean removePatientFromNurse(String nurseId, String patientId) {
@@ -143,6 +182,19 @@ public class NurseService implements Manageable, Searchable {
         return nurse != null && nurse.removePatient(patientId);
     }
 
+    public static void displayNurseNamesAndIds() {
+        if (nurseList.isEmpty()) {
+            System.out.println("No nurses found.\n");
+            return;
+        }
+
+        System.out.println("===== Nurses List =====");
+        for (Nurse nurse : nurseList) {
+            System.out.println("- " + nurse.getFirstName() + " " + nurse.getLastName() +
+                    " (Nurse ID: " + nurse.getNurseId() + ")");
+        }
+        System.out.println("========================\n");
+    }
 
     @Override
     public String add(Object entity) {
@@ -180,23 +232,27 @@ public class NurseService implements Manageable, Searchable {
 
     @Override
     public String search(String keyword) {
-        if (HelperUtils.isNull(keyword)) {
+        if (HelperUtils.isNull(keyword) || keyword.trim().isEmpty()) {
             return "Invalid keyword.";
         }
 
-        StringBuilder sb = new StringBuilder("Search Results:\n");
+        StringBuilder sb = new StringBuilder();
         for (Nurse nurse : nurseList) {
             if ((HelperUtils.isNotNull(nurse.getFirstName()) && nurse.getFirstName().toLowerCase().contains(keyword.toLowerCase())) ||
                     (HelperUtils.isNotNull(nurse.getLastName()) && nurse.getLastName().toLowerCase().contains(keyword.toLowerCase())) ||
                     (HelperUtils.isNotNull(nurse.getEmail()) && nurse.getEmail().toLowerCase().contains(keyword.toLowerCase())) ||
                     (HelperUtils.isNotNull(nurse.getShift()) && nurse.getShift().toLowerCase().contains(keyword.toLowerCase())) ||
                     (HelperUtils.isNotNull(nurse.getDepartmentId()) && nurse.getDepartmentId().toLowerCase().contains(keyword.toLowerCase()))) {
-                sb.append(nurse.displayInfo(""));
-                sb.append(System.lineSeparator());
-                sb.append("------------------------\n");
+
+                sb.append("- ")
+                        .append(nurse.getFirstName()).append(" ")
+                        .append(nurse.getLastName())
+                        .append(" (Nurse ID: ").append(nurse.getNurseId()).append(")")
+                        .append(System.lineSeparator());
             }
         }
-        return sb.length() > 10 ? sb.toString() : "No matching nurses found.";
+
+        return sb.length() > 0 ? "Search Results:\n" + sb.toString() : "";
     }
 
     @Override

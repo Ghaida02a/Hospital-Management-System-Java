@@ -385,6 +385,7 @@ public class HospitalManagementApp {
     }
 
     private static void showNurseManagementMenu() {
+        option = 0;
         Manageable nurseManager = new NurseService();
         while (option != 8) {
             nurseManagementMenu();
@@ -395,23 +396,27 @@ public class HospitalManagementApp {
                 }
                 case 2 -> System.out.println(nurseManager.getAll());
                 case 3 -> {
-                    String dept = InputHandler.getStringInput("Enter department ID to search: ");
-//                    List<Nurse> nursesByDepartment = NurseService.getNursesByDepartment(dept);
-//                    if (nursesByDepartment.isEmpty()) {
-//                        System.out.println("No nurses found in department \"" + dept + "\".");
-//                    } else {
-//                        System.out.println("Found " + nursesByDepartment.size() + " nurse(s):");
-//                        for (Nurse n : nursesByDepartment) {
-//                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() + " (Nurse ID: " + n.getNurseId() + ")");
-//                        }
-//                    }
-//                    System.out.println();
-                    String result = ((NurseService) nurseManager).search(dept);
+                    System.out.println("Searching Nurses by Department...");
+                    System.out.println("Available Departments:");
+                    System.out.println(DepartmentService.getAllDepartments());
 
-                    if (result.isEmpty()) {
+                    String dept = InputHandler.getStringInput("Enter department ID to search: ");
+                    while (HelperUtils.isNull(DepartmentService.getDepartmentById(dept))) {
+                        System.out.println("Department not found. Please try again.");
+                        System.out.println("Available Departments:");
+                        System.out.println(DepartmentService.getAllDepartments());
+                        dept = InputHandler.getStringInput("Enter department ID to search: ");
+                    }
+
+                    List<Nurse> nursesByDepartment = NurseService.getNursesByDepartment(dept);
+                    if (nursesByDepartment.isEmpty()) {
                         System.out.println("No nurses found in department \"" + dept + "\".");
                     } else {
-                        System.out.println("Found nurses in department \"" + dept + "\":");
+                        System.out.println("Found " + nursesByDepartment.size() + " nurse(s):");
+                        for (Nurse n : nursesByDepartment) {
+                            System.out.println("- " + n.getFirstName() + " " + n.getLastName() +
+                                    " (Nurse ID: " + n.getNurseId() + ")");
+                        }
                     }
                 }
                 case 4 -> {
@@ -431,24 +436,64 @@ public class HospitalManagementApp {
                         System.out.println("No nurses found with shift \"" + shift + "\".");
                     } else {
                         System.out.println("Found nurses with shift \"" + shift + "\":");
+                        System.out.println(result);
                     }
 
                 }
                 case 5 -> {
+                    System.out.println("Assigning Patient to Nurse...");
+                    System.out.println("Available Nurses:");
+                    NurseService.displayNurseNamesAndIds();
                     String nurseId = InputHandler.getStringInput("Enter Nurse ID: ");
+
+                    System.out.println("Available Patients:");
+                    PatientService.displayPatientNamesAndIds();
                     String patientId = InputHandler.getStringInput("Enter Patient ID to assign: ");
-                    Nurse nurse = NurseService.getNurseById(nurseId);
-                    Patient patient = PatientService.getPatientById(patientId);
-                    if (nurse.assignPatient(patient)) {
-                        System.out.println("Patient " + patient.getPatientId() + " assigned to Nurse " + nurse.getNurseId());
-                    } else {
-                        System.out.println("Assignment failed or patient already assigned.");
-                    }
+
+                    boolean ok = NurseService.assignPatientToNurse(nurseId, patientId);
                 }
                 case 6 -> {
-                    String id = InputHandler.getStringInput("Enter nurse ID to update: ");
-                    Nurse updated = NurseService.addNurse();
-                    NurseService.editNurse(id, updated);
+//                    String id = InputHandler.getStringInput("Enter nurse ID to update: ");
+//                    Nurse updated = NurseService.addNurse();
+//                    NurseService.editNurse(id, updated);
+                    String nurseId = InputHandler.getStringInput("Enter Nurse ID to update: ");
+                    Nurse nurse = NurseService.getNurseById(nurseId);
+
+                    if (HelperUtils.isNotNull(nurse)) {
+                        nurse.displayInfo("");
+                        System.out.println("------------------------");
+
+                        boolean updating = true;
+                        while (updating) {
+                            System.out.println("What would you like to update?");
+                            System.out.println("1 - Department");
+                            System.out.println("2 - Shift");
+                            System.out.println("3 - Exit Update Menu");
+
+                            int choice = InputHandler.getIntInput("Enter your choice: ");
+                            switch (choice) {
+                                case 1 -> {
+                                    System.out.println("Available Departments:");
+                                    System.out.println(DepartmentService.getAllDepartments());
+                                    String deptId = InputHandler.getStringInput("Enter new Department ID: ");
+                                    while (HelperUtils.isNull(DepartmentService.getDepartmentById(deptId))) {
+                                        System.out.println("Department not found. Please try again.");
+                                        deptId = InputHandler.getStringInput("Enter new Department ID: ");
+                                    }
+                                    nurse.setDepartmentId(deptId);
+                                }
+                                case 2 -> {
+                                    String shift = InputHandler.getStringInput("Enter new shift (Morning/Evening/Night): ");
+                                    nurse.setShift(shift);
+                                }
+                                case 3 -> updating = false;
+                                default -> System.out.println("Invalid choice.");
+                            }
+                        }
+                        System.out.println("Nurse updated successfully!");
+                    } else {
+                        System.out.println("Nurse with ID " + nurseId + " not found.");
+                    }
                 }
                 case 7 -> {
                     String id = InputHandler.getStringInput("Enter nurse ID to remove: ");
@@ -737,6 +782,7 @@ public class HospitalManagementApp {
     }
 
     private static void showDepartmentManagementMenu() {
+        option = 0;
         Manageable departmentManager = new DepartmentService();
         while (option != 8) {
             departmentManagementMenu();

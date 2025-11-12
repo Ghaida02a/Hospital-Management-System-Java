@@ -5,7 +5,9 @@ import Utils.HelperUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Nurse extends Person implements Displayable {
     private String nurseId;
@@ -90,30 +92,54 @@ public class Nurse extends Person implements Displayable {
     }
 
     public void setAssignedPatients(List<Patient> assignedPatients) {
-        if (HelperUtils.isNotNull(assignedPatients)) {
-            this.assignedPatients = assignedPatients;
-        } else {
-            this.assignedPatients = null;
-            System.out.println("Warning: Assigned patients list cannot be null. Setting to null.");
+        if (HelperUtils.isNull(assignedPatients)) {
+            this.assignedPatients = new ArrayList<>();
+            return;
         }
+        // deduplicate by patient ID
+        List<Patient> unique = new ArrayList<>();
+        Set<String> seenIds = new LinkedHashSet<>();
+        for (Patient p : assignedPatients) {
+            if (HelperUtils.isNull(p)) {
+                System.out.println("Warning: null patient in assigned list ignored.");
+                continue;
+            }
+            String pid = p.getId();
+            if (HelperUtils.isNull(pid) || pid.isEmpty()) {
+                System.out.println("Warning: patient with null/empty ID ignored.");
+                continue;
+            }
+            if (seenIds.add(pid)) {
+                unique.add(p);
+            } else {
+                System.out.println("Warning: duplicate patient ID '" + pid + "' ignored.");
+            }
+        }
+        this.assignedPatients = unique;
     }
 
     // Assign a patient to the nurse
     public boolean assignPatient(Patient patient) {
         if (HelperUtils.isNull(patient)) {
+            System.out.println("Cannot assign null patient.");
+            return false;
+        }
+        String pid = patient.getPatientId();
+        if (HelperUtils.isNull(pid) || pid.isEmpty()) {
+            System.out.println("Cannot assign patient with null/empty ID.");
             return false;
         }
         if (HelperUtils.isNull(assignedPatients)) {
             assignedPatients = new ArrayList<>();
         }
         for (Patient p : assignedPatients) {
-            if (p.getPatientId().equals(patient.getPatientId())) {
-                System.out.println("Patient already assigned.");
+            if (HelperUtils.isNotNull(p) && pid.equals(p.getPatientId())) {
+                System.out.println("Patient with ID " + pid + " is already assigned to nurse " + this.getNurseId());
                 return false;
             }
         }
         assignedPatients.add(patient);
-        System.out.println("Assigned patient " + patient.getPatientId() + " to nurse " + this.getNurseId());
+        System.out.println("Assigned patient ID " + pid + " to nurse " + this.getNurseId());
         return true;
     }
 
@@ -139,7 +165,8 @@ public class Nurse extends Person implements Displayable {
         sb.append("Department Id: ").append(departmentId).append(System.lineSeparator());
         sb.append("Shift: ").append(shift).append(System.lineSeparator());
         sb.append("Qualification: ").append(qualification).append(System.lineSeparator());
-        sb.append("Assigned Patients Count: ").append(HelperUtils.isNull(assignedPatients) ? 0 : assignedPatients.size());
+        //sb.append("Assigned Patients Count: ").append(HelperUtils.isNull(assignedPatients) ? 0 : assignedPatients.size());
+        sb.append("Assigned Patients: ").append(HelperUtils.isNotNull(assignedPatients) ? assignedPatients.toString() : "[]").append(System.lineSeparator());
         String out = sb.toString();
         System.out.println(out);
         return out;
