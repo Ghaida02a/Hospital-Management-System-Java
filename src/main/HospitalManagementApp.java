@@ -690,6 +690,7 @@ public class HospitalManagementApp {
     }
 
     private static void showMedicalRecordsManagementMenu() {
+        option = 0;
         Manageable medicalRecordManager = new MedicalRecordService();
         while (option != 8) {
             medicalRecordsManagementMenu();
@@ -735,6 +736,7 @@ public class HospitalManagementApp {
                     }
                 }
                 case 4 -> {
+                    System.out.println("Searching Medical Records by Doctor...");
                     String did = InputHandler.getStringInput("Enter doctor ID: ");
                     String result = ((MedicalRecordService) medicalRecordManager).search(did);
                     if (result.isEmpty()) {
@@ -745,18 +747,64 @@ public class HospitalManagementApp {
                     }
                 }
                 case 5 -> {
+                    System.out.println("Updating Medical Record...");
                     System.out.print("Enter record ID to update: ");
-                    String updatedRecordId = scanner.nextLine();
-                    MedicalRecord updatedRecord = MedicalRecordService.createRecord();
-                    MedicalRecordService.updateRecord(updatedRecordId, updatedRecord);
+                    String recordId = scanner.nextLine();
+                    MedicalRecord record = MedicalRecordService.getRecordById(recordId);
+
+                    if (HelperUtils.isNotNull(record)) {
+                        boolean updating = true;
+                        while (updating) {
+                            System.out.println("What would you like to update?");
+                            System.out.println("1 - Diagnosis");
+                            System.out.println("2 - Prescription");
+                            System.out.println("3 - Notes");
+                            System.out.println("4 - Test Results");
+                            System.out.println("5 - Exit Update Menu");
+
+                            int choice = InputHandler.getIntInput("Enter your choice: ");
+                            switch (choice) {
+                                case 1 -> {
+                                    String diagnosis = InputHandler.getStringInput("Enter new diagnosis: ");
+                                    record.setDiagnosis(diagnosis);
+                                }
+                                case 2 -> {
+                                    String prescription = InputHandler.getStringInput("Enter new prescription: ");
+                                    record.setPrescription(prescription);
+                                }
+                                case 3 -> {
+                                    String notes = InputHandler.getStringInput("Enter new notes: ");
+                                    record.setNotes(notes);
+                                }
+                                case 4 -> {
+                                    String testResults = InputHandler.getStringInput("Enter new test results: ");
+                                    record.setTestResults(testResults);
+                                }
+                                case 5 -> updating = false;
+                                default -> System.out.println("Invalid choice.");
+                            }
+                        }
+                        MedicalRecordService.updateRecord(recordId, record);
+                        System.out.println("Medical record updated successfully!");
+                    } else {
+                        System.out.println("Record with ID " + recordId + " not found.");
+                    }
                 }
                 case 6 -> {
+                    System.out.println("Deleting Medical Record...");
                     String recordId = InputHandler.getStringInput("Enter record ID to delete: ");
                     String result = medicalRecordManager.remove(recordId);
                     System.out.println(result);
                 }
                 case 7 -> {
+                    System.out.println("Generating Patient History Report...");
+                    System.out.println("Patient List:");
+                    PatientService.displayPatientNamesAndIds();
                     String pid = InputHandler.getStringInput("Enter patient ID for history report: ");
+                    while (HelperUtils.isNull(PatientService.getPatientById(pid))) {
+                        System.out.println("Patient not found. Please try again.");
+                        pid = InputHandler.getStringInput("Enter patient ID for history report: ");
+                    }
                     MedicalRecordService.generatePatientHistoryReport(pid);
                 }
                 case 8 -> System.out.println("Exiting Medical Record Management...");

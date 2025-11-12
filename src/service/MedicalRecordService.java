@@ -27,12 +27,28 @@ public class MedicalRecordService implements Manageable, Searchable {
         System.out.println("Medical Record ID: " + medicalRecord.getRecordId());
 
         // Patient ID
+//        String patientId = InputHandler.getStringInput("Enter Patient ID: ");
+//        medicalRecord.setPatientId(patientId);
+        System.out.println("Patient List:");
+        PatientService.displayPatientNamesAndIds();
         String patientId = InputHandler.getStringInput("Enter Patient ID: ");
+        while (PatientService.getPatientById(patientId) == null) {
+            System.out.println("Patient not found. Please try again.");
+            patientId = InputHandler.getStringInput("Enter Patient ID: ");
+        }
         medicalRecord.setPatientId(patientId);
+        System.out.println("Patient ID: " + medicalRecord.getPatientId());
 
         // Doctor ID
+        System.out.println("Doctor List:");
+        DoctorService.displayDoctorNamesAndIds();
         String doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+        while (DoctorService.getDoctorById(doctorId) == null) {
+            System.out.println("Doctor not found. Please try again.");
+            doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+        }
         medicalRecord.setDoctorId(doctorId);
+        System.out.println("Doctor ID: " + medicalRecord.getDoctorId());
 
         // Visit Date
         LocalDate visitDate = InputHandler.getDateInput("Enter Visit Date");
