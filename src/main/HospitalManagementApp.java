@@ -264,28 +264,98 @@ public class HospitalManagementApp {
                 }
                 case 7 -> {
                     List<Doctor> availableDoctors = DoctorService.getAvailableDoctors();
-
                     System.out.println("===== Available Doctors =====");
                     if (availableDoctors.isEmpty()) {
                         System.out.println("No available doctors found.\n");
                     } else {
                         for (Doctor doc : availableDoctors) {
-                            System.out.println("- Dr. " + doc.getFirstName() + " " + doc.getLastName() + " (ID: " + doc.getId() + ")");
+                            System.out.println("- DR. " + doc.getFirstName() + " " + doc.getLastName() + " (ID: " + doc.getDoctorId() + ")");
                         }
                         System.out.println();
                     }
                 }
                 case 8 -> {
+                    System.out.println("Assigning Patient to Doctor...");
+                    System.out.println("Available Doctors:");
+                    DoctorService.displayDoctorNamesAndIds();
                     String doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+
+                    System.out.println("Available Patients:");
+                    PatientService.displayPatientNamesAndIds();
                     String patientId = InputHandler.getStringInput("Enter Patient ID to assign: ");
+
                     boolean ok = DoctorService.assignPatientToDoctor(doctorId, patientId);
-                    if (ok) System.out.println("Assignment succeeded.");
-                    else System.out.println("Assignment failed.");
+                    if (ok) {
+                        System.out.println("Assignment succeeded.");
+                        System.out.println("Patient " + patientId + " assigned to Doctor " + doctorId + ".");
+                    } else {
+                        System.out.println("Assignment failed.");
+                    }
                 }
                 case 9 -> {
                     String id = InputHandler.getStringInput("Enter doctor ID to update: ");
-                    Doctor updatedDoctor = DoctorService.addDoctor();
-                    DoctorService.editDoctor(id, updatedDoctor);
+                    Doctor doctor = DoctorService.getDoctorById(id);
+
+                    if (HelperUtils.isNotNull(doctor)) {
+                        doctor.displayInfo("");
+                        System.out.println("------------------------");
+
+                        boolean updating = true;
+                        while (updating) {
+                            System.out.println("What would you like to update?");
+                            System.out.println("1 - Specialization");
+                            System.out.println("2 - Department");
+                            System.out.println("3 - Availability Slots");
+                            System.out.println("4 - Surgery Count");
+                            System.out.println("5 - Consultation Fee");
+                            System.out.println("6 - Exit Update Menu for this doctor.");
+
+                            int choice = InputHandler.getIntInput("Enter your choice: ");
+                            switch (choice) {
+                                case 1 -> {
+                                    String newSpec = InputHandler.getStringInput("Enter new specialization: ");
+                                    doctor.setSpecialization(newSpec);
+                                    System.out.println("Specialization updated to " + newSpec);
+                                }
+                                case 2 -> {
+                                    System.out.println("Department List:");
+                                    System.out.println(DepartmentService.getAllDepartments());
+
+                                    String departmentId = InputHandler.getStringInput("Enter Department ID: ");
+                                    Department department = DepartmentService.getDepartmentById(departmentId);
+
+                                    while (HelperUtils.isNull(department)) {
+                                        System.out.println("Department not found. Please try again.");
+                                        departmentId = InputHandler.getStringInput("Enter Department ID: ");
+                                        department = DepartmentService.getDepartmentById(departmentId);
+                                    }
+
+                                    doctor.setDepartmentId(departmentId);
+                                    System.out.println("Department ID updated to: " + doctor.getDepartmentId());
+                                }
+                                case 3 -> {
+                                    List<Integer> slots = InputHandler.getIntegerList("Enter availability slots (0–23): ");
+                                    doctor.updateAvailability(slots);
+                                    System.out.println("Availability slots updated to: " + doctor.getAvailableSlots());
+                                }
+                                case 4 -> {
+                                    int surgeryCount = InputHandler.getIntInput("Enter number of surgeries to add: ");
+                                    doctor.updateSurgeryCount(surgeryCount);
+                                    System.out.println("Surgery count updated to: " + surgeryCount);
+                                }
+                                case 5 -> {
+                                    double newFee = InputHandler.getDoubleInput("Enter new consultation fee: ");
+                                    doctor.setConsultationFee(newFee);
+                                    System.out.println("Consultation fee updated to: " + newFee);
+                                }
+                                case 6 -> updating = false;
+                                default -> System.out.println("Invalid choice.");
+                            }
+                        }
+                        System.out.println("Doctor updated successfully!");
+                    } else {
+                        System.out.println("Doctor with ID " + id + " not found.");
+                    }
                 }
                 case 10 -> {
                     String id = InputHandler.getStringInput("Enter doctor ID to remove: ");

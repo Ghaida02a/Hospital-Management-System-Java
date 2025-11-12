@@ -167,4 +167,10 @@ public class Department implements Displayable {
     public String displaySummary(String str) {
         return "Department Id: " + departmentId + " - Department Name: " + departmentName;
     }
+
+    @Override
+    public String toString() {
+        return  "departmentId='" + departmentId + '\'' +
+                ", departmentName='" + departmentName + "\n";
+    }
 }

@@ -202,7 +202,7 @@ public class Doctor extends Person implements Displayable {
             System.out.println("Cannot assign null patient.");
             return false;
         }
-        String pid = patient.getId();
+        String pid = patient.getPatientId();
         if (HelperUtils.isNull(pid) || pid.isEmpty()) {
             System.out.println("Cannot assign patient with null/empty ID.");
             return false;
@@ -211,7 +211,7 @@ public class Doctor extends Person implements Displayable {
             assignedPatients = new ArrayList<>();
         }
         for (Patient p : assignedPatients) {
-            if (HelperUtils.isNotNull(p) && pid.equals(p.getId())) {
+            if (HelperUtils.isNotNull(p) && pid.equals(p.getPatientId())) {
                 System.out.println("Patient with ID " + pid + " is already assigned to doctor " + this.getDoctorId());
                 return false;
             }
@@ -367,7 +367,8 @@ public class Doctor extends Person implements Displayable {
         sb.append("Consultation Fee: ").append(consultationFee).append(System.lineSeparator());
         sb.append("Available: ").append(available).append(System.lineSeparator());
         sb.append("Available Slots: ").append(HelperUtils.isNotNull(availableSlots) ? availableSlots.toString() : "[]").append(System.lineSeparator());
-        sb.append("Assigned Patients Count: ").append(HelperUtils.isNotNull(assignedPatients) ? assignedPatients.size() : 0);
+        //sb.append("Assigned Patients Count: ").append(HelperUtils.isNotNull(assignedPatients) ? assignedPatients.size() : 0);
+        sb.append("Assigned Patients: ").append(HelperUtils.isNotNull(assignedPatients) ? assignedPatients.toString() : "[]").append(System.lineSeparator());
         String out = sb.toString();
         System.out.println(out);
         return out;
@@ -375,7 +376,7 @@ public class Doctor extends Person implements Displayable {
 
     @Override
     public String displaySummary(String str) {
-        return "Doctor{" + getId() + ": " + getFirstName() + " " + getLastName() + "}";
+        return "Doctor{" + getDoctorId() + ": " + getFirstName() + " " + getLastName() + "}";
     }
 
     // Overloaded methods for updating consultation fee

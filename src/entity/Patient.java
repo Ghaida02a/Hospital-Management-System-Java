@@ -272,7 +272,7 @@ public class Patient extends Person implements Displayable {
 
     @Override
     public String toString() {
-        return "Patient ID: " + getId() +
+        return "Patient ID: " + getPatientId() +
                 "\nName: " + getFirstName() + " " + getLastName() +
                 "\nDOB: " + getDateOfBirth() +
                 "\nGender: " + getGender() +

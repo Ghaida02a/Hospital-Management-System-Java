@@ -57,7 +57,18 @@ public class DoctorService implements Manageable, Searchable {
 
         doctor.setExperienceYears(InputHandler.getIntInput("Enter Experience Years: "));
 
-        doctor.setDepartmentId(InputHandler.getStringInput("Enter Department ID: "));
+        // Department selection
+        System.out.println("Department List:");
+        System.out.println(DepartmentService.getAllDepartments());
+        String departmentId = InputHandler.getStringInput("Enter Department ID: ");
+        Department department = DepartmentService.getDepartmentById(departmentId);
+        while (department == null) {
+            System.out.println("Department not found. Please try again.");
+            departmentId = InputHandler.getStringInput("Enter Department ID: ");
+            department = DepartmentService.getDepartmentById(departmentId);
+        }
+        doctor.setDepartmentId(departmentId);
+        System.out.println("Department ID: " + doctor.getDepartmentId());
 
         doctor.setConsultationFee(InputHandler.getDoubleInput("Enter Consultation Fee: "));
 
@@ -701,7 +712,7 @@ public class DoctorService implements Manageable, Searchable {
             surgeon.setFirstName(names[i]);
             surgeon.setLastName(lastNames[i]);
             surgeon.setDateOfBirth(LocalDate.of(2022, 03, 1));
-            surgeon.setGender("Male");
+            surgeon.setGender("Female");
             surgeon.setPhoneNumber("92923232" + i);
             surgeon.setEmail(surgeon.getFirstName().toLowerCase() + "." + surgeon.getLastName().toLowerCase() + i + emailAddress[i % emailAddress.length]);
             surgeon.setAddress("123 Main St");

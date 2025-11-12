@@ -17,6 +17,7 @@ public class DepartmentService implements Manageable, Searchable {
 
     public static Department addDepartment() {
         Department department = new Department();
+        System.out.println("\n--- Department Registration ---");
         String generatedId = HelperUtils.getRandomNumber(4);
         department.setDepartmentId(generatedId);
         System.out.println("Department ID: " + department.getDepartmentId());
@@ -217,7 +218,7 @@ public class DepartmentService implements Manageable, Searchable {
 
         for (int i = 0; i < 4; i++) {
             Department department = new Department();
-            department.setDepartmentId("DEP-123" + i);
+            department.setDepartmentId(HelperUtils.getRandomNumber(4));
             department.setDepartmentName(departmentNames[i]);
             department.setHeadDoctorId("DR-123" + i);
             department.setDoctors(new ArrayList<>());
