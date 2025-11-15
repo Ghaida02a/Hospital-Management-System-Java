@@ -10,7 +10,6 @@ import entity.Nurse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DepartmentService implements Manageable, Searchable {
     public static List<Department> departmentList = new ArrayList<>();
@@ -148,6 +147,19 @@ public class DepartmentService implements Manageable, Searchable {
 
     public static List<Department> getAllDepartments() {
         return new ArrayList<>(departmentList);
+    }
+
+    public static void displayDepartmentNamesAndIds() {
+        if (departmentList.isEmpty()) {
+            System.out.println("No Department found.\n");
+            return;
+        }
+
+        System.out.println("===== Department List =====");
+        for (Department department : departmentList) {
+            System.out.println("Department ID: " + department.getDepartmentId() + "  Department Name:" + department.getDepartmentName());
+        }
+        System.out.println("========================\n");
     }
 
     @Override

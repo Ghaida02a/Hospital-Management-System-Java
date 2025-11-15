@@ -226,7 +226,7 @@ public class Patient extends Person implements Displayable {
         }
         if (HelperUtils.isNotNull(appointment)) {
             this.appointment.add(appointment);
-            System.out.println("Appointment scheduled for patient " + this.getId());
+            System.out.println("Appointment scheduled for patient " + this.getPatientId());
         } else {
             System.out.println("Warning: null appointment not added.");
         }

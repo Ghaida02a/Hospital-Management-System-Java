@@ -550,7 +550,7 @@ public class HospitalManagementApp {
                         GeneralPractitioner gp = (GeneralPractitioner) doctor;
                         if (gp.isHomeVisitAvailable()) {
                             String dateTime = InputHandler.getStringInput("Enter home visit date/time: ");
-                            gp.scheduleHomeVisit(patient.getId(), dateTime);
+                            gp.scheduleHomeVisit(patient.getPatientId(), dateTime);
                         }
                     }
 
@@ -579,7 +579,7 @@ public class HospitalManagementApp {
                     if (result.isEmpty()) {
                         System.out.println("No appointments found for patient " + pid);
                     } else {
-                        System.out.println("Found appointments for patient " + pid + ":");
+                        System.out.println("Found appointments for patient " + pid);
                         System.out.println(result);
                     }
                 }
@@ -594,7 +594,7 @@ public class HospitalManagementApp {
                     if (result.isEmpty()) {
                         System.out.println("No appointments found for doctor " + did);
                     } else {
-                        System.out.println("Found appointments for doctor " + did + ":");
+                        System.out.println("Found appointments for doctor " + did);
                         System.out.println(result);
                     }
                 }
@@ -891,7 +891,7 @@ public class HospitalManagementApp {
     }
 
     private static void reportsAndStatisticsMenu() {
-        System.out.println("===== Report And Statistics =====");
+        System.out.println("===== Report And Statistics Menu =====");
         System.out.print("""
                 1- Daily Appointments Report
                 2- Doctor Performance Report
@@ -909,30 +909,54 @@ public class HospitalManagementApp {
             reportsAndStatisticsMenu();
             switch (option) {
                 case 1 -> {
+                    System.out.println("Generating Daily Appointments Report...");
                     LocalDate date = InputHandler.getDateInput("Enter date for the report");
                     ReportService.generateDailyAppointmentsReport(date);
                 }
                 case 2 -> {
-                    String doctorId = InputHandler.getStringInput("Enter Doctor ID for performance report (or leave blank for all doctors): ");
+                    System.out.println("Generating Doctor Performance Report...");
+                    DoctorService.displayDoctorNamesAndIds();
+                    String doctorId = InputHandler.getStringInput("Enter Doctor ID for performance report: ");
+                    while (HelperUtils.isNull(DoctorService.getDoctorById(doctorId))) {
+                        System.out.println("Doctor not found. Please try again.");
+                        doctorId = InputHandler.getStringInput("Enter Doctor ID for performance report: ");
+                    }
                     ReportService.generateDoctorPerformanceReport(doctorId);
                 }
                 case 3 -> {
-                    String departmentId = InputHandler.getStringInput("Enter Department ID for occupancy report (or leave blank for all departments): ");
+                    System.out.println("Generating Department Occupancy Report...");
+                    DepartmentService.displayDepartmentNamesAndIds();
+                    String departmentId = InputHandler.getStringInput("Enter Department ID for occupancy report: ");
+                    while (HelperUtils.isNull(DepartmentService.getDepartmentById(departmentId))) {
+                        System.out.println("Department not found. Please try again.");
+                        departmentId = InputHandler.getStringInput("Enter Department ID for occupancy report: ");
+                    }
                     ReportService.generateDepartmentOccupancyReport(departmentId);
                 }
                 case 4 -> {
+                    System.out.println("Generating Patient Statistics Report...");
+                    PatientService.displayPatientNamesAndIds();
                     String patientId = InputHandler.getStringInput("Enter Patient ID for statistics report: ");
+                    while (HelperUtils.isNull(PatientService.getPatientById(patientId))) {
+                        System.out.println("Patient not found. Please try again.");
+                        patientId = InputHandler.getStringInput("Enter Patient ID for statistics report: ");
+                    }
                     Patient patient = PatientService.getPatientById(patientId);
 
                     if (patient instanceof OutPatient outPatient) {
                         System.out.println("OutPatient Visit Count: " + outPatient.getVisitCount());
                         System.out.println("Last Visit Date: " + outPatient.getLastVisitDate());
                     }
-
                     ReportService.generatePatientStatisticsReport(patientId);
                 }
                 case 5 -> {
+                    System.out.println("Generating Emergency Cases Report...");
+                    PatientService.displayPatientNamesAndIds();
                     String patientId = InputHandler.getStringInput("Enter Patient ID for emergency cases report: ");
+                    while (HelperUtils.isNull(PatientService.getPatientById(patientId))) {
+                        System.out.println("Patient not found. Please try again.");
+                        patientId = InputHandler.getStringInput("Enter Patient ID for emergency cases report: ");
+                    }
                     ReportService.generateEmergencyCasesReport(patientId);
                 }
                 case 6 -> System.out.println("Exiting Report Management...");

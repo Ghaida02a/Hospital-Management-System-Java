@@ -319,6 +319,21 @@ public class PatientService implements Manageable, Searchable {
                 return patient;
             }
         }
+        for (InPatient inPatient : inPatientList) {
+            if (inPatient.getPatientId().equals(patientId)) {
+                return inPatient;
+            }
+        }
+        for (OutPatient outPatient : outPatientList) {
+            if (outPatient.getPatientId().equals(patientId)) {
+                return outPatient;
+            }
+        }
+        for (EmergencyPatient emergencyPatient : emergencyPatientList) {
+            if (emergencyPatient.getPatientId().equals(patientId)) {
+                return emergencyPatient;
+            }
+        }
         return null;
     }
 
@@ -398,9 +413,18 @@ public class PatientService implements Manageable, Searchable {
         }
     }
 
+    //    public static List<Patient> getAllPatients() {
+//        return new ArrayList<>(patientList);
+//    }
     public static List<Patient> getAllPatients() {
-        return new ArrayList<>(patientList);
+        List<Patient> allPatients = new ArrayList<>();
+        allPatients.addAll(patientList);
+        allPatients.addAll(inPatientList);
+        allPatients.addAll(outPatientList);
+        allPatients.addAll(emergencyPatientList);
+        return allPatients;
     }
+
 
     public static void addMedicalRecordToPatient(String patientId, MedicalRecord record) {
         Patient patient = getPatientById(patientId);
@@ -557,6 +581,7 @@ public class PatientService implements Manageable, Searchable {
                     " -> Name: " + patient.getFirstName() + " " + patient.getLastName());
         }
     }
+
 
     @Override
     public String add(Object entity) {

@@ -25,9 +25,24 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         appointment.setAppointmentId(generatedId);
         System.out.println("Appointment ID: " + appointment.getAppointmentId());
 
-        appointment.setPatientId(InputHandler.getStringInput("Enter Patient ID: "));
 
-        appointment.setDoctorId(InputHandler.getStringInput("Enter Doctor ID: "));
+        System.out.println("Patient List:");
+        PatientService.displayPatientNamesAndIds();
+        String patientId = InputHandler.getStringInput("Enter Patient ID: ");
+        while (HelperUtils.isNull(PatientService.getPatientById(patientId))) {
+            System.out.println("Patient not found. Please try again.");
+            patientId = InputHandler.getStringInput("Enter Patient ID: ");
+        }
+        appointment.setPatientId(patientId);
+
+        System.out.println("Doctor List:");
+        DoctorService.displayDoctorNamesAndIds();
+        String doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+        while (HelperUtils.isNull(DoctorService.getDoctorById(doctorId))) {
+            System.out.println("Doctor not found. Please try again.");
+            doctorId = InputHandler.getStringInput("Enter Doctor ID: ");
+        }
+        appointment.setDoctorId(doctorId);
 
         while (true) {
             LocalDate date = InputHandler.getDateInput("Enter Appointment Date ");
@@ -45,9 +60,9 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
 
         System.out.println("Appointment set for " + appointment.getAppointmentDate() + " at " + appointment.getAppointmentTime());
 
-        appointment.setReason(InputHandler.getStringInput("Enter Reason (optional): "));
+        appointment.setReason(InputHandler.getStringInput("Enter Reason: "));
 
-        appointment.setNotes(InputHandler.getStringInput("Notes (optional): "));
+        appointment.setNotes(InputHandler.getStringInput("Enter Notes: "));
 
         appointment.setStatus("Scheduled");
 
@@ -130,7 +145,8 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
         LocalDate today = LocalDate.now();
         System.out.println("===== Upcoming Appointments =====");
         for (Appointment a : appointmentList) {
-            if (HelperUtils.isNotNull(a.getAppointmentDate()) && !a.getAppointmentDate().isBefore(today) && a.getStatus().equals("Scheduled")) {
+            if (HelperUtils.isNotNull(a.getAppointmentDate()) && !a.getAppointmentDate().isBefore(today)
+                    && a.getStatus().equals("Scheduled")) {
                 a.displayInfo("");
                 System.out.println("------------------------");
             }
@@ -364,6 +380,7 @@ public class AppointmentService implements Manageable, Searchable, Appointable {
             appointment.setAppointmentTime(appointmentTimes[i % appointmentTimes.length]);
             appointment.setReason(reasons[i % reasons.length]);
             appointment.setStatus("Scheduled");
+            appointment.setNotes("Notes for appointment " + i);
 
             save(appointment);
         }

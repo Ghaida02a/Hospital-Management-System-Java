@@ -1,10 +1,7 @@
 package service;
 
 import Utils.HelperUtils;
-import entity.Appointment;
-import entity.Department;
-import entity.Doctor;
-import entity.Patient;
+import entity.*;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -21,46 +18,54 @@ public class ReportService {
                 System.out.println("Appointment ID: " + appt.getAppointmentId());
                 System.out.println("Patient ID: " + appt.getPatientId());
                 System.out.println("Doctor ID: " + appt.getDoctorId());
+                System.out.println("Date: " + appt.getAppointmentDate());
                 System.out.println("Time: " + appt.getAppointmentTime());
                 System.out.println("Status: " + appt.getStatus());
+                System.out.println("Reason: " + appt.getReason());
+                System.out.println("Notes: " + appt.getNotes());
                 System.out.println("--------------------------------------------");
             }
         }
     }
 
     public static void generateDoctorPerformanceReport(String doctorId) {
-        List<Doctor> doctors = DoctorService.getAllDoctors();  // get all doctors from DoctorService
-
         System.out.println("===== Doctor Performance Report =====");
-        if (HelperUtils.isNull(doctors) || doctors.isEmpty()) {
-            System.out.println("No doctors found in the system.");
+
+        // Get the doctor by ID
+        Doctor doctor = DoctorService.getDoctorById(doctorId);
+
+        if (HelperUtils.isNull(doctor)) {
+            System.out.println("Doctor not found in the system.");
             return;
         }
 
-        for (Doctor doctor : doctors) {
-            // Get appointments for each doctor
-            List<Appointment> doctorAppointments = AppointmentService.getAppointmentsByDoctor(doctor.getDoctorId());
-            long totalAppointments = doctorAppointments.size(); //total appointments for the doctor
+        // Get all appointments for this doctor
+        List<Appointment> doctorAppointments = AppointmentService.getAppointmentsByDoctor(doctor.getDoctorId());
 
-            long completedAppointments = 0; //count of completed appointments
-            long cancelledAppointments = 0; // count of cancelled appointments
+        long totalAppointments = doctorAppointments.size();
+        long completedAppointments = 0;
+        long cancelledAppointments = 0;
 
-            for (Appointment appointment : doctorAppointments) {
-                String status = appointment.getStatus();
+        // Count completed and cancelled appointments
+        for (Appointment appointment : doctorAppointments) {
+            String status = appointment.getStatus();
+            if (HelperUtils.isNotNull(status)) {
                 if (status.equalsIgnoreCase("Completed")) {
                     completedAppointments++;
                 } else if (status.equalsIgnoreCase("Cancelled")) {
                     cancelledAppointments++;
                 }
             }
-
-            System.out.println("Doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
-            System.out.println("  Total Appointments: " + totalAppointments);
-            System.out.println("  Completed: " + completedAppointments);
-            System.out.println("  Cancelled: " + cancelledAppointments);
-            System.out.println("-------------------------------------------");
         }
+
+        // Print the report for Dr performance
+        System.out.println("Doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
+        System.out.println("  Total Appointments: " + totalAppointments);
+        System.out.println("  Completed: " + completedAppointments);
+        System.out.println("  Cancelled: " + cancelledAppointments);
+        System.out.println("-------------------------------------------");
     }
+
 
     public static void generateDepartmentOccupancyReport(String departmentId) {
         List<Department> departments = DepartmentService.getAllDepartments();  // get all departments from DepartmentService
@@ -134,38 +139,22 @@ public class ReportService {
     }
 
     public static void generateEmergencyCasesReport(String patientId) {
-        List<Patient> patients = PatientService.getAllPatients(); // Assuming you have this method
+        System.out.println("===== Emergency Case Report =====");
 
-        System.out.println("===== Emergency Cases Report =====");
-
-        if (HelperUtils.isNull(patients) || patients.isEmpty()) {
-            System.out.println("No patients found in the system.");
+        Patient p = PatientService.getPatientById(patientId);
+        if (HelperUtils.isNull(p)) {
+            System.out.println("Patient not found with ID: " + patientId);
             return;
         }
 
-        boolean found = false;
-        for (Patient patient : patients) {
-            String emergencyContact = patient.getEmergencyContact();
-            String phone = patient.getPhoneNumber();
-
-            boolean missingOrInvalid = HelperUtils.isNull(emergencyContact) || emergencyContact.trim().isEmpty();
-            boolean sameAsPhone = HelperUtils.isNotNull(phone) && phone.equals(emergencyContact);
-
-            if (missingOrInvalid || sameAsPhone) {
-                found = true;
-                System.out.println("------------------------------");
-                System.out.println("Patient ID: " + patient.getId());
-                System.out.println("Name: " + patient.getFirstName() + " " + patient.getLastName());
-                System.out.println("Phone: " + phone);
-                System.out.println("Emergency Contact: " + (missingOrInvalid ? "MISSING/INVALID" : emergencyContact));
-                if (sameAsPhone) {
-                    System.out.println("⚠️ Warning: Emergency contact same as patient phone number!");
-                }
-            }
-        }
-
-        if (!found) {
-            System.out.println("All patients have valid emergency contact information.");
-        }
+        System.out.println("Patient ID: " + p.getPatientId());
+        System.out.println("Name: " + p.getFirstName() + " " + p.getLastName());
+        System.out.println("Phone: " + p.getPhoneNumber());
+        System.out.println("Address: " + p.getAddress());
+        System.out.println("Emergency Contact: " + p.getEmergencyContact());
+        System.out.println("Blood Type: " + p.getBloodGroup());
+        System.out.println("Allergies: " + p.getAllergies());
+        System.out.println("-------------------------------------------");
     }
+
 }
